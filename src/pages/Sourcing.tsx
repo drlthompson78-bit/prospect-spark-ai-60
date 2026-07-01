@@ -137,13 +137,14 @@ export default function Sourcing() {
             <Input type="number" min={1} max={20} value={maxResults} onChange={e => setMaxResults(Number(e.target.value))} />
           </div>
           <div className="col-span-2">
+          <div className="sm:col-span-2">
             <Label>Zoekquery</Label>
             <Input value={query} onChange={e => setQuery(e.target.value)} placeholder="loodgieter Rotterdam"/>
           </div>
         </div>
-        <div className="mt-4 flex gap-2">
-          <Button onClick={search} disabled={loading || !query}>{loading ? "Zoeken…" : "Search Google Places"}</Button>
-          <div className="text-xs text-muted-foreground self-center">Voorbeeld: loodgieter Rotterdam · dakdekker Capelle · elektricien Barendrecht</div>
+        <div className="mt-4 flex flex-col sm:flex-row gap-2 sm:items-center">
+          <Button onClick={search} disabled={loading || !query} className="w-full sm:w-auto">{loading ? "Zoeken…" : "Search Google Places"}</Button>
+          <div className="text-xs text-muted-foreground">Voorbeeld: loodgieter Rotterdam · dakdekker Capelle</div>
         </div>
       </Card>
 
