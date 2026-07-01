@@ -106,8 +106,8 @@ export default function Sourcing() {
       <h1 className="text-xl md:text-2xl font-semibold mb-1">Prospect Sourcing</h1>
       <p className="text-sm text-muted-foreground mb-6">Zoek bedrijven via Google Places (server-side, API-key nooit in de browser)</p>
 
-      <Card className="p-6 mb-6">
-        <div className="grid grid-cols-2 gap-4">
+      <Card className="p-4 md:p-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label>Regio</Label>
             <Select value={regionId} onValueChange={setRegionId}>
