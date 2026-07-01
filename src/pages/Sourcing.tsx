@@ -102,12 +102,12 @@ export default function Sourcing() {
   }
 
   return (
-    <div className="p-8 max-w-6xl">
-      <h1 className="text-2xl font-semibold mb-1">Prospect Sourcing</h1>
+    <div className="p-4 md:p-8 max-w-6xl">
+      <h1 className="text-xl md:text-2xl font-semibold mb-1">Prospect Sourcing</h1>
       <p className="text-sm text-muted-foreground mb-6">Zoek bedrijven via Google Places (server-side, API-key nooit in de browser)</p>
 
-      <Card className="p-6 mb-6">
-        <div className="grid grid-cols-2 gap-4">
+      <Card className="p-4 md:p-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label>Regio</Label>
             <Select value={regionId} onValueChange={setRegionId}>
@@ -136,14 +136,14 @@ export default function Sourcing() {
             <Label>Max resultaten (1–20)</Label>
             <Input type="number" min={1} max={20} value={maxResults} onChange={e => setMaxResults(Number(e.target.value))} />
           </div>
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <Label>Zoekquery</Label>
             <Input value={query} onChange={e => setQuery(e.target.value)} placeholder="loodgieter Rotterdam"/>
           </div>
         </div>
-        <div className="mt-4 flex gap-2">
-          <Button onClick={search} disabled={loading || !query}>{loading ? "Zoeken…" : "Search Google Places"}</Button>
-          <div className="text-xs text-muted-foreground self-center">Voorbeeld: loodgieter Rotterdam · dakdekker Capelle · elektricien Barendrecht</div>
+        <div className="mt-4 flex flex-col sm:flex-row gap-2 sm:items-center">
+          <Button onClick={search} disabled={loading || !query} className="w-full sm:w-auto">{loading ? "Zoeken…" : "Search Google Places"}</Button>
+          <div className="text-xs text-muted-foreground">Voorbeeld: loodgieter Rotterdam · dakdekker Capelle</div>
         </div>
       </Card>
 
