@@ -136,7 +136,6 @@ export default function Sourcing() {
             <Label>Max resultaten (1–20)</Label>
             <Input type="number" min={1} max={20} value={maxResults} onChange={e => setMaxResults(Number(e.target.value))} />
           </div>
-          <div className="col-span-2">
           <div className="sm:col-span-2">
             <Label>Zoekquery</Label>
             <Input value={query} onChange={e => setQuery(e.target.value)} placeholder="loodgieter Rotterdam"/>
