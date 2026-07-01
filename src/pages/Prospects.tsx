@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -127,8 +127,8 @@ export default function Prospects() {
               {grouped.map(([regionId, rows]) => {
                 const r = regionMap[regionId];
                 return (
-                  <>
-                    <tr key={`h-${regionId}`}>
+                  <Fragment key={regionId}>
+                    <tr>
                       <td colSpan={14} className="region-header">
                         === REGIO {String(r?.region_order ?? "??").padStart(2,"0")}: {(r?.region_name ?? "Onbekend").toUpperCase()} ({rows.length}) ===
                       </td>
@@ -151,9 +151,10 @@ export default function Prospects() {
                         <td className="p-2 text-xs">{p.outreach_status}</td>
                       </tr>
                     ))}
-                  </>
+                  </Fragment>
                 );
               })}
+
               {filtered.length === 0 && <tr><td colSpan={14} className="p-8 text-center text-muted-foreground text-sm">Nog geen prospects. Ga naar Sourcing om te starten.</td></tr>}
             </tbody>
           </table>
