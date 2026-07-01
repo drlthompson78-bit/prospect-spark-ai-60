@@ -239,9 +239,15 @@ Deno.serve(async (req) => {
         created_by: userId,
       });
 
+      const uiStatus = !website ? "missing_website" : fit === "rejected" ? "pending_review" : "created";
       results.push({
-        status: fit === "rejected" ? "rejected" : "created",
+        status: uiStatus,
         company_name: companyName,
+        address: pl.formattedAddress ?? null,
+        phone: phoneMain,
+        website,
+        rating: pl.rating ?? null,
+        review_count: reviewCount,
         prospect_id: inserted!.id,
         fit_category: fit,
         lead_score: score,
