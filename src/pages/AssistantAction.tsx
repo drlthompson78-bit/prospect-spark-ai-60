@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { AlertTriangle, Copy, Trash2 } from "lucide-react";
+import { AlertTriangle, Copy, Trash2, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/assistant-action`;
 
@@ -55,6 +56,9 @@ export default function AssistantAction() {
   const [scenarioResult, setScenarioResult] = useState<any>(null);
   const [recomputeResult, setRecomputeResult] = useState<any>(null);
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
+  const [recomputeProgress, setRecomputeProgress] = useState(0);
+  const [recomputeElapsed, setRecomputeElapsed] = useState(0);
+  const [recomputeTotal, setRecomputeTotal] = useState<number | null>(null);
 
   async function loadMaintenance() {
     const { data } = await supabase.from("assistant_action_logs")
@@ -201,21 +205,67 @@ export default function AssistantAction() {
             onClick={async () => {
               setRunning("recompute");
               setRecomputeResult(null);
+              setRecomputeProgress(0);
+              setRecomputeElapsed(0);
+              setRecomputeTotal(null);
+
+              // Get an estimated total up-front for the live counter
+              const { count } = await supabase
+                .from("prospects")
+                .select("*", { count: "exact", head: true })
+                .eq("is_test_record", false);
+              setRecomputeTotal(count ?? null);
+
+              const start = Date.now();
+              const tick = setInterval(() => {
+                const elapsed = (Date.now() - start) / 1000;
+                setRecomputeElapsed(elapsed);
+                // Asymptotic progress toward 95% (never completes until server responds)
+                setRecomputeProgress(Math.min(95, 100 * (1 - Math.exp(-elapsed / 6))));
+              }, 200);
+
               try {
                 const { data, error } = await supabase.functions.invoke("recompute-clean-list", { body: {} });
                 if (error) throw error;
                 if (data?.status !== "success") throw new Error(data?.error_message ?? "Unknown error");
                 setRecomputeResult(data);
+                setRecomputeProgress(100);
                 toast.success(`Herberekend: ${data.clean_list_eligible_true} eligible / ${data.total_checked} totaal`);
               } catch (e: any) {
                 setRecomputeResult({ status: "failed", error_message: e.message ?? String(e), timestamp: new Date().toISOString() });
+                setRecomputeProgress(0);
                 toast.error(e.message ?? "Recompute mislukt");
-              } finally { setRunning(null); loadMaintenance(); }
+              } finally {
+                clearInterval(tick);
+                setRecomputeElapsed((Date.now() - start) / 1000);
+                setRunning(null);
+                loadMaintenance();
+              }
             }}
           >
-            {running === "recompute" ? "Bezig…" : "Recompute now"}
+            {running === "recompute" ? (
+              <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>
+            ) : "Recompute now"}
           </Button>
         </div>
+
+        {running === "recompute" && (
+          <div className="rounded border border-border p-3 space-y-2 bg-secondary/30">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">
+                Bezig met herberekenen{recomputeTotal !== null ? ` van ~${recomputeTotal} prospects` : ""}…
+              </span>
+              <span>{recomputeElapsed.toFixed(1)}s · {Math.round(recomputeProgress)}%</span>
+            </div>
+            <Progress value={recomputeProgress} className="h-2" />
+            <div className="text-[11px] text-muted-foreground">
+              Live teller: {recomputeTotal !== null
+                ? `~${Math.round((recomputeProgress / 100) * recomputeTotal)} / ${recomputeTotal} geschat verwerkt`
+                : "totaal onbekend"}
+            </div>
+          </div>
+        )}
+
 
         {recomputeResult && recomputeResult.status === "success" && (
           <div className="rounded border border-border p-3 text-xs bg-secondary/40">
