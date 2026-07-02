@@ -244,38 +244,37 @@ export default function AssistantAction() {
               }
             }}
           >
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              disabled={running === "recompute" || running === "verify"}
-              onClick={async () => {
-                setRunning("verify");
-                setVerifyResult(null);
-                try {
-                  const { data, error } = await supabase.functions.invoke("verify-export-eligibility", { body: {} });
-                  if (error) throw error;
-                  if (data?.status === "failed") throw new Error(data?.error_message ?? "Unknown error");
-                  setVerifyResult(data);
-                  if (data.status === "warning") {
-                    toast.warning(`Verify: ${data.inconsistencies_found} inconsistentie(s) gevonden`);
-                  } else {
-                    toast.success(`Verify OK: ${data.export_eligible_count} exporteerbaar / ${data.total_prospects_checked} totaal`);
-                  }
-                } catch (e: any) {
-                  setVerifyResult({ status: "failed", error_message: e.message ?? String(e), timestamp: new Date().toISOString() });
-                  toast.error(e.message ?? "Verify mislukt");
-                } finally { setRunning(null); loadMaintenance(); }
-              }}
-            >
-              {running === "verify" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Verify export eligibility"}
-            </Button>
             {running === "recompute" ? (
               <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>
             ) : "Recompute now"}
           </Button>
-          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={running === "recompute" || running === "verify"}
+            onClick={async () => {
+              setRunning("verify");
+              setVerifyResult(null);
+              try {
+                const { data, error } = await supabase.functions.invoke("verify-export-eligibility", { body: {} });
+                if (error) throw error;
+                if (data?.status === "failed") throw new Error(data?.error_message ?? "Unknown error");
+                setVerifyResult(data);
+                if (data.status === "warning") {
+                  toast.warning(`Verify: ${data.inconsistencies_found} inconsistentie(s) gevonden`);
+                } else {
+                  toast.success(`Verify OK: ${data.export_eligible_count} exporteerbaar / ${data.total_prospects_checked} totaal`);
+                }
+              } catch (e: any) {
+                setVerifyResult({ status: "failed", error_message: e.message ?? String(e), timestamp: new Date().toISOString() });
+                toast.error(e.message ?? "Verify mislukt");
+              } finally { setRunning(null); loadMaintenance(); }
+            }}
+          >
+            {running === "verify" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Verify export eligibility"}
+          </Button>
         </div>
+
 
 
         {running === "recompute" && (
