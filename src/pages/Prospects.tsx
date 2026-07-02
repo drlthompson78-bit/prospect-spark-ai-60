@@ -90,7 +90,7 @@ export default function Prospects() {
       </div>
 
       <Card className="p-4 mb-4">
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           <Input placeholder="Zoek naam / stad" value={f.q} onChange={e => setF({...f, q: e.target.value})}/>
           <Select value={f.region} onValueChange={v => setF({...f, region: v})}>
             <SelectTrigger><SelectValue placeholder="Regio"/></SelectTrigger>
