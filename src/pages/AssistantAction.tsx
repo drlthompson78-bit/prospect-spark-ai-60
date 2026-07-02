@@ -99,6 +99,8 @@ export default function AssistantAction() {
   const [cleanSeedResult, setCleanSeedResult] = useState<any>(null);
   const [fictivePreview, setFictivePreview] = useState<any>(null);
   const [fictiveDeleteResult, setFictiveDeleteResult] = useState<any>(null);
+  const [dupPreview, setDupPreview] = useState<any>(null);
+  const [dupApplyResult, setDupApplyResult] = useState<any>(null);
 
   const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
   const [auditData, setAuditData] = useState<any>(null);
@@ -574,7 +576,149 @@ export default function AssistantAction() {
         )}
       </Card>
 
+      <Card className="p-4 space-y-3 border-destructive/40">
+
+        <div>
+          <div className="font-medium text-sm">Duplicate / leadsite guard</div>
+          <div className="text-xs text-muted-foreground">
+            Scant <code>public.prospects</code> op records met hetzelfde <code>phone_main</code>, <code>phone_mobile_e164</code>
+            of root-domein van <code>website_url</code>. De "winnaar" per groep (hoogste lead_score, dan oudste)
+            blijft ongewijzigd; extra records worden gemarkeerd als
+            <code> qualification_status = "rejected_duplicate_or_network"</code>,
+            <code> fit_category = "rejected"</code>, <code> clean_list_eligible = false</code>
+            met <code>exclusion_reason = "Duplicate telefoonnummer/domein/netwerkprofiel"</code>.
+            Testrecords en al gerejecte records worden niet aangeraakt.
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={running === "dup-preview"}
+            onClick={async () => {
+              setRunning("dup-preview");
+              setDupApplyResult(null);
+              try {
+                const { data, error } = await supabase
+                  .from("prospects")
+                  .select("id, company_name, website_url, phone_main, phone_mobile_e164, lead_score, created_at, qualification_status")
+                  .eq("is_test_record", false)
+                  .not("source_type", "in", "(test_seed,assistant_test,sandbox)")
+                  .limit(5000);
+                if (error) throw error;
+                const norm = (s: any) => (s == null ? "" : String(s).replace(/[^\d+]/g, "").toLowerCase());
+                const rootDomain = (u: any) => {
+                  if (!u) return "";
+                  try {
+                    const h = new URL(String(u).startsWith("http") ? u : "https://" + u).hostname.toLowerCase();
+                    const parts = h.replace(/^www\./, "").split(".");
+                    return parts.length >= 2 ? parts.slice(-2).join(".") : h;
+                  } catch { return ""; }
+                };
+                const active = (data ?? []).filter((p: any) => !String(p.qualification_status ?? "").startsWith("rejected"));
+                const groups: Record<string, any[]> = {};
+                for (const p of active) {
+                  const keys = [
+                    norm(p.phone_main) ? "pm:" + norm(p.phone_main) : "",
+                    norm(p.phone_mobile_e164) ? "mob:" + norm(p.phone_mobile_e164) : "",
+                    rootDomain(p.website_url) ? "dom:" + rootDomain(p.website_url) : "",
+                  ].filter(Boolean);
+                  for (const k of keys) (groups[k] ||= []).push(p);
+                }
+                const toReject = new Map<string, string>();
+                for (const [k, arr] of Object.entries(groups)) {
+                  if (arr.length < 2) continue;
+                  const sorted = [...arr].sort((a: any, b: any) => {
+                    const la = a.lead_score ?? -1, lb = b.lead_score ?? -1;
+                    if (lb !== la) return lb - la;
+                    return String(a.created_at).localeCompare(String(b.created_at));
+                  });
+                  for (const loser of sorted.slice(1)) if (!toReject.has(loser.id)) toReject.set(loser.id, k.split(":")[0]);
+                }
+                const rows = Array.from(toReject.keys()).slice(0, 200).map((id) => {
+                  const p = active.find((x: any) => x.id === id);
+                  return { id, company_name: p.company_name, website_url: p.website_url, matched_on: toReject.get(id) };
+                });
+                setDupPreview({ count: toReject.size, ids: Array.from(toReject.keys()), rows, examined: active.length });
+              } catch (e: any) {
+                toast.error(e.message ?? "Preview mislukt");
+              } finally { setRunning(null); }
+            }}
+          >
+            {running === "dup-preview" ? "Bezig…" : "Preview duplicates"}
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            disabled={!dupPreview || dupPreview.count === 0 || running === "dup-apply"}
+            onClick={async () => {
+              if (!dupPreview || dupPreview.count === 0) return;
+              if (!confirm(`Confirm: ${dupPreview.count} records worden gemarkeerd als rejected_duplicate_or_network. Doorgaan?`)) return;
+              setRunning("dup-apply");
+              try {
+                const { error, count } = await supabase.from("prospects").update({
+                  qualification_status: "rejected_duplicate_or_network",
+                  fit_category: "rejected",
+                  clean_list_eligible: false,
+                  exclusion_reason: "Duplicate telefoonnummer/domein/netwerkprofiel",
+                  updated_at: new Date().toISOString(),
+                }, { count: "exact" }).in("id", dupPreview.ids);
+                if (error) throw error;
+                const updated = count ?? dupPreview.count;
+                await supabase.from("assistant_action_logs").insert({
+                  action_type: "apply_duplicate_guard",
+                  status: "success",
+                  request_json: { source: "assistant_action_page" },
+                  result_json: { duplicates_found: dupPreview.count, records_updated: updated },
+                });
+                setDupApplyResult({ status: "success", records_updated: updated, last_run_at: new Date().toISOString() });
+                setDupPreview(null);
+                toast.success(`${updated} duplicates gemarkeerd`);
+              } catch (e: any) {
+                setDupApplyResult({ status: "failed", error_message: e.message });
+                toast.error(e.message ?? "Update mislukt");
+              } finally { setRunning(null); }
+            }}
+          >
+            Apply duplicate guard
+          </Button>
+        </div>
+
+        {dupPreview && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40 space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant={dupPreview.count === 0 ? "outline" : "secondary"}>{dupPreview.count} duplicates</Badge>
+              <span className="text-muted-foreground">Van {dupPreview.examined} actieve prospects onderzocht (max 200 in preview)</span>
+            </div>
+            {dupPreview.count > 0 && (
+              <ul className="space-y-1 font-mono text-[11px] max-h-64 overflow-y-auto">
+                {dupPreview.rows.map((r: any) => (
+                  <li key={r.id}>
+                    <span className="text-muted-foreground">{r.id.slice(0, 8)}</span> · {r.company_name} · <span className="text-muted-foreground">match:{r.matched_on}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+        {dupApplyResult && dupApplyResult.status === "success" && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40">
+            <div className="flex items-center gap-2">
+              <Badge>success</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(dupApplyResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <div className="font-mono mt-1">records_updated: {dupApplyResult.records_updated}</div>
+          </div>
+        )}
+        {dupApplyResult && dupApplyResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 font-mono text-destructive">
+            {dupApplyResult.error_message}
+          </div>
+        )}
+      </Card>
+
       <Card className="p-4 space-y-3">
+
         <div className="flex items-start justify-between flex-wrap gap-3">
 
           <div>

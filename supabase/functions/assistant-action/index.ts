@@ -37,6 +37,9 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   // Admin cleanup: preview + confirm delete of fictive test prospects
   "preview-delete-test-prospects": "read",
   "delete-test-prospects": "production_write",
+  // Duplicate/leadsite guard
+  "preview-duplicate-guard": "read",
+  "apply-duplicate-guard": "production_write",
 };
 
 const GET_LINK_ENDPOINTS = new Set([
@@ -1016,6 +1019,90 @@ Deno.serve(async (req) => {
           last_run_at: new Date().toISOString(),
         };
         await logAction({ tokenId: v.tokenId, action_type: endpoint, result_json: result, status: "success" });
+        return j(result);
+      }
+
+      case "preview-duplicate-guard":
+      case "apply-duplicate-guard": {
+        const apply = endpoint === "apply-duplicate-guard";
+        const { data, error } = await admin
+          .from("prospects")
+          .select("id, company_name, website_url, phone_main, phone_mobile_e164, lead_score, created_at, qualification_status, fit_category, clean_list_eligible, is_test_record, source_type")
+          .eq("is_test_record", false)
+          .not("source_type", "in", "(test_seed,assistant_test,sandbox)");
+        if (error) throw new Error(error.message);
+
+        const norm = (s: string | null | undefined) => (s ?? "").replace(/[^\d+]/g, "").toLowerCase();
+        const rootDomain = (u: string | null | undefined) => {
+          if (!u) return "";
+          try {
+            const h = new URL(u.startsWith("http") ? u : "https://" + u).hostname.toLowerCase();
+            const parts = h.replace(/^www\./, "").split(".");
+            return parts.length >= 2 ? parts.slice(-2).join(".") : h;
+          } catch { return ""; }
+        };
+
+        // Group by phone_main / phone_mobile / root domain. Skip already-rejected.
+        const active = (data ?? []).filter((p: any) => !String(p.qualification_status ?? "").startsWith("rejected"));
+        const groups: Record<string, any[]> = {};
+        for (const p of active) {
+          const keys = [
+            norm(p.phone_main) ? "pm:" + norm(p.phone_main) : "",
+            norm(p.phone_mobile_e164) ? "mob:" + norm(p.phone_mobile_e164) : "",
+            rootDomain(p.website_url) ? "dom:" + rootDomain(p.website_url) : "",
+          ].filter(Boolean);
+          for (const k of keys) (groups[k] ||= []).push(p);
+        }
+
+        const toReject = new Map<string, string>(); // id -> reason key
+        for (const [k, arr] of Object.entries(groups)) {
+          if (arr.length < 2) continue;
+          // Winner: highest lead_score (nulls last), then oldest created_at.
+          const sorted = [...arr].sort((a, b) => {
+            const la = a.lead_score ?? -1, lb = b.lead_score ?? -1;
+            if (lb !== la) return lb - la;
+            return String(a.created_at).localeCompare(String(b.created_at));
+          });
+          for (const loser of sorted.slice(1)) {
+            if (!toReject.has(loser.id)) toReject.set(loser.id, k.split(":")[0]);
+          }
+        }
+
+        const ids = Array.from(toReject.keys());
+        const preview = ids.slice(0, 50).map((id) => {
+          const p = active.find((x: any) => x.id === id)!;
+          return {
+            id, company_name: p.company_name, website_url: p.website_url,
+            matched_on: toReject.get(id),
+          };
+        });
+
+        let updated = 0;
+        if (apply && ids.length > 0) {
+          const { error: upErr, count } = await admin
+            .from("prospects")
+            .update({
+              qualification_status: "rejected_duplicate_or_network",
+              fit_category: "rejected",
+              clean_list_eligible: false,
+              exclusion_reason: "Duplicate telefoonnummer/domein/netwerkprofiel",
+              updated_at: new Date().toISOString(),
+            }, { count: "exact" })
+            .in("id", ids);
+          if (upErr) throw new Error(upErr.message);
+          updated = count ?? ids.length;
+        }
+
+        const result = {
+          status: "success",
+          mode: apply ? "applied" : "preview",
+          candidates_examined: active.length,
+          duplicates_found: ids.length,
+          records_updated: updated,
+          preview,
+          last_run_at: new Date().toISOString(),
+        };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, result_json: { duplicates_found: ids.length, records_updated: updated }, status: "success" });
         return j(result);
       }
     }
