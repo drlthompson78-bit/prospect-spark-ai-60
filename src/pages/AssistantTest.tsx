@@ -32,11 +32,27 @@ const ENDPOINTS: { path: string; label: string; extra?: string }[] = [
   { path: "full-report", label: "Full report (HTML)" },
 ];
 
+type GPPlace = {
+  name: string | null; address: string | null; website: string | null;
+  phone_masked: string | null; rating: number | null; review_count: number; status: string | null;
+  qualification_status: string; exclusion_reason: string | null; recommended_action: string;
+  clean_list_eligible: boolean; lead_score_preliminary: number; fit_category: string;
+};
+type GPSummary = {
+  total_results: number; qualified_candidates: number; pending_manual_review: number;
+  rejected_missing_website: number; rejected_possible_leadsite: number;
+  rejected_directory: number; rejected_other: number;
+};
+
 export default function AssistantTest() {
   const [tokens, setTokens] = useState<TokenRow[]>([]);
   const [duration, setDuration] = useState("1");
   const [newToken, setNewToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [gpQuery, setGpQuery] = useState("loodgieter Rotterdam");
+  const [gpLoading, setGpLoading] = useState(false);
+  const [gpSummary, setGpSummary] = useState<GPSummary | null>(null);
+  const [gpPlaces, setGpPlaces] = useState<GPPlace[]>([]);
 
   async function load() {
     const { data } = await supabase
@@ -46,6 +62,22 @@ export default function AssistantTest() {
     setTokens((data as any) ?? []);
   }
   useEffect(() => { load(); }, []);
+
+  async function runGooglePlacesTest() {
+    if (!newToken) { toast.error("Genereer eerst een testlink"); return; }
+    setGpLoading(true);
+    try {
+      const url = `${FN_BASE}/google-places?token=${encodeURIComponent(newToken)}&query=${encodeURIComponent(gpQuery)}&limit=10`;
+      const r = await fetch(url);
+      const data = await r.json();
+      if (data.error) throw new Error(data.error + (data.detail ? " — " + data.detail : ""));
+      setGpSummary(data.summary ?? null);
+      setGpPlaces(data.places ?? []);
+      toast.success(`${data.summary?.total_results ?? 0} resultaten`);
+    } catch (e: any) {
+      toast.error(e.message ?? "Test mislukt");
+    } finally { setGpLoading(false); }
+  }
 
   async function generate() {
     setLoading(true);
