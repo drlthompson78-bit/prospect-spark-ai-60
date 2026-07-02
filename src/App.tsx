@@ -14,6 +14,7 @@ import ProspectDetail from "@/pages/ProspectDetail";
 import Exports from "@/pages/Exports";
 import Regions from "@/pages/Regions";
 import ScanPage from "@/pages/ScanPage";
+import AssistantTest from "@/pages/AssistantTest";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
