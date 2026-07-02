@@ -22,6 +22,8 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   "audit-log": "read",
   "full-audit-report": "read",
   "full-audit-report.json": "read",
+  // NOTE: create-test-prospect, create-test-prospect-link, full-sandbox-scenario are
+  // permanently disabled. public.prospects mag alleen echte prospects bevatten.
   "create-test-prospect": "sandbox_write",
   "review-prospect": "review_write",
   "reject-prospect": "status_write",
@@ -32,6 +34,9 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   "review-test-prospect-link": "review_write",
   "reject-test-prospect-link": "status_write",
   "full-sandbox-scenario": "sandbox_write",
+  // Admin cleanup: preview + confirm delete of fictive test prospects
+  "preview-delete-test-prospects": "read",
+  "delete-test-prospects": "production_write",
 };
 
 const GET_LINK_ENDPOINTS = new Set([
@@ -41,6 +46,14 @@ const GET_LINK_ENDPOINTS = new Set([
   "reject-test-prospect-link",
   "full-sandbox-scenario",
 ]);
+
+
+const DISABLED_ACTIONS = new Set([
+  "create-test-prospect",
+  "create-test-prospect-link",
+  "full-sandbox-scenario",
+]);
+
 
 async function sha256Hex(input: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
@@ -526,6 +539,14 @@ Deno.serve(async (req) => {
   const requiredScope = ALLOWED_ACTIONS[endpoint];
   if (!requiredScope) return err("not_found", `Unknown endpoint: ${endpoint}`, 404);
 
+  // Permanently disabled endpoints: creating fictive/test prospects in public.prospects
+  // is no longer allowed. public.prospects mag alleen echte prospects bevatten.
+  if (DISABLED_ACTIONS.has(endpoint)) {
+    await logAction({ tokenId: v.tokenId, action_type: endpoint, status: "blocked", error_message: "endpoint_disabled_no_fictive_prospects" });
+    return err("endpoint_disabled", "This endpoint is permanently disabled. public.prospects mag geen fictieve/testrecords bevatten. Gebruik scoring-dry-run of scoring-dry-run-link voor in-memory tests.", 410);
+  }
+
+
   // Scope check
   if (!v.scopes.includes(requiredScope) && !v.scopes.includes("*")) {
     await logAction({ tokenId: v.tokenId, action_type: endpoint, status: "blocked", error_message: "insufficient_scope" });
@@ -956,7 +977,49 @@ Deno.serve(async (req) => {
         await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: pid, result_json: result, status: passed ? "success" : "failed" });
         return j(result);
       }
+
+      case "preview-delete-test-prospects": {
+        const { data, error } = await admin
+          .from("prospects")
+          .select("id, company_name, source_type, notes, is_test_record")
+          .or("is_test_record.eq.true,source_type.in.(test_seed,assistant_test,sandbox),company_name.ilike.[TEST]%,company_name.ilike.TEST - %,notes.ilike.%[TESTDATA]%");
+        if (error) throw new Error(error.message);
+        const rows = (data ?? []).map((p: any) => ({
+          id: p.id, company_name: p.company_name, source_type: p.source_type, is_test_record: p.is_test_record,
+        }));
+        const result = { status: "success", count: rows.length, prospects: rows };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, result_json: { count: rows.length }, status: "success" });
+        return j(result);
+      }
+
+      case "delete-test-prospects": {
+        // Hard delete only records that match the fictive/test markers.
+        const { data: candidates, error: selErr } = await admin
+          .from("prospects")
+          .select("id, company_name, source_type, notes, is_test_record")
+          .or("is_test_record.eq.true,source_type.in.(test_seed,assistant_test,sandbox),company_name.ilike.[TEST]%,company_name.ilike.TEST - %,notes.ilike.%[TESTDATA]%");
+        if (selErr) throw new Error(selErr.message);
+        const ids: string[] = (candidates ?? []).map((p: any) => p.id);
+        let deleted = 0;
+        if (ids.length > 0) {
+          // Clean children first (best-effort)
+          await admin.from("prospect_events").delete().in("prospect_id", ids);
+          await admin.from("scan_pages").delete().in("prospect_id", ids);
+          const { error: delErr, count } = await admin.from("prospects").delete({ count: "exact" }).in("id", ids);
+          if (delErr) throw new Error(delErr.message);
+          deleted = count ?? ids.length;
+        }
+        const result = {
+          status: "success",
+          records_matched: ids.length,
+          records_deleted: deleted,
+          last_run_at: new Date().toISOString(),
+        };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, result_json: result, status: "success" });
+        return j(result);
+      }
     }
+
 
 
     return err("not_found", "Unknown endpoint", 404);
