@@ -194,6 +194,9 @@ export default function AssistantTest() {
                   <th className="text-left p-2">Raw opp.</th>
                   <th className="text-left p-2">Lead score</th>
                   <th className="text-left p-2">Clean</th>
+                  <th className="text-left p-2">DB flag</th>
+                  <th className="text-left p-2">Test</th>
+                  <th className="text-left p-2">Export</th>
                   <th className="text-left p-2">Reason</th>
                   <th className="text-left p-2">Recommended</th>
                 </tr>
