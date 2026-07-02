@@ -37,6 +37,9 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   // Admin cleanup: preview + confirm delete of fictive test prospects
   "preview-delete-test-prospects": "read",
   "delete-test-prospects": "production_write",
+  // Duplicate/leadsite guard
+  "preview-duplicate-guard": "read",
+  "apply-duplicate-guard": "production_write",
 };
 
 const GET_LINK_ENDPOINTS = new Set([
