@@ -205,7 +205,8 @@ export default function AssistantTest() {
                     <td className="p-2">{p.phone_masked ?? "—"}</td>
                     <td className="p-2"><Badge variant={p.qualification_status === "qualified_candidate" ? "default" : p.qualification_status === "pending_manual_review" ? "secondary" : "outline"}>{p.qualification_status}</Badge></td>
                     <td className="p-2">{p.fit_category}</td>
-                    <td className="p-2">{p.lead_score_preliminary}</td>
+                    <td className="p-2">{p.raw_opportunity_score}</td>
+                    <td className="p-2">{p.lead_score === null ? <span className="text-muted-foreground italic">pending</span> : p.lead_score}</td>
                     <td className="p-2">{p.clean_list_eligible ? "✓" : "—"}</td>
                     <td className="p-2 max-w-[200px] text-muted-foreground">{p.exclusion_reason ?? "—"}</td>
                     <td className="p-2 max-w-[220px]">{p.recommended_action}</td>
