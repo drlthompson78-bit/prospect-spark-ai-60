@@ -50,7 +50,7 @@ export default function Exports() {
 
   async function exportWhatsapp() {
     const { data } = await supabase.from("prospects").select("*, scan_pages(scan_slug, public_url)")
-      .eq("import_allowed", true).eq("permission_status", "opt_in").eq("is_test_record", false).not("phone_mobile_e164", "is", null);
+      .eq("import_allowed", true).eq("permission_status", "opt_in").eq("is_test_record", false).eq("clean_list_eligible", true).not("phone_mobile_e164", "is", null);
 
     if (!data?.length) { toast.error("Geen prospects met opt-in + import_allowed + mobiel"); return; }
     const rows = data.map((p: any) => ({
