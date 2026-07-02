@@ -655,22 +655,20 @@ export default function AssistantAction() {
 
       <Card className="p-4 space-y-3">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground">Testscenario</h2>
-        <p className="text-xs text-muted-foreground">Maakt testprospects aan, voert 2 reviews uit (redesign=75 en =60) en rejecteert. Vereist een sandbox-token met alle write-scopes.</p>
-        <div>
-          <Label>Sandbox token</Label>
-          <Input value={scenarioToken} onChange={e => setScenarioToken(e.target.value)} placeholder="plak token..." />
+        <div className="rounded border border-yellow-500/40 bg-yellow-500/10 p-3 text-xs">
+          <div className="font-semibold mb-1">Uitgeschakeld</div>
+          <div className="text-muted-foreground">
+            <code>create-test-prospect</code>, <code>create-test-prospect-link</code> en <code>full-sandbox-scenario</code> zijn permanent uitgeschakeld.
+            <br />De echte <code>public.prospects</code> tabel mag geen fictieve records meer bevatten (Google Places + handmatige invoer + echte import).
+            <br />Gebruik <code>scoring-dry-run</code> of <code>scoring-dry-run-link</code> voor read-only in-memory scoretests.
+          </div>
         </div>
-        <Button size="sm" onClick={runScenario} disabled={running === "scenario"}>{running === "scenario" ? "Bezig…" : "Run scenario"}</Button>
-        {scenarioResult && (
-          <pre className="bg-secondary rounded p-3 text-xs overflow-x-auto max-h-96">{JSON.stringify(scenarioResult, null, 2)}</pre>
-        )}
       </Card>
 
       <Card className="p-4 space-y-3">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground">Sandbox GET test links</h2>
         <p className="text-xs text-muted-foreground">
-          Deze GET action links zijn <strong>alleen voor sandbox-tests</strong>. Production-write via GET is uitgeschakeld.
-          Vul een sandbox token in en kopieer de link.
+          Deze GET links zijn <strong>read-only</strong>. Endpoints die fictieve prospects zouden aanmaken zijn permanent uitgeschakeld.
         </p>
         <div>
           <Label>Sandbox token (voor links)</Label>
@@ -679,8 +677,6 @@ export default function AssistantAction() {
         {[
           { label: "Capabilities", path: `capabilities` },
           { label: "Scoring dry-run (raw=100, redesign=75)", path: `scoring-dry-run-link?raw=100&redesign=75` },
-          { label: "Create test prospect", path: `create-test-prospect-link` },
-          { label: "Full sandbox scenario", path: `full-sandbox-scenario` },
           { label: "Audit log", path: `audit-log` },
         ].map(({ label, path }) => {
           const sep = path.includes("?") ? "&" : "?";
@@ -698,6 +694,7 @@ export default function AssistantAction() {
           );
         })}
       </Card>
+
 
       <Card className="p-4">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-3">Action log (laatste 30)</h2>
