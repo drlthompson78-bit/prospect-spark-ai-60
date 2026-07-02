@@ -241,6 +241,7 @@ export type Database = {
           address: string | null
           business_status: string | null
           city: string | null
+          clean_list_eligible: boolean
           company_name: string
           contact_page_url: string | null
           conversion_opportunity_score: number | null
@@ -295,6 +296,7 @@ export type Database = {
           address?: string | null
           business_status?: string | null
           city?: string | null
+          clean_list_eligible?: boolean
           company_name: string
           contact_page_url?: string | null
           conversion_opportunity_score?: number | null
@@ -349,6 +351,7 @@ export type Database = {
           address?: string | null
           business_status?: string | null
           city?: string | null
+          clean_list_eligible?: boolean
           company_name?: string
           contact_page_url?: string | null
           conversion_opportunity_score?: number | null
