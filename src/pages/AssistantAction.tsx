@@ -220,6 +220,9 @@ export default function AssistantAction() {
       <div>
         <h1 className="text-2xl font-semibold">Assistant Action Mode</h1>
         <p className="text-sm text-muted-foreground">Beveiligde mutatie-endpoints voor een externe AI-assistent. Standaard uit.</p>
+        <p className="text-xs text-primary mt-2">
+          Download het audit JSON-bestand en upload dit naar ChatGPT voor volledige analyse.
+        </p>
       </div>
 
       <Card className="p-4 flex items-center justify-between">
