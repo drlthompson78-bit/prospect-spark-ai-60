@@ -474,8 +474,109 @@ export default function AssistantAction() {
         )}
       </Card>
 
+      <Card className="p-4 space-y-3 border-destructive/40">
+        <div>
+          <div className="font-medium text-sm">Delete fictive test prospects</div>
+          <div className="text-xs text-muted-foreground">
+            Verwijdert permanent alle records uit <code>public.prospects</code> die voldoen aan één van:
+            <code>is_test_record=true</code> · <code>source_type ∈ (test_seed, assistant_test, sandbox)</code> ·
+            company_name begint met <code>[TEST]</code> of <code>TEST - </code> · notes bevat <code>[TESTDATA]</code>.
+            Echte Google Places prospects blijven ongemoeid.
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={running === "fictive-preview"}
+            onClick={async () => {
+              setRunning("fictive-preview");
+              setFictiveDeleteResult(null);
+              try {
+                const { data, error } = await supabase
+                  .from("prospects")
+                  .select("id, company_name, source_type, is_test_record, notes")
+                  .or("is_test_record.eq.true,source_type.in.(test_seed,assistant_test,sandbox),company_name.ilike.[TEST]%,company_name.ilike.TEST - %,notes.ilike.%[TESTDATA]%")
+                  .limit(500);
+                if (error) throw error;
+                setFictivePreview({ count: data?.length ?? 0, rows: data ?? [] });
+              } catch (e: any) {
+                toast.error(e.message ?? "Preview mislukt");
+              } finally { setRunning(null); }
+            }}
+          >
+            {running === "fictive-preview" ? "Bezig…" : "Preview test prospects"}
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            disabled={!fictivePreview || fictivePreview.count === 0 || running === "fictive-delete"}
+            onClick={async () => {
+              if (!fictivePreview || fictivePreview.count === 0) return;
+              if (!confirm(`Confirm delete: ${fictivePreview.count} testrecords worden permanent verwijderd uit public.prospects. Doorgaan?`)) return;
+              setRunning("fictive-delete");
+              try {
+                const ids: string[] = fictivePreview.rows.map((r: any) => r.id);
+                await supabase.from("prospect_events").delete().in("prospect_id", ids);
+                await supabase.from("scan_pages").delete().in("prospect_id", ids);
+                const { error, count } = await supabase.from("prospects").delete({ count: "exact" }).in("id", ids);
+                if (error) throw error;
+                const deleted = count ?? ids.length;
+                await supabase.from("assistant_action_logs").insert({
+                  action_type: "delete_fictive_test_prospects",
+                  status: "success",
+                  request_json: { source: "assistant_action_page" },
+                  result_json: { records_matched: ids.length, records_deleted: deleted },
+                });
+                setFictiveDeleteResult({ status: "success", records_deleted: deleted, records_matched: ids.length, last_run_at: new Date().toISOString() });
+                setFictivePreview(null);
+                toast.success(`${deleted} testrecords verwijderd`);
+              } catch (e: any) {
+                setFictiveDeleteResult({ status: "failed", error_message: e.message });
+                toast.error(e.message ?? "Verwijderen mislukt");
+              } finally { setRunning(null); }
+            }}
+          >
+            <Trash2 className="h-3 w-3 mr-1" /> Confirm delete test prospects
+          </Button>
+        </div>
+
+        {fictivePreview && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40 space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant={fictivePreview.count === 0 ? "outline" : "secondary"}>{fictivePreview.count} match{fictivePreview.count === 1 ? "" : "es"}</Badge>
+              <span className="text-muted-foreground">Preview (max 500)</span>
+            </div>
+            {fictivePreview.count > 0 && (
+              <ul className="space-y-1 font-mono text-[11px] max-h-64 overflow-y-auto">
+                {fictivePreview.rows.map((r: any) => (
+                  <li key={r.id}>
+                    <span className="text-muted-foreground">{r.id.slice(0, 8)}</span> · {r.company_name} · <span className="text-muted-foreground">{r.source_type ?? "—"}</span>{r.is_test_record ? " · test" : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+        {fictiveDeleteResult && fictiveDeleteResult.status === "success" && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40">
+            <div className="flex items-center gap-2">
+              <Badge>success</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(fictiveDeleteResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <div className="font-mono mt-1">records_deleted: {fictiveDeleteResult.records_deleted} · records_matched: {fictiveDeleteResult.records_matched}</div>
+          </div>
+        )}
+        {fictiveDeleteResult && fictiveDeleteResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 font-mono text-destructive">
+            {fictiveDeleteResult.error_message}
+          </div>
+        )}
+      </Card>
+
       <Card className="p-4 space-y-3">
         <div className="flex items-start justify-between flex-wrap gap-3">
+
           <div>
             <div className="font-medium text-sm">Full Audit Report</div>
             <div className="text-xs text-muted-foreground">
