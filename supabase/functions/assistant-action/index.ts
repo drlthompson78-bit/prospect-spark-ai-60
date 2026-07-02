@@ -595,6 +595,29 @@ Deno.serve(async (req) => {
         return j({ status: "success", logs: data ?? [] });
       }
 
+      case "full-audit-report":
+      case "full-audit-report.json": {
+        const report = await buildAuditReport(v);
+        // Log summary (without sensitive detail)
+        await logAction({
+          tokenId: v.tokenId,
+          action_type: "full_audit_report",
+          status: report.overall.overall_status === "fail" ? "failed" : "success",
+          result_json: {
+            overall_status: report.overall.overall_status,
+            critical_issues_count: report.overall.critical_issues_count,
+            warnings_count: report.overall.warnings_count,
+            batch_ready: report.batch_readiness.batch_ready,
+            generated_at: report.generated_at,
+          },
+        });
+        if (endpoint === "full-audit-report.json") return j(report);
+        const jsonUrl = `${url.origin}${url.pathname.replace(/full-audit-report$/, "full-audit-report.json")}?token=${encodeURIComponent(token ?? "")}`;
+        return new Response(renderAuditHtml(report, jsonUrl), {
+          headers: { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" },
+        });
+      }
+
       case "create-test-prospect": {
         const company = String(body.company_name ?? "").slice(0, 200) || "Demo";
         const prefixed = company.startsWith("TEST - ") ? company : `TEST - ${company}`;
