@@ -112,6 +112,10 @@ export default function Prospects() {
               <SelectItem value="opt_out">Opt-out</SelectItem>
             </SelectContent>
           </Select>
+          <label className="flex items-center gap-2 text-xs px-2">
+            <input type="checkbox" checked={f.cleanOnly} onChange={e => setF({...f, cleanOnly: e.target.checked})}/>
+            Alleen clean-lijst
+          </label>
         </div>
       </Card>
 
