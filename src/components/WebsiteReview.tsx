@@ -146,6 +146,7 @@ export default function WebsiteReview({ prospect, onSaved }: Props) {
       lead_score: eligible ? leadScore : 0,
       fit_category: fit,
       exclusion_reason: eligible ? null : (leadsite ? "Directory/leadsite" : "Onvoldoende redesign-kans"),
+      clean_list_eligible: eligible && leadScore >= 70 && !p.is_test_record,
     }, "website_reviewed", `Reviewed · redesign=${redesignScore} · lead=${leadScore} · fit=${fit}`);
   }
 
@@ -161,6 +162,7 @@ export default function WebsiteReview({ prospect, onSaved }: Props) {
       lead_score: 0,
       fit_category: "rejected",
       exclusion_reason: "Handmatig afgewezen na website review",
+      clean_list_eligible: false,
     }, "website_review_rejected", `Afgewezen na review · redesign=${redesignScore}`);
   }
 

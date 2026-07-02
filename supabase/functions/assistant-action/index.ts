@@ -305,6 +305,7 @@ Deno.serve(async (req) => {
           lead_score: leadScore,
           fit_category: fit,
           exclusion_reason: exclusionReason,
+          clean_list_eligible: eligible,
         };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
@@ -336,7 +337,7 @@ Deno.serve(async (req) => {
         if (v.mode === "production" && !v.scopes.includes("production_write")) {
           return err("production_write_required", "Production changes require production_write scope", 403);
         }
-        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason };
+        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason, clean_list_eligible: false };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
         await admin.from("prospect_events").insert({ prospect_id: id, event_type: "assistant_rejected", event_note: reason });
@@ -411,7 +412,7 @@ Deno.serve(async (req) => {
           company_name: "TEST - Assistant Demo Prospect",
           segment: "loodgieter",
           city: "Rotterdam",
-          website_url: "https://example.com",
+          website_url: `https://example.com/sandbox-${crypto.randomUUID()}`,
           raw_opportunity_score: 100,
           qualification_status: "pending_manual_review",
           is_test_record: true,
@@ -423,6 +424,7 @@ Deno.serve(async (req) => {
           fit_category: "pending",
           lead_score: null,
           website_review_status: "pending",
+          clean_list_eligible: false,
         };
         const { data, error } = await admin.from("prospects").insert(insertRow).select("id").single();
         if (error) throw new Error(error.message);
@@ -454,6 +456,7 @@ Deno.serve(async (req) => {
           lead_score: leadScore, fit_category: fit,
           exclusion_reason: null,
           review_notes: "Sandbox GET link review",
+          clean_list_eligible: eligible,
         };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
@@ -480,7 +483,7 @@ Deno.serve(async (req) => {
           return err("sandbox_only", "GET reject only allowed on test records", 403);
         }
         const reason = "Rejected by assistant sandbox test";
-        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason };
+        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason, clean_list_eligible: false };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
         await admin.from("prospect_events").insert({ prospect_id: id, event_type: "assistant_rejected", event_note: reason });
@@ -501,13 +504,13 @@ Deno.serve(async (req) => {
         const { data: created, error: cErr } = await admin.from("prospects").insert({
           company_name: "TEST - Assistant Demo Prospect",
           segment: "loodgieter", city: "Rotterdam",
-          website_url: "https://example.com",
+          website_url: `https://example.com/sandbox-${crypto.randomUUID()}`,
           raw_opportunity_score: 100,
           qualification_status: "pending_manual_review",
           is_test_record: true, has_own_website: true, has_visible_phone: false,
           source_type: "assistant_test", permission_status: "not_contacted",
           import_allowed: false, fit_category: "pending",
-          lead_score: null, website_review_status: "pending",
+          lead_score: null, website_review_status: "pending", clean_list_eligible: false,
         }).select("id").single();
         if (cErr) throw new Error(cErr.message);
         const pid = created.id as string;
@@ -525,6 +528,7 @@ Deno.serve(async (req) => {
           reviewed_at: new Date().toISOString(),
           lead_score: leadScore, fit_category: fit,
           exclusion_reason: null, review_notes: "Sandbox full scenario",
+          clean_list_eligible: eligible,
         }).eq("id", pid);
         if (rErr) throw new Error(rErr.message);
         await admin.from("prospect_events").insert({

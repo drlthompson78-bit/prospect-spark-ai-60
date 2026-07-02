@@ -20,17 +20,9 @@ export default function Prospects() {
 
   const regionMap = useMemo(() => Object.fromEntries(regions.map(r => [r.id, r])), [regions]);
 
-  // Strict clean-list criteria (voor de 1.000 schone prospects)
-  // Vereist afgeronde website review met redesign_score >= 70 en definitieve lead_score.
-  const isClean = (p: any) =>
-    !!p.website_url &&
-    p.has_own_website === true &&
-    p.has_visible_phone === true &&
-    p.website_review_status === "reviewed" &&
-    (p.redesign_score ?? 0) >= 70 &&
-    ["A","B","C"].includes(p.fit_category) &&
-    p.lead_score !== null &&
-    (p.lead_score ?? 0) >= 70;
+  // Clean-list = de vlag in de database, plus test records altijd uitsluiten.
+  // De vlag wordt gezet door de website review flow en assistant-action endpoints.
+  const isClean = (p: any) => p.clean_list_eligible === true && p.is_test_record !== true;
 
 
 
