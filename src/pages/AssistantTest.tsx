@@ -212,6 +212,9 @@ export default function AssistantTest() {
                     <td className="p-2">{p.raw_opportunity_score}</td>
                     <td className="p-2">{p.lead_score === null ? <span className="text-muted-foreground italic">pending</span> : p.lead_score}</td>
                     <td className="p-2">{p.clean_list_eligible ? "✓" : "—"}</td>
+                    <td className="p-2">{p.clean_list_eligible_from_db === null ? <span className="text-muted-foreground italic">n/a</span> : p.clean_list_eligible_from_db ? "✓" : "—"}</td>
+                    <td className="p-2">{p.is_test_record ? "test" : "—"}</td>
+                    <td className="p-2">{p.export_eligible ? "✓" : "—"}</td>
                     <td className="p-2 max-w-[200px] text-muted-foreground">{p.exclusion_reason ?? "—"}</td>
                     <td className="p-2 max-w-[220px]">{p.recommended_action}</td>
                   </tr>
