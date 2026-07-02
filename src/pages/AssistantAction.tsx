@@ -322,7 +322,52 @@ export default function AssistantAction() {
             <div className="font-mono text-destructive">{recomputeResult.error_message}</div>
           </div>
         )}
+
+        {verifyResult && verifyResult.status !== "failed" && (
+          <div className={`rounded border p-3 text-xs space-y-2 ${verifyResult.status === "warning" ? "border-yellow-500/40 bg-yellow-500/10" : "border-border bg-secondary/40"}`}>
+            <div className="flex items-center gap-2 mb-1">
+              <Badge variant={verifyResult.status === "warning" ? "secondary" : "default"}>{verifyResult.status}</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(verifyResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <div className="text-muted-foreground">{verifyResult.message}</div>
+            <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 font-mono">
+              <div><dt className="text-muted-foreground inline">total_prospects_checked: </dt><dd className="inline">{verifyResult.total_prospects_checked}</dd></div>
+              <div><dt className="text-muted-foreground inline">export_eligible_count: </dt><dd className="inline">{verifyResult.export_eligible_count}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_test_records: </dt><dd className="inline">{verifyResult.blocked_test_records}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_pending_review: </dt><dd className="inline">{verifyResult.blocked_pending_review}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_rejected: </dt><dd className="inline">{verifyResult.blocked_rejected}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_low_score: </dt><dd className="inline">{verifyResult.blocked_low_score}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_missing_review: </dt><dd className="inline">{verifyResult.blocked_missing_review}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_clean_list_false: </dt><dd className="inline">{verifyResult.blocked_clean_list_false}</dd></div>
+              <div><dt className="text-muted-foreground inline">inconsistencies_found: </dt><dd className="inline">{verifyResult.inconsistencies_found}</dd></div>
+            </dl>
+            {Array.isArray(verifyResult.inconsistencies) && verifyResult.inconsistencies.length > 0 && (
+              <div className="pt-2 border-t border-border/60">
+                <div className="text-muted-foreground mb-1">Inconsistente prospects (max 20):</div>
+                <ul className="space-y-1 font-mono text-[11px]">
+                  {verifyResult.inconsistencies.map((i: any, idx: number) => (
+                    <li key={idx}>
+                      <span className="text-muted-foreground">{i.id.slice(0, 8)}</span>
+                      {i.company_name ? ` · ${i.company_name}` : ""} — {i.reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {verifyResult && verifyResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="destructive">failed</Badge>
+              <span className="text-muted-foreground">{new Date(verifyResult.timestamp).toLocaleString()}</span>
+            </div>
+            <div className="font-mono text-destructive">{verifyResult.error_message}</div>
+          </div>
+        )}
       </Card>
+
 
       <Card className="p-4 space-y-3">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground">Nieuw token</h2>
