@@ -78,7 +78,62 @@ async function runHealth() {
   };
 }
 
-async function runGooglePlaces(query: string, limit: number) {
+const DIRECTORY_DOMAINS = [
+  "werkspot.nl","mijndomein.nl","bouwmaat.nl","zoofy.nl","homedeal.nl",
+  "offerteadviseur.nl","offertevergelijker.nl","homerun.nl","stratech.nl",
+  "vindingrijk.nu","klussenwijzer.nl","offertes.nl","alleklussen.nl",
+  "trustoo.nl","installatiepartner.nl","kliksafe.nl","yelp.com","facebook.com",
+  "linkedin.com","instagram.com","google.com","goudengids.nl","telefoonboek.nl"
+];
+const NL_CITIES = [
+  "amsterdam","rotterdam","utrecht","denhaag","den-haag","haag","eindhoven",
+  "groningen","tilburg","almere","breda","nijmegen","apeldoorn","haarlem",
+  "arnhem","enschede","amersfoort","zwolle","leiden","maastricht","dordrecht",
+  "ede","alkmaar","delft","hilversum","gouda","capelle","spijkenisse","hoofddorp","zoetermeer"
+];
+const TRADE_WORDS = ["loodgieter","dakdekker","elektricien","installateur","klusbedrijf","aannemer","cv","warmtepomp","groepenkast","onderhoud","goedkope","goedkoop","spoed","24uur","24-uurs"];
+const PREMIUM_SEGMENTS = new Set(["loodgieter","installatiebedrijf","dakdekker","elektricien","aannemer","onderhoudsbedrijf","cv installateur","warmtepomp installateur"]);
+
+function isDirectoryDomain(url: string | null): boolean {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.replace(/^www\./,"").toLowerCase();
+    return DIRECTORY_DOMAINS.some(d => host === d || host.endsWith("."+d));
+  } catch { return false; }
+}
+function leadsiteSignals(url: string | null, name: string): { flag: boolean; reason: string } {
+  const n = (name || "").toLowerCase();
+  let host = "", core = "", utm = false;
+  if (url) {
+    try {
+      const u = new URL(url);
+      host = u.hostname.replace(/^www\./,"").toLowerCase();
+      core = host.split(".")[0] ?? "";
+      utm = Array.from(u.searchParams.keys()).some(k => k.toLowerCase().startsWith("utm_"));
+    } catch { /* ignore */ }
+  }
+  const cityInHost = NL_CITIES.some(c => core.includes(c));
+  const tradeInHost = TRADE_WORDS.some(t => core.includes(t));
+  const cityInName = NL_CITIES.some(c => n.includes(c.replace("-"," ")));
+  const tradeInName = TRADE_WORDS.some(t => n.includes(t));
+  if (cityInHost && tradeInHost) return { flag: true, reason: "Domein combineert stad + branche (leadsite-signaal)" };
+  if (/goedkoop|goedkope|spoed|24\s?uur/.test(n)) return { flag: true, reason: "Naam bevat goedkoop/spoed/24uur" };
+  if (cityInName && tradeInName && n.split(" ").length <= 3) return { flag: true, reason: "Zeer generieke bedrijfsnaam (stad + branche)" };
+  if (utm) return { flag: true, reason: "Website-URL bevat UTM-parameters" };
+  return { flag: false, reason: "" };
+}
+
+function preliminaryScore(website: string | null, hasPhone: boolean, reviews: number, segment: string): number {
+  let s = 0;
+  if (website) s += 20; // heeft eigen domein
+  if (hasPhone) s += 20;
+  if (reviews >= 5) s += 15;
+  if (reviews >= 20) s += 10;
+  if (PREMIUM_SEGMENTS.has(segment.toLowerCase())) s += 15;
+  return Math.min(s, 100);
+}
+
+async function runGooglePlaces(query: string, limit: number, segmentHint: string) {
   if (!GOOGLE_KEY) return { error: "GOOGLE_PLACES_API_KEY not configured" };
   const capped = Math.min(Math.max(limit || 5, 1), 10);
   const fieldMask = [
@@ -96,16 +151,94 @@ async function runGooglePlaces(query: string, limit: number) {
   });
   if (!res.ok) return { error: "Google API error", detail: (await res.text()).slice(0, 300), status: res.status };
   const data = await res.json();
-  const places = (data.places ?? []).map((p: any) => ({
-    name: p.displayName?.text ?? null,
-    address: p.formattedAddress ?? null,
-    website: p.websiteUri ?? null,
-    phone_masked: maskPhone(p.nationalPhoneNumber),
-    rating: p.rating ?? null,
-    review_count: p.userRatingCount ?? 0,
-    status: p.businessStatus ?? null,
-  }));
-  return { query, limit: capped, count: places.length, places };
+  // infer segment from query if not provided
+  const inferredSeg = (segmentHint || TRADE_WORDS.find(t => query.toLowerCase().includes(t)) || "").toLowerCase();
+
+  const places = (data.places ?? []).map((p: any) => {
+    const name = p.displayName?.text ?? null;
+    const website = p.websiteUri ?? null;
+    const phone = p.nationalPhoneNumber ?? null;
+    const reviews = p.userRatingCount ?? 0;
+    const bStatus = p.businessStatus ?? null;
+    const isDir = isDirectoryDomain(website);
+    const lead = leadsiteSignals(website, name || "");
+    const inSegment = inferredSeg ? PREMIUM_SEGMENTS.has(inferredSeg) : true;
+
+    let qualification_status: string;
+    let exclusion_reason: string | null = null;
+    let recommended_action: string;
+    let fit_category = "pending";
+
+    if (!website) {
+      qualification_status = "rejected_missing_website";
+      exclusion_reason = "Geen eigen website gevonden";
+      recommended_action = "Niet opnemen in clean list";
+      fit_category = "rejected";
+    } else if (isDir) {
+      qualification_status = "rejected_directory";
+      exclusion_reason = "Website is directory/leadplatform";
+      recommended_action = "Overslaan — directory";
+      fit_category = "rejected";
+    } else if (!inSegment) {
+      qualification_status = "rejected_other";
+      exclusion_reason = "Segment buiten scope";
+      recommended_action = "Overslaan — segment past niet";
+      fit_category = "rejected";
+    } else if (!phone) {
+      qualification_status = "rejected_other";
+      exclusion_reason = "Geen zichtbaar telefoonnummer";
+      recommended_action = "Overslaan — geen contact";
+      fit_category = "rejected";
+    } else if (lead.flag) {
+      qualification_status = "rejected_possible_leadsite";
+      exclusion_reason = lead.reason;
+      recommended_action = "Handmatig controleren of dit een echt vakbedrijf is";
+      fit_category = "rejected";
+    } else if (bStatus && bStatus !== "OPERATIONAL") {
+      qualification_status = "pending_manual_review";
+      exclusion_reason = `Business status: ${bStatus}`;
+      recommended_action = "Handmatig verifiëren — status niet OPERATIONAL";
+    } else {
+      qualification_status = "pending_manual_review";
+      recommended_action = "Website visueel beoordelen en leadscore aanvullen";
+    }
+
+    const lead_score_preliminary = preliminaryScore(website, !!phone, reviews, inferredSeg);
+    // clean_list_eligible: strict — vereist manual/AI review; blijft false in deze test-preview
+    const clean_list_eligible =
+      qualification_status === "qualified_candidate" &&
+      !!website && !!phone && !isDir && !lead.flag &&
+      lead_score_preliminary >= 70 &&
+      ["A","B","C"].includes(fit_category);
+
+    return {
+      name,
+      address: p.formattedAddress ?? null,
+      website,
+      phone_masked: maskPhone(phone),
+      rating: p.rating ?? null,
+      review_count: reviews,
+      status: bStatus,
+      qualification_status,
+      exclusion_reason,
+      recommended_action,
+      clean_list_eligible,
+      lead_score_preliminary,
+      fit_category,
+    };
+  });
+
+  const summary = {
+    total_results: places.length,
+    qualified_candidates: places.filter((p:any) => p.qualification_status === "qualified_candidate").length,
+    pending_manual_review: places.filter((p:any) => p.qualification_status === "pending_manual_review").length,
+    rejected_missing_website: places.filter((p:any) => p.qualification_status === "rejected_missing_website").length,
+    rejected_possible_leadsite: places.filter((p:any) => p.qualification_status === "rejected_possible_leadsite").length,
+    rejected_directory: places.filter((p:any) => p.qualification_status === "rejected_directory").length,
+    rejected_other: places.filter((p:any) => p.qualification_status === "rejected_other").length,
+  };
+
+  return { query, segment: inferredSeg || null, limit: capped, summary, places };
 }
 
 async function runSecurityAudit() {
