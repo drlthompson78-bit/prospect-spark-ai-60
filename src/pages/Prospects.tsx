@@ -11,7 +11,7 @@ import { ExternalLink } from "lucide-react";
 export default function Prospects() {
   const [prospects, setProspects] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
-  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", q: "", cleanOnly: true });
+  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", review: "all", q: "", cleanOnly: true });
 
   useEffect(() => {
     supabase.from("regions").select("*").order("region_order").then(({ data }) => setRegions(data ?? []));
@@ -21,15 +21,17 @@ export default function Prospects() {
   const regionMap = useMemo(() => Object.fromEntries(regions.map(r => [r.id, r])), [regions]);
 
   // Strict clean-list criteria (voor de 1.000 schone prospects)
-  // Rejected prospects hebben lead_score = 0; pending hebben lead_score = null.
-  // Alleen prospects met een definitieve lead_score >= 70 én fit A/B/C tellen mee.
+  // Vereist afgeronde website review met redesign_score >= 70 en definitieve lead_score.
   const isClean = (p: any) =>
     !!p.website_url &&
     p.has_own_website === true &&
     p.has_visible_phone === true &&
+    p.website_review_status === "reviewed" &&
+    (p.redesign_score ?? 0) >= 70 &&
     ["A","B","C"].includes(p.fit_category) &&
     p.lead_score !== null &&
     (p.lead_score ?? 0) >= 70;
+
 
 
   const cleanCount = useMemo(() => prospects.filter(isClean).length, [prospects]);
@@ -43,6 +45,10 @@ export default function Prospects() {
       if (f.whatsapp === "yes" && !p.whatsapp_visible) return false;
       if (f.whatsapp === "no" && p.whatsapp_visible) return false;
       if (f.permission !== "all" && p.permission_status !== f.permission) return false;
+      if (f.review === "pending" && p.website_review_status === "reviewed") return false;
+      if (f.review === "reviewed_eligible" && !(p.website_review_status === "reviewed" && (p.redesign_score ?? 0) >= 70 && ["A","B","C"].includes(p.fit_category))) return false;
+      if (f.review === "reviewed_rejected" && !(p.website_review_status === "reviewed" && (p.fit_category === "rejected" || (p.redesign_score ?? 0) < 70))) return false;
+
       if (f.q && !(`${p.company_name} ${p.city ?? ""}`.toLowerCase().includes(f.q.toLowerCase()))) return false;
       return true;
     });
@@ -78,13 +84,13 @@ export default function Prospects() {
         <div>
           <h1 className="text-2xl font-semibold">Prospect Master</h1>
           <p className="text-sm text-muted-foreground">
-            {filtered.length} van {prospects.length} prospects · <b>{cleanCount}</b> voldoen aan clean-criteria (website + telefoon + fit A/B/C + score ≥ 70)
+            {filtered.length} van {prospects.length} prospects · <b>{cleanCount}</b> voldoen aan clean-criteria (reviewed · redesign ≥ 70 · fit A/B/C · lead ≥ 70)
           </p>
         </div>
       </div>
 
       <Card className="p-4 mb-4">
-        <div className="grid grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           <Input placeholder="Zoek naam / stad" value={f.q} onChange={e => setF({...f, q: e.target.value})}/>
           <Select value={f.region} onValueChange={v => setF({...f, region: v})}>
             <SelectTrigger><SelectValue placeholder="Regio"/></SelectTrigger>
@@ -116,6 +122,17 @@ export default function Prospects() {
               <SelectItem value="opt_out">Opt-out</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={f.review} onValueChange={v => setF({...f, review: v})}>
+            <SelectTrigger><SelectValue placeholder="Website review"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle reviews</SelectItem>
+              <SelectItem value="pending">Pending website review</SelectItem>
+              <SelectItem value="reviewed_eligible">Reviewed eligible</SelectItem>
+              <SelectItem value="reviewed_rejected">Reviewed rejected</SelectItem>
+            </SelectContent>
+          </Select>
+
+
           <label className="flex items-center gap-2 text-xs px-2">
             <input type="checkbox" checked={f.cleanOnly} onChange={e => setF({...f, cleanOnly: e.target.checked})}/>
             Alleen clean-lijst

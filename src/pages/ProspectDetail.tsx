@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { fitBadgeClass, slugify } from "@/lib/scoring";
 import { toast } from "sonner";
-import { ArrowLeft, ExternalLink, Phone, MessageCircle, Star, ImageOff } from "lucide-react";
+import { ArrowLeft, ExternalLink, Phone, MessageCircle, Star } from "lucide-react";
+import WebsiteReview from "@/components/WebsiteReview";
+
 
 export default function ProspectDetail() {
   const { id } = useParams();
@@ -88,12 +90,8 @@ export default function ProspectDetail() {
             <div className="text-sm text-muted-foreground">{p.reason_fit ?? p.exclusion_reason ?? "—"}</div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-3">Screenshot</h2>
-            <div className="aspect-video bg-secondary rounded flex items-center justify-center text-muted-foreground text-sm">
-              <div className="text-center"><ImageOff className="h-8 w-8 mx-auto mb-2"/> Nog geen screenshot (pending)</div>
-            </div>
-          </Card>
+          <WebsiteReview prospect={p} onSaved={load} />
+
 
           <Card className="p-6">
             <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-3">Notities</h2>

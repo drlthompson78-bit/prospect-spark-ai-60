@@ -169,7 +169,9 @@ export type Database = {
           city: string | null
           company_name: string
           contact_page_url: string | null
+          conversion_opportunity_score: number | null
           created_at: string
+          cta_score: number | null
           distance_ring: number | null
           exclusion_reason: string | null
           fit_category: string
@@ -185,7 +187,9 @@ export type Database = {
           last_verified_at: string | null
           latitude: number | null
           lead_score: number | null
+          local_seo_score: number | null
           longitude: number | null
+          mobile_usability_score: number | null
           notes: string | null
           outreach_status: string
           permission_status: string
@@ -198,10 +202,16 @@ export type Database = {
           redesign_score: number
           region_id: string | null
           region_rank: number | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           segment: string | null
           source_type: string
           source_url: string | null
+          trust_score: number | null
           updated_at: string
+          visual_age_score: number | null
+          website_review_status: string
           website_url: string | null
           whatsapp_link: string | null
           whatsapp_visible: boolean
@@ -212,7 +222,9 @@ export type Database = {
           city?: string | null
           company_name: string
           contact_page_url?: string | null
+          conversion_opportunity_score?: number | null
           created_at?: string
+          cta_score?: number | null
           distance_ring?: number | null
           exclusion_reason?: string | null
           fit_category?: string
@@ -228,7 +240,9 @@ export type Database = {
           last_verified_at?: string | null
           latitude?: number | null
           lead_score?: number | null
+          local_seo_score?: number | null
           longitude?: number | null
+          mobile_usability_score?: number | null
           notes?: string | null
           outreach_status?: string
           permission_status?: string
@@ -241,10 +255,16 @@ export type Database = {
           redesign_score?: number
           region_id?: string | null
           region_rank?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           segment?: string | null
           source_type?: string
           source_url?: string | null
+          trust_score?: number | null
           updated_at?: string
+          visual_age_score?: number | null
+          website_review_status?: string
           website_url?: string | null
           whatsapp_link?: string | null
           whatsapp_visible?: boolean
@@ -255,7 +275,9 @@ export type Database = {
           city?: string | null
           company_name?: string
           contact_page_url?: string | null
+          conversion_opportunity_score?: number | null
           created_at?: string
+          cta_score?: number | null
           distance_ring?: number | null
           exclusion_reason?: string | null
           fit_category?: string
@@ -271,7 +293,9 @@ export type Database = {
           last_verified_at?: string | null
           latitude?: number | null
           lead_score?: number | null
+          local_seo_score?: number | null
           longitude?: number | null
+          mobile_usability_score?: number | null
           notes?: string | null
           outreach_status?: string
           permission_status?: string
@@ -284,10 +308,16 @@ export type Database = {
           redesign_score?: number
           region_id?: string | null
           region_rank?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           segment?: string | null
           source_type?: string
           source_url?: string | null
+          trust_score?: number | null
           updated_at?: string
+          visual_age_score?: number | null
+          website_review_status?: string
           website_url?: string | null
           whatsapp_link?: string | null
           whatsapp_visible?: boolean
