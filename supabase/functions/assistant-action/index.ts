@@ -45,8 +45,8 @@ const GET_LINK_ENDPOINTS = new Set([
   "review-test-prospect-link",
   "reject-test-prospect-link",
   "full-sandbox-scenario",
-  "preview-delete-test-prospects",
 ]);
+
 
 const DISABLED_ACTIONS = new Set([
   "create-test-prospect",
