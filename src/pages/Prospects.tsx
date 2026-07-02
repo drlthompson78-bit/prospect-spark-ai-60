@@ -163,6 +163,7 @@ export default function Prospects() {
   async function handleExportCleanList() {
     const rows = prospects.filter(p =>
       p.is_test_record === false &&
+      !["test_seed","assistant_test","sandbox"].includes(String(p.source_type ?? "")) &&
       p.clean_list_eligible === true &&
       p.website_review_status === "reviewed" &&
       ["A","B","C"].includes(p.fit_category) &&
@@ -179,6 +180,7 @@ export default function Prospects() {
   async function handleExportWhatsApp() {
     const rows = prospects.filter(p =>
       p.is_test_record === false &&
+      !["test_seed","assistant_test","sandbox"].includes(String(p.source_type ?? "")) &&
       p.clean_list_eligible === true &&
       p.website_review_status === "reviewed" &&
       ["A","B","C"].includes(p.fit_category) &&

@@ -96,6 +96,7 @@ export default function AssistantAction() {
   const [recomputeResult, setRecomputeResult] = useState<any>(null);
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
   const [verifyResult, setVerifyResult] = useState<any>(null);
+  const [cleanSeedResult, setCleanSeedResult] = useState<any>(null);
   const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
   const [auditData, setAuditData] = useState<any>(null);
   const [auditHtml, setAuditHtml] = useState<string | null>(null);
@@ -107,7 +108,7 @@ export default function AssistantAction() {
   async function loadMaintenance() {
     const { data } = await supabase.from("assistant_action_logs")
       .select("*")
-      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility", "verify_export_eligibility"])
+      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility", "verify_export_eligibility", "clean_old_test_seed_records"])
       .order("created_at", { ascending: false }).limit(10);
     setMaintenanceRuns((data ?? []) as LogRow[]);
   }
@@ -324,7 +325,58 @@ export default function AssistantAction() {
           >
             {running === "verify" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Verify export eligibility"}
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!!running}
+            onClick={async () => {
+              if (!confirm("Markeer alle legacy testrecords ([TEST], [TESTDATA], source_type=test_seed) correct als testrecord? Echte Google Places prospects blijven ongemoeid.")) return;
+              setRunning("clean-seed");
+              setCleanSeedResult(null);
+              try {
+                const { data, error } = await supabase.functions.invoke("clean-test-seed-records", { body: {} });
+                if (error) throw error;
+                if (data?.status !== "success") throw new Error(data?.error_message ?? "Unknown error");
+                setCleanSeedResult(data);
+                toast.success(`Cleanup: ${data.records_updated} van ${data.records_checked} records gemarkeerd`);
+              } catch (e: any) {
+                setCleanSeedResult({ status: "failed", error_message: e.message ?? String(e), last_run_at: new Date().toISOString() });
+                toast.error(e.message ?? "Cleanup mislukt");
+              } finally { setRunning(null); loadMaintenance(); }
+            }}
+          >
+            {running === "clean-seed" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Clean old test seed records"}
+          </Button>
         </div>
+
+        {cleanSeedResult && cleanSeedResult.status === "success" && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40 space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge>success</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(cleanSeedResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 font-mono">
+              <div><dt className="text-muted-foreground inline">records_checked: </dt><dd className="inline">{cleanSeedResult.records_checked}</dd></div>
+              <div><dt className="text-muted-foreground inline">records_updated: </dt><dd className="inline">{cleanSeedResult.records_updated}</dd></div>
+            </dl>
+            {Array.isArray(cleanSeedResult.updated_ids) && cleanSeedResult.updated_ids.length > 0 && (
+              <div className="pt-2 border-t border-border/60">
+                <div className="text-muted-foreground mb-1">updated_ids ({cleanSeedResult.updated_ids.length}):</div>
+                <div className="font-mono text-[11px] break-all">{cleanSeedResult.updated_ids.slice(0, 50).join(", ")}{cleanSeedResult.updated_ids.length > 50 ? " …" : ""}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {cleanSeedResult && cleanSeedResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="destructive">failed</Badge>
+              <span className="text-muted-foreground">{new Date(cleanSeedResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <div className="font-mono text-destructive">{cleanSeedResult.error_message}</div>
+          </div>
+        )}
 
 
 
