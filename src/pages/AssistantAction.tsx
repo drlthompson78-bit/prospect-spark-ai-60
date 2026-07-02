@@ -74,7 +74,7 @@ export default function AssistantAction() {
     setTokens((t.data ?? []) as Token[]);
     setLogs((l.data ?? []) as LogRow[]);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); loadMaintenance(); }, []);
 
   async function toggleEnabled(v: boolean) {
     const { data: userRes } = await supabase.auth.getUser();
