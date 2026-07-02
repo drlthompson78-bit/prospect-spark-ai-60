@@ -157,6 +157,65 @@ export default function AssistantTest() {
         )}
       </Card>
 
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <div className="text-sm font-medium">Google Places kwalificatie test</div>
+            <div className="text-xs text-muted-foreground">Roept /assistant-test/google-places aan en toont qualification per resultaat.</div>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Input value={gpQuery} onChange={e => setGpQuery(e.target.value)} placeholder="loodgieter Rotterdam" />
+          <Button onClick={runGooglePlacesTest} disabled={gpLoading || !newToken}>{gpLoading ? "Bezig…" : "Run test"}</Button>
+        </div>
+        {!newToken && <div className="text-xs text-muted-foreground">Genereer eerst een testlink hierboven.</div>}
+        {gpSummary && (
+          <div className="text-xs flex flex-wrap gap-x-4 gap-y-1 border rounded p-2 bg-muted/30">
+            <span>Total: <b>{gpSummary.total_results}</b></span>
+            <span>Qualified: <b>{gpSummary.qualified_candidates}</b></span>
+            <span>Pending review: <b>{gpSummary.pending_manual_review}</b></span>
+            <span>Missing website: <b>{gpSummary.rejected_missing_website}</b></span>
+            <span>Possible leadsite: <b>{gpSummary.rejected_possible_leadsite}</b></span>
+            <span>Directory: <b>{gpSummary.rejected_directory}</b></span>
+            <span>Other rejected: <b>{gpSummary.rejected_other}</b></span>
+          </div>
+        )}
+        {gpPlaces.length > 0 && (
+          <div className="overflow-x-auto border rounded">
+            <table className="w-full text-xs">
+              <thead className="bg-secondary text-[10px] uppercase text-muted-foreground">
+                <tr>
+                  <th className="text-left p-2">Bedrijf</th>
+                  <th className="text-left p-2">Website</th>
+                  <th className="text-left p-2">Tel</th>
+                  <th className="text-left p-2">Qualification</th>
+                  <th className="text-left p-2">Fit</th>
+                  <th className="text-left p-2">Score</th>
+                  <th className="text-left p-2">Clean</th>
+                  <th className="text-left p-2">Reason</th>
+                  <th className="text-left p-2">Recommended</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gpPlaces.map((p, i) => (
+                  <tr key={i} className="border-t align-top">
+                    <td className="p-2">{p.name ?? "—"}</td>
+                    <td className="p-2">{p.website ? <a href={p.website} target="_blank" rel="noreferrer" className="text-accent underline">link</a> : "—"}</td>
+                    <td className="p-2">{p.phone_masked ?? "—"}</td>
+                    <td className="p-2"><Badge variant={p.qualification_status === "qualified_candidate" ? "default" : p.qualification_status === "pending_manual_review" ? "secondary" : "outline"}>{p.qualification_status}</Badge></td>
+                    <td className="p-2">{p.fit_category}</td>
+                    <td className="p-2">{p.lead_score_preliminary}</td>
+                    <td className="p-2">{p.clean_list_eligible ? "✓" : "—"}</td>
+                    <td className="p-2 max-w-[200px] text-muted-foreground">{p.exclusion_reason ?? "—"}</td>
+                    <td className="p-2 max-w-[220px]">{p.recommended_action}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
       <Card className="p-4">
         <div className="text-sm font-medium mb-3">Bestaande tokens</div>
         {tokens.length === 0 && <div className="text-sm text-muted-foreground">Nog geen tokens.</div>}
