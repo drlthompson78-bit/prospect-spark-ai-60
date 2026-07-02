@@ -37,7 +37,7 @@ type GPPlace = {
   name: string | null; address: string | null; website: string | null;
   phone_masked: string | null; rating: number | null; review_count: number; status: string | null;
   qualification_status: string; exclusion_reason: string | null; recommended_action: string;
-  clean_list_eligible: boolean; lead_score_preliminary: number; fit_category: string;
+  clean_list_eligible: boolean; raw_opportunity_score: number; lead_score: number | null; fit_category: string;
 };
 type GPSummary = {
   total_results: number; qualified_candidates: number; pending_manual_review: number;
@@ -190,7 +190,8 @@ export default function AssistantTest() {
                   <th className="text-left p-2">Tel</th>
                   <th className="text-left p-2">Qualification</th>
                   <th className="text-left p-2">Fit</th>
-                  <th className="text-left p-2">Score</th>
+                  <th className="text-left p-2">Raw opp.</th>
+                  <th className="text-left p-2">Lead score</th>
                   <th className="text-left p-2">Clean</th>
                   <th className="text-left p-2">Reason</th>
                   <th className="text-left p-2">Recommended</th>
@@ -204,7 +205,8 @@ export default function AssistantTest() {
                     <td className="p-2">{p.phone_masked ?? "—"}</td>
                     <td className="p-2"><Badge variant={p.qualification_status === "qualified_candidate" ? "default" : p.qualification_status === "pending_manual_review" ? "secondary" : "outline"}>{p.qualification_status}</Badge></td>
                     <td className="p-2">{p.fit_category}</td>
-                    <td className="p-2">{p.lead_score_preliminary}</td>
+                    <td className="p-2">{p.raw_opportunity_score}</td>
+                    <td className="p-2">{p.lead_score === null ? <span className="text-muted-foreground italic">pending</span> : p.lead_score}</td>
                     <td className="p-2">{p.clean_list_eligible ? "✓" : "—"}</td>
                     <td className="p-2 max-w-[200px] text-muted-foreground">{p.exclusion_reason ?? "—"}</td>
                     <td className="p-2 max-w-[220px]">{p.recommended_action}</td>

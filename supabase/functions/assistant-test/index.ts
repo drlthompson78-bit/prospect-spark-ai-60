@@ -123,13 +123,21 @@ function leadsiteSignals(url: string | null, name: string): { flag: boolean; rea
   return { flag: false, reason: "" };
 }
 
-function preliminaryScore(website: string | null, hasPhone: boolean, reviews: number, segment: string): number {
+// Raw commercial opportunity — losstaand van kwalificatie.
+// Signaleert potentie: web-aanwezigheid, contact, reviews, segment, lokaal.
+function rawOpportunityScore(opts: {
+  website: string | null; hasPhone: boolean; reviews: number;
+  rating: number | null; segment: string; hasAddress: boolean;
+}): number {
   let s = 0;
-  if (website) s += 20; // heeft eigen domein
-  if (hasPhone) s += 20;
-  if (reviews >= 5) s += 15;
-  if (reviews >= 20) s += 10;
-  if (PREMIUM_SEGMENTS.has(segment.toLowerCase())) s += 15;
+  if (opts.website) s += 20;
+  if (opts.hasPhone) s += 15;
+  if (opts.reviews >= 5) s += 10;
+  if (opts.reviews >= 20) s += 10;
+  if (opts.reviews >= 50) s += 5;
+  if (opts.rating && opts.rating >= 4.0) s += 10;
+  if (PREMIUM_SEGMENTS.has(opts.segment.toLowerCase())) s += 20;
+  if (opts.hasAddress) s += 10; // lokale dienstverlener signaal
   return Math.min(s, 100);
 }
 
@@ -203,12 +211,25 @@ async function runGooglePlaces(query: string, limit: number, segmentHint: string
       recommended_action = "Website visueel beoordelen en leadscore aanvullen";
     }
 
-    const lead_score_preliminary = preliminaryScore(website, !!phone, reviews, inferredSeg);
-    // clean_list_eligible: strict — vereist manual/AI review; blijft false in deze test-preview
+    const raw_opportunity_score = rawOpportunityScore({
+      website, hasPhone: !!phone, reviews, rating: p.rating ?? null,
+      segment: inferredSeg, hasAddress: !!p.formattedAddress,
+    });
+
+    // lead_score: telt alleen mee voor de clean list.
+    // - rejected_* → 0
+    // - pending_manual_review → null (nog niet definitief)
+    // - qualified_candidate → gelijk aan raw_opportunity_score (na review verder aan te vullen)
+    let lead_score: number | null;
+    if (qualification_status.startsWith("rejected_")) lead_score = 0;
+    else if (qualification_status === "pending_manual_review") lead_score = null;
+    else lead_score = raw_opportunity_score;
+
+    // clean_list_eligible alleen bij qualified_candidate + harde criteria
     const clean_list_eligible =
       qualification_status === "qualified_candidate" &&
       !!website && !!phone && !isDir && !lead.flag &&
-      lead_score_preliminary >= 70 &&
+      (lead_score ?? 0) >= 70 &&
       ["A","B","C"].includes(fit_category);
 
     return {
@@ -223,10 +244,12 @@ async function runGooglePlaces(query: string, limit: number, segmentHint: string
       exclusion_reason,
       recommended_action,
       clean_list_eligible,
-      lead_score_preliminary,
+      raw_opportunity_score,
+      lead_score,
       fit_category,
     };
   });
+
 
   const summary = {
     total_results: places.length,
