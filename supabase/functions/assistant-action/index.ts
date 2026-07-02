@@ -22,6 +22,8 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   "audit-log": "read",
   "full-audit-report": "read",
   "full-audit-report.json": "read",
+  // NOTE: create-test-prospect, create-test-prospect-link, full-sandbox-scenario are
+  // permanently disabled. public.prospects mag alleen echte prospects bevatten.
   "create-test-prospect": "sandbox_write",
   "review-prospect": "review_write",
   "reject-prospect": "status_write",
@@ -32,6 +34,9 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   "review-test-prospect-link": "review_write",
   "reject-test-prospect-link": "status_write",
   "full-sandbox-scenario": "sandbox_write",
+  // Admin cleanup: preview + confirm delete of fictive test prospects
+  "preview-delete-test-prospects": "read",
+  "delete-test-prospects": "production_write",
 };
 
 const GET_LINK_ENDPOINTS = new Set([
@@ -40,7 +45,15 @@ const GET_LINK_ENDPOINTS = new Set([
   "review-test-prospect-link",
   "reject-test-prospect-link",
   "full-sandbox-scenario",
+  "preview-delete-test-prospects",
 ]);
+
+const DISABLED_ACTIONS = new Set([
+  "create-test-prospect",
+  "create-test-prospect-link",
+  "full-sandbox-scenario",
+]);
+
 
 async function sha256Hex(input: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
