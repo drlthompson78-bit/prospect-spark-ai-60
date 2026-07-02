@@ -11,7 +11,7 @@ import { ExternalLink } from "lucide-react";
 export default function Prospects() {
   const [prospects, setProspects] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
-  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", q: "" });
+  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", q: "", cleanOnly: true });
 
   useEffect(() => {
     supabase.from("regions").select("*").order("region_order").then(({ data }) => setRegions(data ?? []));
@@ -20,8 +20,19 @@ export default function Prospects() {
 
   const regionMap = useMemo(() => Object.fromEntries(regions.map(r => [r.id, r])), [regions]);
 
+  // Strict clean-list criteria (voor de 1.000 schone prospects)
+  const isClean = (p: any) =>
+    !!p.website_url &&
+    p.has_own_website === true &&
+    p.has_visible_phone === true &&
+    ["A","B","C"].includes(p.fit_category) &&
+    (p.lead_score ?? 0) >= 70;
+
+  const cleanCount = useMemo(() => prospects.filter(isClean).length, [prospects]);
+
   const filtered = useMemo(() => {
     let list = prospects.filter(p => {
+      if (f.cleanOnly && !isClean(p)) return false;
       if (f.region !== "all" && p.region_id !== f.region) return false;
       if (f.segment !== "all" && p.segment !== f.segment) return false;
       if (f.fit !== "all" && p.fit_category !== f.fit) return false;
