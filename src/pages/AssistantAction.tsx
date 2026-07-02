@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { AlertTriangle, Copy, Trash2 } from "lucide-react";
+import { AlertTriangle, Copy, Trash2, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/assistant-action`;
 
