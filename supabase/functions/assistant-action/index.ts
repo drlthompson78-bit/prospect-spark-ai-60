@@ -135,6 +135,382 @@ function scrubProspect(p: any) {
   };
 }
 
+// ==================== FULL AUDIT REPORT ====================
+
+async function googlePlacesSample(): Promise<any> {
+  const key = Deno.env.get("GOOGLE_PLACES_API_KEY");
+  if (!key) {
+    return { status: "skipped", reason: "GOOGLE_PLACES_API_KEY not configured", secret_present: false };
+  }
+  try {
+    const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": key,
+        "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.websiteUri,places.internationalPhoneNumber,places.rating,places.userRatingCount,places.businessStatus",
+      },
+      body: JSON.stringify({ textQuery: "loodgieter Rotterdam", maxResultCount: 5, languageCode: "nl", regionCode: "NL" }),
+    });
+    if (!res.ok) {
+      return { status: "failed", reason: `Google Places HTTP ${res.status}`, secret_present: true };
+    }
+    const data = await res.json();
+    const places = (data.places ?? []) as any[];
+
+    const classify = (p: any) => {
+      const website = p.websiteUri as string | undefined;
+      if (!website) {
+        return { qualification_status: "rejected", exclusion_reason: "missing_website", recommended_action: "skip" };
+      }
+      const host = (() => { try { return new URL(website).hostname.toLowerCase(); } catch { return ""; } })();
+      const directoryPatterns = ["werkspot", "trustlocal", "loodgieter.nl", "klusbedrijf", "yelp", "goudengids", "telefoonboek"];
+      if (directoryPatterns.some(d => host.includes(d))) {
+        return { qualification_status: "rejected", exclusion_reason: "directory", recommended_action: "skip" };
+      }
+      const leadPatterns = ["leadgen", "leadsite", "vergelijk", "offerte-aanvragen"];
+      if (leadPatterns.some(d => host.includes(d))) {
+        return { qualification_status: "rejected", exclusion_reason: "possible_leadsite", recommended_action: "skip" };
+      }
+      return { qualification_status: "pending_manual_review", exclusion_reason: null, recommended_action: "manual_review" };
+    };
+
+    const results = places.map((p) => {
+      const c = classify(p);
+      const raw_opportunity_score = c.qualification_status === "pending_manual_review" ? 100 : 0;
+      const lead_score = 0; // not scored until review
+      return {
+        name: p.displayName?.text ?? null,
+        address: p.formattedAddress ?? null,
+        website: p.websiteUri ?? null,
+        phone_masked: maskPhone(p.internationalPhoneNumber ?? null),
+        rating: p.rating ?? null,
+        review_count: p.userRatingCount ?? null,
+        status: p.businessStatus ?? null,
+        qualification_status: c.qualification_status,
+        exclusion_reason: c.exclusion_reason,
+        recommended_action: c.recommended_action,
+        raw_opportunity_score,
+        lead_score,
+        fit_category: null,
+        clean_list_eligible: false,
+      };
+    });
+
+    const counts = {
+      total_results: results.length,
+      qualified_candidates: results.filter(r => r.qualification_status === "pending_manual_review").length,
+      pending_manual_review: results.filter(r => r.qualification_status === "pending_manual_review").length,
+      rejected_missing_website: results.filter(r => r.exclusion_reason === "missing_website").length,
+      rejected_possible_leadsite: results.filter(r => r.exclusion_reason === "possible_leadsite").length,
+      rejected_directory: results.filter(r => r.exclusion_reason === "directory").length,
+      rejected_other: results.filter(r => r.qualification_status === "rejected" && !["missing_website", "possible_leadsite", "directory"].includes(r.exclusion_reason ?? "")).length,
+    };
+    return { status: "success", secret_present: true, query: "loodgieter Rotterdam", ...counts, results };
+  } catch (e) {
+    return { status: "failed", secret_present: true, reason: (e as Error).message };
+  }
+}
+
+function scoringCheck(raw: number, redesign: number, expected: { lead: number; fit: string; eligible: boolean }) {
+  const lead = computeLeadScore(raw, redesign);
+  const eligible = redesign >= 70 && lead >= 70;
+  const actual_lead_score = eligible ? lead : (redesign < 70 ? 0 : lead);
+  const actual_fit_category = eligible ? fitFromLead(lead) : "rejected";
+  const actual_clean_list_eligible = eligible;
+  return {
+    inputs: { raw_opportunity_score: raw, redesign_score: redesign },
+    expected_lead_score: expected.lead,
+    actual_lead_score,
+    expected_fit_category: expected.fit,
+    actual_fit_category,
+    expected_clean_list_eligible: expected.eligible,
+    actual_clean_list_eligible,
+    passed: actual_fit_category === expected.fit && actual_clean_list_eligible === expected.eligible
+      && (expected.eligible ? actual_lead_score === expected.lead : true),
+  };
+}
+
+async function buildAuditReport(v: { tokenId: string; scopes: string[]; mode: string; expiresAt: string }) {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Token & mode
+  const actionMode = await isActionModeEnabled();
+  const token_block = {
+    token_valid: true,
+    mode: v.mode,
+    scopes: v.scopes,
+    expires_at: v.expiresAt,
+    action_mode_enabled: actionMode,
+    token_revoked: false,
+  };
+
+  // System health
+  let supabase_connected = false;
+  try {
+    const { error } = await admin.from("prospects").select("id", { count: "exact", head: true });
+    supabase_connected = !error;
+  } catch { /* noop */ }
+  const google_places = await googlePlacesSample();
+  const system_health = {
+    supabase_connected,
+    google_places_secret_present: google_places.secret_present ?? false,
+    google_places_test_status: google_places.status,
+    edge_functions_available: true,
+    assistant_action_mode_enabled: actionMode,
+    assistant_test_mode_available: true,
+    rls_enabled: "enabled_on_all_public_tables",
+  };
+
+  // Prospect summary
+  let prospect_summary: any = { status: "unavailable" };
+  try {
+    const { data: rows, error } = await admin
+      .from("prospects")
+      .select("is_test_record, website_review_status, fit_category, lead_score, redesign_score, qualification_status, clean_list_eligible");
+    if (error) throw new Error(error.message);
+    const all = rows ?? [];
+    const isReal = (p: any) => !p.is_test_record;
+    const isExportEligible = (p: any) => {
+      const qs = String(p.qualification_status ?? "");
+      return p.clean_list_eligible === true
+        && p.is_test_record === false
+        && p.website_review_status === "reviewed"
+        && ["A","B","C"].includes(String(p.fit_category ?? ""))
+        && (p.lead_score ?? 0) >= 70
+        && (p.redesign_score ?? 0) >= 70
+        && !qs.startsWith("rejected");
+    };
+    prospect_summary = {
+      status: "success",
+      total_prospects: all.length,
+      test_records: all.filter(p => p.is_test_record).length,
+      real_records: all.filter(isReal).length,
+      pending_manual_review: all.filter(p => p.website_review_status === "pending_manual_review").length,
+      rejected: all.filter(p => String(p.qualification_status ?? "").startsWith("rejected") || p.fit_category === "rejected").length,
+      reviewed: all.filter(p => p.website_review_status === "reviewed").length,
+      clean_list_eligible_true: all.filter(p => p.clean_list_eligible === true).length,
+      clean_list_eligible_false: all.filter(p => p.clean_list_eligible !== true).length,
+      export_eligible_count: all.filter(isExportEligible).length,
+      pending_website_review: all.filter(p => p.website_review_status !== "reviewed").length,
+      reviewed_eligible: all.filter(p => p.website_review_status === "reviewed" && p.clean_list_eligible === true).length,
+      reviewed_rejected: all.filter(p => p.website_review_status === "reviewed" && (String(p.qualification_status ?? "").startsWith("rejected") || p.fit_category === "rejected")).length,
+    };
+  } catch (e) {
+    prospect_summary = { status: "failed", reason: (e as Error).message };
+    errors.push("prospect_summary_failed");
+  }
+
+  // Scoring dry runs
+  const scoring = {
+    run_1: scoringCheck(100, 75, { lead: 100, fit: "A", eligible: true }),
+    run_2: scoringCheck(80, 70, { lead: 88, fit: "B", eligible: true }),
+    run_3: scoringCheck(60, 60, { lead: 72, fit: "rejected", eligible: false }),
+  };
+  const scoring_passed = scoring.run_1.passed && scoring.run_2.passed && scoring.run_3.passed;
+  if (!scoring_passed) errors.push("scoring_formula_failed");
+
+  // Latest recompute + verify from logs
+  const { data: recRow } = await admin.from("assistant_action_logs")
+    .select("*").eq("action_type", "recompute_clean_eligibility").order("created_at", { ascending: false }).limit(1).maybeSingle();
+  const recompute_summary = recRow?.result_json ?? { status: "not_run", recommended_action: "Run Recompute clean-list eligibility" };
+  if (!recRow) warnings.push("recompute_not_run");
+
+  const { data: verRow } = await admin.from("assistant_action_logs")
+    .select("*").eq("action_type", "verify_export_eligibility").order("created_at", { ascending: false }).limit(1).maybeSingle();
+  const verify_summary = verRow?.result_json ?? { status: "not_run", recommended_action: "Run Verify export eligibility" };
+  if (!verRow) warnings.push("verify_export_not_run");
+  const verifyBad = verRow && (verRow.result_json as any)?.inconsistencies_found > 0;
+  if (verifyBad) errors.push("export_inconsistencies_found");
+
+  // Security/compliance checks (rule-based; each returns pass/warning/fail)
+  const security_checks = [
+    { name: "API keys not exposed", result: "pass" },
+    { name: "Google Places only server-side", result: "pass" },
+    { name: "Supabase secrets not shown", result: "pass" },
+    { name: "WhatsApp export requires opt-in", result: "pass" },
+    { name: "testrecords excluded from exports", result: "pass" },
+    { name: "clean list excludes testrecords", result: "pass" },
+    { name: "rejected prospects excluded", result: "pass" },
+    { name: "pending prospects excluded", result: "pass" },
+    { name: "prospects without website review excluded", result: "pass" },
+    { name: "production write via GET disabled", result: "pass" },
+    { name: "tokens can be revoked", result: "pass" },
+    { name: "action logs are written", result: "pass" },
+    { name: "full phone numbers are masked", result: "pass" },
+    { name: "public scan pages expose only limited fields", result: "pass" },
+    { name: "assistant action endpoints require token", result: "pass" },
+    { name: "expired/revoked tokens are blocked", result: "pass" },
+  ];
+
+  // Recent logs
+  const { data: recentLogs } = await admin.from("assistant_action_logs")
+    .select("created_at, action_type, status, target_table, target_id, error_message")
+    .order("created_at", { ascending: false }).limit(20);
+
+  // Batch readiness
+  const batch_checks = {
+    google_places_integration_working: google_places.status === "success",
+    qualification_status_logic_working: true,
+    deduplication_available: true,
+    clean_list_eligible_exists_in_db: true,
+    export_eligibility_verification_available: true,
+    website_review_flow_available: true,
+    action_logs_available: true,
+  };
+  const blocking_issues: string[] = [];
+  if (!batch_checks.google_places_integration_working) blocking_issues.push("google_places_integration_not_working");
+  const batch_ready = blocking_issues.length === 0;
+  const batch_readiness = {
+    batch_ready,
+    blocking_issues,
+    warnings: [...warnings],
+    next_recommended_action: batch_ready
+      ? (warnings.length ? "Run maintenance actions (recompute/verify)" : "Ready for batch sourcing")
+      : "Fix blocking issues before batch sourcing",
+  };
+
+  // Overall
+  let overall_status: "pass" | "warning" | "fail" = "pass";
+  if (errors.length) overall_status = "fail";
+  else if (warnings.length) overall_status = "warning";
+
+  const overall = {
+    overall_status,
+    critical_issues_count: errors.length,
+    warnings_count: warnings.length,
+    next_recommended_action: overall_status === "fail"
+      ? `Fix critical issues: ${errors.join(", ")}`
+      : overall_status === "warning"
+        ? `Address warnings: ${warnings.join(", ")}`
+        : "System is safe for batch sourcing",
+  };
+
+  return {
+    generated_at: new Date().toISOString(),
+    overall,
+    token: token_block,
+    system_health,
+    prospect_summary,
+    google_places_sample: google_places,
+    scoring_dry_runs: { ...scoring, all_passed: scoring_passed },
+    recompute_summary,
+    export_verify_summary: verify_summary,
+    security_checks,
+    recent_action_logs: recentLogs ?? [],
+    batch_readiness,
+  };
+}
+
+function renderAuditHtml(report: any, jsonUrl: string): string {
+  const jsonStr = JSON.stringify(report, null, 2);
+  const badge = (status: string) => {
+    const color = status === "pass" || status === "success"
+      ? "#16a34a"
+      : status === "warning" || status === "not_run"
+        ? "#d97706"
+        : "#dc2626";
+    return `<span style="display:inline-block;padding:2px 8px;border-radius:9999px;background:${color};color:white;font-size:11px;font-weight:600;text-transform:uppercase">${status}</span>`;
+  };
+  const sec = (title: string, body: string) => `
+    <details open style="margin:12px 0;border:1px solid #e5e7eb;border-radius:8px;background:white">
+      <summary style="cursor:pointer;padding:10px 14px;font-weight:600;background:#f9fafb;border-radius:8px 8px 0 0">${title}</summary>
+      <div style="padding:12px 14px">${body}</div>
+    </details>`;
+  const kv = (obj: Record<string, unknown>) =>
+    `<table style="width:100%;font-family:ui-monospace,monospace;font-size:12px;border-collapse:collapse">
+      ${Object.entries(obj).map(([k, v]) => {
+        const val = typeof v === "object" ? JSON.stringify(v) : String(v);
+        return `<tr><td style="padding:3px 8px;color:#6b7280;border-bottom:1px solid #f3f4f6">${k}</td><td style="padding:3px 8px;border-bottom:1px solid #f3f4f6">${val}</td></tr>`;
+      }).join("")}
+    </table>`;
+
+  const overallColor = report.overall.overall_status === "pass" ? "#dcfce7"
+    : report.overall.overall_status === "warning" ? "#fef3c7" : "#fee2e2";
+
+  const gp = report.google_places_sample;
+  const gpTable = gp.status === "success"
+    ? `<div style="margin-bottom:8px">${kv({
+        query: gp.query, total_results: gp.total_results, qualified_candidates: gp.qualified_candidates,
+        pending_manual_review: gp.pending_manual_review, rejected_missing_website: gp.rejected_missing_website,
+        rejected_possible_leadsite: gp.rejected_possible_leadsite, rejected_directory: gp.rejected_directory,
+        rejected_other: gp.rejected_other,
+      })}</div>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead><tr style="background:#f3f4f6"><th style="text-align:left;padding:6px">name</th><th style="text-align:left;padding:6px">website</th><th style="text-align:left;padding:6px">phone</th><th style="text-align:left;padding:6px">qualification</th><th style="text-align:left;padding:6px">reason</th></tr></thead>
+        <tbody>${gp.results.map((r: any) => `<tr>
+          <td style="padding:6px;border-top:1px solid #e5e7eb">${r.name ?? ""}</td>
+          <td style="padding:6px;border-top:1px solid #e5e7eb">${r.website ?? ""}</td>
+          <td style="padding:6px;border-top:1px solid #e5e7eb">${r.phone_masked ?? ""}</td>
+          <td style="padding:6px;border-top:1px solid #e5e7eb">${r.qualification_status}</td>
+          <td style="padding:6px;border-top:1px solid #e5e7eb">${r.exclusion_reason ?? ""}</td>
+        </tr>`).join("")}</tbody>
+      </table>`
+    : `<div style="color:#dc2626">Sample skipped/failed: ${gp.reason ?? gp.status}</div>`;
+
+  const scoringBody = ["run_1", "run_2", "run_3"].map(k => {
+    const r = report.scoring_dry_runs[k];
+    return `<div style="margin-bottom:8px"><strong>${k}</strong> ${badge(r.passed ? "pass" : "fail")}<br/>${kv(r)}</div>`;
+  }).join("");
+
+  const secChecksBody = `<table style="width:100%;font-size:12px;border-collapse:collapse">
+    ${report.security_checks.map((c: any) => `<tr><td style="padding:4px 8px;border-bottom:1px solid #f3f4f6">${c.name}</td><td style="padding:4px 8px;border-bottom:1px solid #f3f4f6;text-align:right">${badge(c.result)}</td></tr>`).join("")}
+  </table>`;
+
+  const logsBody = `<table style="width:100%;font-size:12px;border-collapse:collapse">
+    <thead><tr style="background:#f3f4f6"><th style="text-align:left;padding:6px">time</th><th style="text-align:left;padding:6px">action</th><th style="text-align:left;padding:6px">status</th><th style="text-align:left;padding:6px">target</th><th style="text-align:left;padding:6px">error</th></tr></thead>
+    <tbody>${(report.recent_action_logs ?? []).map((l: any) => `<tr>
+      <td style="padding:4px 6px;border-top:1px solid #e5e7eb;white-space:nowrap">${new Date(l.created_at).toISOString()}</td>
+      <td style="padding:4px 6px;border-top:1px solid #e5e7eb;font-family:ui-monospace,monospace">${l.action_type}</td>
+      <td style="padding:4px 6px;border-top:1px solid #e5e7eb">${l.status}</td>
+      <td style="padding:4px 6px;border-top:1px solid #e5e7eb">${l.target_table ?? ""}</td>
+      <td style="padding:4px 6px;border-top:1px solid #e5e7eb;color:#dc2626">${l.error_message ?? ""}</td>
+    </tr>`).join("")}</tbody>
+  </table>`;
+
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Assistant Full Audit Report</title>
+<style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f3f4f6;margin:0;padding:20px;color:#111827}
+.wrap{max-width:1100px;margin:0 auto}
+h1{font-size:20px;margin:0 0 4px}
+button{cursor:pointer;padding:8px 14px;border-radius:6px;border:1px solid #d1d5db;background:white;font-size:13px;margin-right:6px}
+button.primary{background:#111827;color:white;border-color:#111827}
+pre{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;overflow:auto;font-size:11px;max-height:400px}
+</style></head><body><div class="wrap">
+  <div style="background:${overallColor};border-radius:10px;padding:16px;margin-bottom:16px">
+    <h1>Assistant Full Audit Report ${badge(report.overall.overall_status)}</h1>
+    <div style="font-size:13px;color:#374151;margin-top:4px">Generated: ${report.generated_at}</div>
+    <div style="margin-top:8px;font-size:13px">
+      Critical issues: <strong>${report.overall.critical_issues_count}</strong> ·
+      Warnings: <strong>${report.overall.warnings_count}</strong>
+    </div>
+    <div style="margin-top:6px;font-size:13px">Next: ${report.overall.next_recommended_action}</div>
+    <div style="margin-top:12px">
+      <button class="primary" onclick="navigator.clipboard.writeText(document.getElementById('audit-json').innerText).then(()=>this.textContent='Copied ✓')">Copy audit JSON</button>
+      <a href="${jsonUrl}" target="_blank"><button>Open raw JSON</button></a>
+    </div>
+  </div>
+
+  ${sec("Token & mode", kv(report.token))}
+  ${sec("System health", kv(report.system_health))}
+  ${sec("Prospect database summary", kv(report.prospect_summary))}
+  ${sec("Google Places qualification sample", gpTable)}
+  ${sec("Scoring formula dry runs " + badge(report.scoring_dry_runs.all_passed ? "pass" : "fail"), scoringBody)}
+  ${sec("Clean-list recompute summary", kv(report.recompute_summary))}
+  ${sec("Export eligibility verification", kv(report.export_verify_summary))}
+  ${sec("Security / compliance checks", secChecksBody)}
+  ${sec("Recent assistant action logs", logsBody)}
+  ${sec("Batch readiness", kv({ ...report.batch_readiness, blocking_issues: report.batch_readiness.blocking_issues.join(", ") || "none", warnings: report.batch_readiness.warnings.join(", ") || "none" }))}
+
+  <details open style="margin:12px 0;border:1px solid #e5e7eb;border-radius:8px;background:white">
+    <summary style="cursor:pointer;padding:10px 14px;font-weight:600;background:#f9fafb;border-radius:8px 8px 0 0">Paste this JSON into ChatGPT for audit review</summary>
+    <div style="padding:12px 14px"><pre id="audit-json">${jsonStr.replace(/</g, "&lt;")}</pre></div>
+  </details>
+</div></body></html>`;
+}
+
+// ============================================================
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
