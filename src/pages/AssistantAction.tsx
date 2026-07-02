@@ -175,6 +175,33 @@ export default function AssistantAction() {
         </div>
       </Card>
 
+      <Card className="p-4 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <div className="font-medium text-sm">Recompute clean-list eligibility</div>
+          <div className="text-xs text-muted-foreground">
+            Zet <code>clean_list_eligible</code> voor alle prospects opnieuw op basis van huidige criteria
+            (reviewed, redesign≥70, lead≥70, fit A/B/C, geen rejected, geen testrecord).
+          </div>
+        </div>
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={running === "recompute"}
+          onClick={async () => {
+            setRunning("recompute");
+            try {
+              const { data, error } = await supabase.functions.invoke("recompute-clean-list", { body: {} });
+              if (error) throw error;
+              toast.success(`Herberekend: ${data.clean_list_eligible_true} eligible / ${data.scanned} totaal`);
+            } catch (e: any) {
+              toast.error(e.message ?? "Recompute mislukt");
+            } finally { setRunning(null); }
+          }}
+        >
+          {running === "recompute" ? "Bezig…" : "Recompute now"}
+        </Button>
+      </Card>
+
       <Card className="p-4 space-y-3">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground">Nieuw token</h2>
         <div className="flex flex-wrap items-end gap-3">
