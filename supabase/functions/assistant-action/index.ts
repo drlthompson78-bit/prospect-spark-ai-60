@@ -412,7 +412,7 @@ Deno.serve(async (req) => {
           company_name: "TEST - Assistant Demo Prospect",
           segment: "loodgieter",
           city: "Rotterdam",
-          website_url: "https://example.com",
+          website_url: `https://example.com/sandbox-${crypto.randomUUID()}`,
           raw_opportunity_score: 100,
           qualification_status: "pending_manual_review",
           is_test_record: true,
@@ -504,7 +504,7 @@ Deno.serve(async (req) => {
         const { data: created, error: cErr } = await admin.from("prospects").insert({
           company_name: "TEST - Assistant Demo Prospect",
           segment: "loodgieter", city: "Rotterdam",
-          website_url: "https://example.com",
+          website_url: `https://example.com/sandbox-${crypto.randomUUID()}`,
           raw_opportunity_score: 100,
           qualification_status: "pending_manual_review",
           is_test_record: true, has_own_website: true, has_visible_phone: false,
