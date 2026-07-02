@@ -122,6 +122,15 @@ export default function Prospects() {
               <SelectItem value="opt_out">Opt-out</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={f.review} onValueChange={v => setF({...f, review: v})}>
+            <SelectTrigger><SelectValue placeholder="Website review"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle reviews</SelectItem>
+              <SelectItem value="pending">Pending website review</SelectItem>
+              <SelectItem value="reviewed_eligible">Reviewed eligible</SelectItem>
+              <SelectItem value="reviewed_rejected">Reviewed rejected</SelectItem>
+            </SelectContent>
+
           <label className="flex items-center gap-2 text-xs px-2">
             <input type="checkbox" checked={f.cleanOnly} onChange={e => setF({...f, cleanOnly: e.target.checked})}/>
             Alleen clean-lijst
