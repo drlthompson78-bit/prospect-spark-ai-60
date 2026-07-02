@@ -56,6 +56,7 @@ export default function AssistantAction() {
   const [scenarioResult, setScenarioResult] = useState<any>(null);
   const [recomputeResult, setRecomputeResult] = useState<any>(null);
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
+  const [verifyResult, setVerifyResult] = useState<any>(null);
   const [recomputeProgress, setRecomputeProgress] = useState(0);
   const [recomputeElapsed, setRecomputeElapsed] = useState(0);
   const [recomputeTotal, setRecomputeTotal] = useState<number | null>(null);
@@ -63,7 +64,7 @@ export default function AssistantAction() {
   async function loadMaintenance() {
     const { data } = await supabase.from("assistant_action_logs")
       .select("*")
-      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility"])
+      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility", "verify_export_eligibility"])
       .order("created_at", { ascending: false }).limit(10);
     setMaintenanceRuns((data ?? []) as LogRow[]);
   }
@@ -247,7 +248,34 @@ export default function AssistantAction() {
               <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>
             ) : "Recompute now"}
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={running === "recompute" || running === "verify"}
+            onClick={async () => {
+              setRunning("verify");
+              setVerifyResult(null);
+              try {
+                const { data, error } = await supabase.functions.invoke("verify-export-eligibility", { body: {} });
+                if (error) throw error;
+                if (data?.status === "failed") throw new Error(data?.error_message ?? "Unknown error");
+                setVerifyResult(data);
+                if (data.status === "warning") {
+                  toast.warning(`Verify: ${data.inconsistencies_found} inconsistentie(s) gevonden`);
+                } else {
+                  toast.success(`Verify OK: ${data.export_eligible_count} exporteerbaar / ${data.total_prospects_checked} totaal`);
+                }
+              } catch (e: any) {
+                setVerifyResult({ status: "failed", error_message: e.message ?? String(e), timestamp: new Date().toISOString() });
+                toast.error(e.message ?? "Verify mislukt");
+              } finally { setRunning(null); loadMaintenance(); }
+            }}
+          >
+            {running === "verify" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Verify export eligibility"}
+          </Button>
         </div>
+
+
 
         {running === "recompute" && (
           <div className="rounded border border-border p-3 space-y-2 bg-secondary/30">
@@ -294,7 +322,52 @@ export default function AssistantAction() {
             <div className="font-mono text-destructive">{recomputeResult.error_message}</div>
           </div>
         )}
+
+        {verifyResult && verifyResult.status !== "failed" && (
+          <div className={`rounded border p-3 text-xs space-y-2 ${verifyResult.status === "warning" ? "border-yellow-500/40 bg-yellow-500/10" : "border-border bg-secondary/40"}`}>
+            <div className="flex items-center gap-2 mb-1">
+              <Badge variant={verifyResult.status === "warning" ? "secondary" : "default"}>{verifyResult.status}</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(verifyResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <div className="text-muted-foreground">{verifyResult.message}</div>
+            <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 font-mono">
+              <div><dt className="text-muted-foreground inline">total_prospects_checked: </dt><dd className="inline">{verifyResult.total_prospects_checked}</dd></div>
+              <div><dt className="text-muted-foreground inline">export_eligible_count: </dt><dd className="inline">{verifyResult.export_eligible_count}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_test_records: </dt><dd className="inline">{verifyResult.blocked_test_records}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_pending_review: </dt><dd className="inline">{verifyResult.blocked_pending_review}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_rejected: </dt><dd className="inline">{verifyResult.blocked_rejected}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_low_score: </dt><dd className="inline">{verifyResult.blocked_low_score}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_missing_review: </dt><dd className="inline">{verifyResult.blocked_missing_review}</dd></div>
+              <div><dt className="text-muted-foreground inline">blocked_clean_list_false: </dt><dd className="inline">{verifyResult.blocked_clean_list_false}</dd></div>
+              <div><dt className="text-muted-foreground inline">inconsistencies_found: </dt><dd className="inline">{verifyResult.inconsistencies_found}</dd></div>
+            </dl>
+            {Array.isArray(verifyResult.inconsistencies) && verifyResult.inconsistencies.length > 0 && (
+              <div className="pt-2 border-t border-border/60">
+                <div className="text-muted-foreground mb-1">Inconsistente prospects (max 20):</div>
+                <ul className="space-y-1 font-mono text-[11px]">
+                  {verifyResult.inconsistencies.map((i: any, idx: number) => (
+                    <li key={idx}>
+                      <span className="text-muted-foreground">{i.id.slice(0, 8)}</span>
+                      {i.company_name ? ` · ${i.company_name}` : ""} — {i.reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {verifyResult && verifyResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="destructive">failed</Badge>
+              <span className="text-muted-foreground">{new Date(verifyResult.timestamp).toLocaleString()}</span>
+            </div>
+            <div className="font-mono text-destructive">{verifyResult.error_message}</div>
+          </div>
+        )}
       </Card>
+
 
       <Card className="p-4 space-y-3">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground">Nieuw token</h2>
