@@ -96,8 +96,14 @@ export default function Prospects() {
 
   useEffect(() => {
     supabase.from("regions").select("*").order("region_order").then(({ data }) => setRegions(data ?? []));
-    supabase.from("prospects").select("*").limit(2000).then(({ data }) => setProspects(data ?? []));
+    // public.prospects mag alleen echte prospects tonen — testrecords worden altijd uitgesloten.
+    supabase.from("prospects").select("*")
+      .eq("is_test_record", false)
+      .not("source_type", "in", "(test_seed,assistant_test,sandbox)")
+      .limit(2000)
+      .then(({ data }) => setProspects(data ?? []));
   }, []);
+
 
   const regionMap = useMemo(() => Object.fromEntries(regions.map(r => [r.id, r])), [regions]);
 
