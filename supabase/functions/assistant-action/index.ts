@@ -456,6 +456,7 @@ Deno.serve(async (req) => {
           lead_score: leadScore, fit_category: fit,
           exclusion_reason: null,
           review_notes: "Sandbox GET link review",
+          clean_list_eligible: eligible,
         };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
