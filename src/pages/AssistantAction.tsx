@@ -57,6 +57,7 @@ export default function AssistantAction() {
   const [recomputeResult, setRecomputeResult] = useState<any>(null);
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
   const [verifyResult, setVerifyResult] = useState<any>(null);
+  const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
   const [recomputeProgress, setRecomputeProgress] = useState(0);
   const [recomputeElapsed, setRecomputeElapsed] = useState(0);
   const [recomputeTotal, setRecomputeTotal] = useState<number | null>(null);
@@ -367,6 +368,72 @@ export default function AssistantAction() {
           </div>
         )}
       </Card>
+
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="font-medium text-sm">Full Audit Report</div>
+            <div className="text-xs text-muted-foreground">
+              Read-only HTML+JSON rapport dat alle system, security, scoring en export checks combineert.
+              Genereert een nieuwe read-only token (24u) en toont een deelbare link.
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={running === "audit"}
+            onClick={async () => {
+              setRunning("audit");
+              try {
+                const token = randomToken();
+                const hash = await sha256Hex(token);
+                const expires_at = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+                const { data: userRes } = await supabase.auth.getUser();
+                const { error } = await supabase.from("assistant_test_tokens").insert({
+                  token_hash: hash, scopes: ["read"], mode: "sandbox", expires_at,
+                  created_by: userRes.user?.id ?? null, revoked: false,
+                });
+                if (error) throw error;
+                const html = `${FN_URL}/full-audit-report?token=${encodeURIComponent(token)}`;
+                const json = `${FN_URL}/full-audit-report.json?token=${encodeURIComponent(token)}`;
+                setAuditLinks({ html, json });
+                toast.success("Audit link gegenereerd (24u geldig)");
+                load();
+              } catch (e: any) {
+                toast.error(e.message ?? "Kon audit link niet aanmaken");
+              } finally { setRunning(null); }
+            }}
+          >
+            {running === "audit" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Generate Full Audit Report"}
+          </Button>
+        </div>
+        {auditLinks && (
+          <div className="space-y-2">
+            {[
+              { label: "HTML rapport (deel deze link met de assistent)", url: auditLinks.html },
+              { label: "Raw JSON endpoint", url: auditLinks.json },
+            ].map(({ label, url }) => (
+              <div key={label} className="bg-secondary rounded p-2 text-xs space-y-1">
+                <div className="text-muted-foreground">{label}</div>
+                <div className="flex items-center gap-2">
+                  <code className="font-mono break-all flex-1">{url}</code>
+                  <Button size="sm" variant="ghost" onClick={() => { navigator.clipboard.writeText(url); toast.success("Link gekopieerd"); }}>
+                    <Copy className="h-3 w-3"/>
+                  </Button>
+                  <a href={url} target="_blank" rel="noreferrer">
+                    <Button size="sm" variant="outline">Open</Button>
+                  </a>
+                </div>
+              </div>
+            ))}
+            <div className="text-[11px] text-muted-foreground">
+              Alleen leestoegang. Bevat geen secrets of volledige telefoonnummers. Token kan via de tokentabel worden ingetrokken.
+            </div>
+          </div>
+        )}
+      </Card>
+
+
 
 
       <Card className="p-4 space-y-3">
