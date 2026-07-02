@@ -185,31 +185,65 @@ export default function AssistantAction() {
         </div>
       </Card>
 
-      <Card className="p-4 flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <div className="font-medium text-sm">Recompute clean-list eligibility</div>
-          <div className="text-xs text-muted-foreground">
-            Zet <code>clean_list_eligible</code> voor alle prospects opnieuw op basis van huidige criteria
-            (reviewed, redesign≥70, lead≥70, fit A/B/C, geen rejected, geen testrecord).
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="font-medium text-sm">Recompute clean-list eligibility</div>
+            <div className="text-xs text-muted-foreground">
+              Zet <code>clean_list_eligible</code> voor alle prospects opnieuw op basis van huidige criteria
+              (reviewed, redesign≥70, lead≥70, fit A/B/C, geen rejected, geen testrecord).
+            </div>
           </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={running === "recompute"}
+            onClick={async () => {
+              setRunning("recompute");
+              setRecomputeResult(null);
+              try {
+                const { data, error } = await supabase.functions.invoke("recompute-clean-list", { body: {} });
+                if (error) throw error;
+                if (data?.status !== "success") throw new Error(data?.error_message ?? "Unknown error");
+                setRecomputeResult(data);
+                toast.success(`Herberekend: ${data.clean_list_eligible_true} eligible / ${data.total_checked} totaal`);
+              } catch (e: any) {
+                setRecomputeResult({ status: "failed", error_message: e.message ?? String(e), timestamp: new Date().toISOString() });
+                toast.error(e.message ?? "Recompute mislukt");
+              } finally { setRunning(null); loadMaintenance(); }
+            }}
+          >
+            {running === "recompute" ? "Bezig…" : "Recompute now"}
+          </Button>
         </div>
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={running === "recompute"}
-          onClick={async () => {
-            setRunning("recompute");
-            try {
-              const { data, error } = await supabase.functions.invoke("recompute-clean-list", { body: {} });
-              if (error) throw error;
-              toast.success(`Herberekend: ${data.clean_list_eligible_true} eligible / ${data.scanned} totaal`);
-            } catch (e: any) {
-              toast.error(e.message ?? "Recompute mislukt");
-            } finally { setRunning(null); }
-          }}
-        >
-          {running === "recompute" ? "Bezig…" : "Recompute now"}
-        </Button>
+
+        {recomputeResult && recomputeResult.status === "success" && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge>success</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(recomputeResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 font-mono">
+              <div><dt className="text-muted-foreground inline">total_checked: </dt><dd className="inline">{recomputeResult.total_checked}</dd></div>
+              <div><dt className="text-muted-foreground inline">clean_list_eligible_true: </dt><dd className="inline">{recomputeResult.clean_list_eligible_true}</dd></div>
+              <div><dt className="text-muted-foreground inline">clean_list_eligible_false: </dt><dd className="inline">{recomputeResult.clean_list_eligible_false}</dd></div>
+              <div><dt className="text-muted-foreground inline">test_records_excluded: </dt><dd className="inline">{recomputeResult.test_records_excluded}</dd></div>
+              <div><dt className="text-muted-foreground inline">rejected_excluded: </dt><dd className="inline">{recomputeResult.rejected_excluded}</dd></div>
+              <div><dt className="text-muted-foreground inline">pending_review_excluded: </dt><dd className="inline">{recomputeResult.pending_review_excluded}</dd></div>
+              <div><dt className="text-muted-foreground inline">reviewed_but_not_eligible: </dt><dd className="inline">{recomputeResult.reviewed_but_not_eligible}</dd></div>
+            </dl>
+          </div>
+        )}
+
+        {recomputeResult && recomputeResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="destructive">failed</Badge>
+              <span className="text-muted-foreground">{new Date(recomputeResult.timestamp).toLocaleString()}</span>
+            </div>
+            <div className="font-mono text-destructive">{recomputeResult.error_message}</div>
+          </div>
+        )}
       </Card>
 
       <Card className="p-4 space-y-3">
