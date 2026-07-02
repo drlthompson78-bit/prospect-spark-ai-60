@@ -20,6 +20,8 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   "capabilities": "read",
   "scoring-dry-run": "read",
   "audit-log": "read",
+  "full-audit-report": "read",
+  "full-audit-report.json": "read",
   "create-test-prospect": "sandbox_write",
   "review-prospect": "review_write",
   "reject-prospect": "status_write",
