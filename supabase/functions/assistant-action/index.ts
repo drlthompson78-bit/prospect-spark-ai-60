@@ -24,7 +24,21 @@ const ALLOWED_ACTIONS: Record<string, string> = {
   "review-prospect": "review_write",
   "reject-prospect": "status_write",
   "update-prospect-status": "status_write",
+  // GET sandbox test links — never allow production_write via GET
+  "scoring-dry-run-link": "read",
+  "create-test-prospect-link": "sandbox_write",
+  "review-test-prospect-link": "review_write",
+  "reject-test-prospect-link": "status_write",
+  "full-sandbox-scenario": "sandbox_write",
 };
+
+const GET_LINK_ENDPOINTS = new Set([
+  "scoring-dry-run-link",
+  "create-test-prospect-link",
+  "review-test-prospect-link",
+  "reject-test-prospect-link",
+  "full-sandbox-scenario",
+]);
 
 async function sha256Hex(input: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
