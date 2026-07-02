@@ -146,6 +146,7 @@ export default function WebsiteReview({ prospect, onSaved }: Props) {
       lead_score: eligible ? leadScore : 0,
       fit_category: fit,
       exclusion_reason: eligible ? null : (leadsite ? "Directory/leadsite" : "Onvoldoende redesign-kans"),
+      clean_list_eligible: eligible && leadScore >= 70 && !p.is_test_record,
     }, "website_reviewed", `Reviewed · redesign=${redesignScore} · lead=${leadScore} · fit=${fit}`);
   }
 
