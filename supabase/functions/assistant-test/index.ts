@@ -123,13 +123,21 @@ function leadsiteSignals(url: string | null, name: string): { flag: boolean; rea
   return { flag: false, reason: "" };
 }
 
-function preliminaryScore(website: string | null, hasPhone: boolean, reviews: number, segment: string): number {
+// Raw commercial opportunity — losstaand van kwalificatie.
+// Signaleert potentie: web-aanwezigheid, contact, reviews, segment, lokaal.
+function rawOpportunityScore(opts: {
+  website: string | null; hasPhone: boolean; reviews: number;
+  rating: number | null; segment: string; hasAddress: boolean;
+}): number {
   let s = 0;
-  if (website) s += 20; // heeft eigen domein
-  if (hasPhone) s += 20;
-  if (reviews >= 5) s += 15;
-  if (reviews >= 20) s += 10;
-  if (PREMIUM_SEGMENTS.has(segment.toLowerCase())) s += 15;
+  if (opts.website) s += 20;
+  if (opts.hasPhone) s += 15;
+  if (opts.reviews >= 5) s += 10;
+  if (opts.reviews >= 20) s += 10;
+  if (opts.reviews >= 50) s += 5;
+  if (opts.rating && opts.rating >= 4.0) s += 10;
+  if (PREMIUM_SEGMENTS.has(opts.segment.toLowerCase())) s += 20;
+  if (opts.hasAddress) s += 10; // lokale dienstverlener signaal
   return Math.min(s, 100);
 }
 
