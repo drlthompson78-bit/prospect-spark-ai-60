@@ -357,7 +357,8 @@ Deno.serve(async (req) => {
       case "google-places": {
         const q = url.searchParams.get("query") ?? "loodgieter Rotterdam";
         const lim = Number(url.searchParams.get("limit") ?? "5");
-        result = await runGooglePlaces(q, lim); break;
+        const seg = url.searchParams.get("segment") ?? "";
+        result = await runGooglePlaces(q, lim, seg); break;
       }
       case "security-audit": result = await runSecurityAudit(); break;
       case "whatsapp-export-preview": result = await runWhatsAppExportPreview(); break;
