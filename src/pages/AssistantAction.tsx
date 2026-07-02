@@ -57,6 +57,7 @@ export default function AssistantAction() {
   const [recomputeResult, setRecomputeResult] = useState<any>(null);
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
   const [verifyResult, setVerifyResult] = useState<any>(null);
+  const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
   const [recomputeProgress, setRecomputeProgress] = useState(0);
   const [recomputeElapsed, setRecomputeElapsed] = useState(0);
   const [recomputeTotal, setRecomputeTotal] = useState<number | null>(null);
