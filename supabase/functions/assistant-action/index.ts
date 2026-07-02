@@ -424,6 +424,7 @@ Deno.serve(async (req) => {
           fit_category: "pending",
           lead_score: null,
           website_review_status: "pending",
+          clean_list_eligible: false,
         };
         const { data, error } = await admin.from("prospects").insert(insertRow).select("id").single();
         if (error) throw new Error(error.message);
