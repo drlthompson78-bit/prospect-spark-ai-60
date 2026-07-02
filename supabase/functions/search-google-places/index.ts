@@ -241,21 +241,24 @@ Deno.serve(async (req) => {
       }
 
       const hardOk = qualification_status === "pending_manual_review" || qualification_status === "qualified_candidate";
-      const score = scoreProspect({
+      const rawScore = rawOpportunityScore({
         website_url: website,
-        has_mobile_or_whatsapp: hasMobile,
-        is_directory: isDir,
-        segment: seg,
-        review_count: reviewCount,
         has_phone: !!phoneMain,
+        rating: pl.rating ?? null,
+        review_count: reviewCount,
+        segment: seg,
+        address: pl.formattedAddress ?? null,
       });
-      // fit stays pending until manually qualified; only compute A/B/C for pending_manual_review
-      let fit: string;
-      if (qualification_status === "pending_manual_review") {
-        fit = "pending";
-      } else {
-        fit = "rejected";
-      }
+
+      // lead_score: 0 for rejected, null for pending, filled after manual review
+      const leadScore: number | null =
+        qualification_status.startsWith("rejected_") ? 0 :
+        qualification_status === "pending_manual_review" ? null :
+        rawScore;
+
+      // fit stays pending until manually qualified
+      const fit: string =
+        qualification_status === "pending_manual_review" ? "pending" : "rejected";
 
       const insertRow: Record<string, unknown> = {
         region_id: region_id ?? null,
@@ -278,7 +281,8 @@ Deno.serve(async (req) => {
         has_own_website: !!website,
         has_visible_phone: !!phoneMain,
         has_mobile_or_whatsapp: hasMobile,
-        lead_score: score,
+        raw_opportunity_score: rawScore,
+        lead_score: leadScore,
         fit_category: fit,
         qualification_status,
         exclusion_reason: exclusionReason,
@@ -318,11 +322,14 @@ Deno.serve(async (req) => {
         review_count: reviewCount,
         prospect_id: inserted!.id,
         fit_category: fit,
-        lead_score: score,
+        raw_opportunity_score: rawScore,
+        lead_score: leadScore,
+        clean_list_eligible: false,
         qualification_status,
         exclusion_reason: exclusionReason,
         recommended_action: recommendedAction,
       });
+
       if (qualification_status === "pending_manual_review") created += 1;
     }
 
