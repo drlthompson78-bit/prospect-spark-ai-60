@@ -84,7 +84,7 @@ export default function Prospects() {
         <div>
           <h1 className="text-2xl font-semibold">Prospect Master</h1>
           <p className="text-sm text-muted-foreground">
-            {filtered.length} van {prospects.length} prospects · <b>{cleanCount}</b> voldoen aan clean-criteria (website + telefoon + fit A/B/C + score ≥ 70)
+            {filtered.length} van {prospects.length} prospects · <b>{cleanCount}</b> voldoen aan clean-criteria (reviewed · redesign ≥ 70 · fit A/B/C · lead ≥ 70)
           </p>
         </div>
       </div>
