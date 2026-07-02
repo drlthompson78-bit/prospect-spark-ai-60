@@ -138,7 +138,9 @@ export default function Prospects() {
                 <th className="text-left p-2">WA</th>
                 <th className="text-left p-2">★</th>
                 <th className="text-left p-2">Rev</th>
+                <th className="text-left p-2">Raw</th>
                 <th className="text-left p-2">Score</th>
+
                 <th className="text-left p-2">Fit</th>
                 <th className="text-left p-2">Perm</th>
                 <th className="text-left p-2">Outreach</th>
