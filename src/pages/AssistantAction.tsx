@@ -56,6 +56,9 @@ export default function AssistantAction() {
   const [scenarioResult, setScenarioResult] = useState<any>(null);
   const [recomputeResult, setRecomputeResult] = useState<any>(null);
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
+  const [recomputeProgress, setRecomputeProgress] = useState(0);
+  const [recomputeElapsed, setRecomputeElapsed] = useState(0);
+  const [recomputeTotal, setRecomputeTotal] = useState<number | null>(null);
 
   async function loadMaintenance() {
     const { data } = await supabase.from("assistant_action_logs")
