@@ -243,7 +243,10 @@ export default function Sourcing() {
                   <td className="p-3 text-xs text-muted-foreground max-w-[220px]">{r.exclusion_reason ?? "—"}</td>
                   <td className="p-3 text-xs max-w-[220px]">{r.recommended_action ?? "—"}</td>
                   <td className="p-3">{r.fit_category ?? "—"}</td>
-                  <td className="p-3">{r.lead_score ?? "—"}</td>
+                  <td className="p-3 font-mono text-xs">{r.raw_opportunity_score ?? "—"}</td>
+                  <td className="p-3 font-mono text-xs">{r.lead_score === null || r.lead_score === undefined ? <span className="italic text-muted-foreground">pending</span> : r.lead_score}</td>
+                  <td className="p-3 text-xs">{r.clean_list_eligible ? "✓" : "—"}</td>
+
                   <td className="p-3 text-right">
                     {r.prospect_id && <Link to={`/prospects/${r.prospect_id}`} className="text-accent hover:underline text-xs">Bekijk</Link>}
                   </td>
