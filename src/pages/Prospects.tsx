@@ -11,7 +11,7 @@ import { ExternalLink } from "lucide-react";
 export default function Prospects() {
   const [prospects, setProspects] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
-  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", q: "", cleanOnly: true });
+  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", review: "all", q: "", cleanOnly: true });
 
   useEffect(() => {
     supabase.from("regions").select("*").order("region_order").then(({ data }) => setRegions(data ?? []));
