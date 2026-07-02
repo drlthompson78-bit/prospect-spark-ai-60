@@ -32,7 +32,7 @@ export default function Exports() {
   useEffect(() => { loadHistory(); }, []);
 
   async function exportQualified() {
-    const { data } = await supabase.from("prospects").select("*").in("fit_category", ["A","B","C"]);
+    const { data } = await supabase.from("prospects").select("*").in("fit_category", ["A","B","C"]).eq("is_test_record", false);
     if (!data?.length) { toast.error("Geen qualified prospects"); return; }
     const rows = data.map(p => ({
       rank_overall: p.rank_overall, company_name: p.company_name, segment: p.segment, city: p.city,
