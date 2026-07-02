@@ -79,35 +79,26 @@ const PREMIUM_SEGMENTS = new Set([
   "aannemer","onderhoudsbedrijf","cv installateur","warmtepomp installateur"
 ]);
 
-function scoreProspect(p: {
+function rawOpportunityScore(p: {
   website_url: string | null;
-  has_mobile_or_whatsapp: boolean;
-  is_directory: boolean;
-  segment: string;
-  review_count: number;
   has_phone: boolean;
+  rating: number | null;
+  review_count: number;
+  segment: string;
+  address: string | null;
 }) {
   let score = 0;
-  // Outdated website heuristic: no website = strong signal; else default modest
-  if (!p.website_url) score += 25;
-  else score += 10; // placeholder — later replaced by real analysis
-  if (p.has_mobile_or_whatsapp) score += 20;
-  if (!p.is_directory && p.website_url) score += 20;
-  if (PREMIUM_SEGMENTS.has(p.segment.toLowerCase())) score += 15;
-  if (p.review_count >= 5) score += 10;
-  if (p.website_url) score += 10; // weak CTA placeholder
-  if (p.website_url) score += 10; // mobile matig placeholder
-  if (p.has_phone && p.review_count < 50) score += 10;
-  return Math.min(score, 120);
+  if (p.website_url) score += 20;
+  if (p.has_phone) score += 15;
+  if (p.review_count >= 20) score += 20;
+  else if (p.review_count >= 5) score += 10;
+  else if (p.review_count > 0) score += 5;
+  if ((p.rating ?? 0) >= 4.0) score += 10;
+  if (PREMIUM_SEGMENTS.has((p.segment ?? "").toLowerCase())) score += 20;
+  if (p.address && /nederland|netherlands|\b\d{4}\s?[A-Z]{2}\b/i.test(p.address)) score += 10;
+  return Math.min(score, 100);
 }
 
-function fitCategory(score: number, hardOk: boolean): string {
-  if (!hardOk) return "rejected";
-  if (score >= 90) return "A";
-  if (score >= 75) return "B";
-  if (score >= 70) return "C";
-  return "rejected";
-}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -250,21 +241,24 @@ Deno.serve(async (req) => {
       }
 
       const hardOk = qualification_status === "pending_manual_review" || qualification_status === "qualified_candidate";
-      const score = scoreProspect({
+      const rawScore = rawOpportunityScore({
         website_url: website,
-        has_mobile_or_whatsapp: hasMobile,
-        is_directory: isDir,
-        segment: seg,
-        review_count: reviewCount,
         has_phone: !!phoneMain,
+        rating: pl.rating ?? null,
+        review_count: reviewCount,
+        segment: seg,
+        address: pl.formattedAddress ?? null,
       });
-      // fit stays pending until manually qualified; only compute A/B/C for pending_manual_review
-      let fit: string;
-      if (qualification_status === "pending_manual_review") {
-        fit = "pending";
-      } else {
-        fit = "rejected";
-      }
+
+      // lead_score: 0 for rejected, null for pending, filled after manual review
+      const leadScore: number | null =
+        qualification_status.startsWith("rejected_") ? 0 :
+        qualification_status === "pending_manual_review" ? null :
+        rawScore;
+
+      // fit stays pending until manually qualified
+      const fit: string =
+        qualification_status === "pending_manual_review" ? "pending" : "rejected";
 
       const insertRow: Record<string, unknown> = {
         region_id: region_id ?? null,
@@ -287,7 +281,8 @@ Deno.serve(async (req) => {
         has_own_website: !!website,
         has_visible_phone: !!phoneMain,
         has_mobile_or_whatsapp: hasMobile,
-        lead_score: score,
+        raw_opportunity_score: rawScore,
+        lead_score: leadScore,
         fit_category: fit,
         qualification_status,
         exclusion_reason: exclusionReason,
@@ -327,11 +322,14 @@ Deno.serve(async (req) => {
         review_count: reviewCount,
         prospect_id: inserted!.id,
         fit_category: fit,
-        lead_score: score,
+        raw_opportunity_score: rawScore,
+        lead_score: leadScore,
+        clean_list_eligible: false,
         qualification_status,
         exclusion_reason: exclusionReason,
         recommended_action: recommendedAction,
       });
+
       if (qualification_status === "pending_manual_review") created += 1;
     }
 

@@ -21,12 +21,16 @@ export default function Prospects() {
   const regionMap = useMemo(() => Object.fromEntries(regions.map(r => [r.id, r])), [regions]);
 
   // Strict clean-list criteria (voor de 1.000 schone prospects)
+  // Rejected prospects hebben lead_score = 0; pending hebben lead_score = null.
+  // Alleen prospects met een definitieve lead_score >= 70 én fit A/B/C tellen mee.
   const isClean = (p: any) =>
     !!p.website_url &&
     p.has_own_website === true &&
     p.has_visible_phone === true &&
     ["A","B","C"].includes(p.fit_category) &&
+    p.lead_score !== null &&
     (p.lead_score ?? 0) >= 70;
+
 
   const cleanCount = useMemo(() => prospects.filter(isClean).length, [prospects]);
 
@@ -134,7 +138,9 @@ export default function Prospects() {
                 <th className="text-left p-2">WA</th>
                 <th className="text-left p-2">★</th>
                 <th className="text-left p-2">Rev</th>
+                <th className="text-left p-2">Raw</th>
                 <th className="text-left p-2">Score</th>
+
                 <th className="text-left p-2">Fit</th>
                 <th className="text-left p-2">Perm</th>
                 <th className="text-left p-2">Outreach</th>
@@ -146,7 +152,7 @@ export default function Prospects() {
                 return (
                   <Fragment key={regionId}>
                     <tr>
-                      <td colSpan={14} className="region-header">
+                      <td colSpan={15} className="region-header">
                         === REGIO {String(r?.region_order ?? "??").padStart(2,"0")}: {(r?.region_name ?? "Onbekend").toUpperCase()} ({rows.length}) ===
                       </td>
                     </tr>
@@ -162,7 +168,9 @@ export default function Prospects() {
                         <td className="p-2">{p.whatsapp_visible && <Badge variant="outline" className="text-xs">WA</Badge>}</td>
                         <td className="p-2 text-xs">{p.google_rating ?? "—"}</td>
                         <td className="p-2 text-xs">{p.google_review_count ?? 0}</td>
-                        <td className="p-2 font-mono text-xs">{p.lead_score}</td>
+                        <td className="p-2 font-mono text-xs text-muted-foreground">{p.raw_opportunity_score ?? "—"}</td>
+                        <td className="p-2 font-mono text-xs">{p.lead_score === null || p.lead_score === undefined ? <span className="italic text-muted-foreground">pending</span> : p.lead_score}</td>
+
                         <td className="p-2"><Badge className={fitBadgeClass(p.fit_category)}>{p.fit_category}</Badge></td>
                         <td className="p-2 text-xs">{p.permission_status}</td>
                         <td className="p-2 text-xs">{p.outreach_status}</td>
@@ -172,7 +180,7 @@ export default function Prospects() {
                 );
               })}
 
-              {filtered.length === 0 && <tr><td colSpan={14} className="p-8 text-center text-muted-foreground text-sm">Nog geen prospects. Ga naar Sourcing om te starten.</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={15} className="p-8 text-center text-muted-foreground text-sm">Nog geen prospects. Ga naar Sourcing om te starten.</td></tr>}
             </tbody>
           </table>
         </div>

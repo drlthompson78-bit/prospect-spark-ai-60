@@ -19,12 +19,15 @@ type ResultRow = {
   rating?: number | null;
   review_count?: number | null;
   fit_category?: string | null;
+  raw_opportunity_score?: number | null;
   lead_score?: number | null;
+  clean_list_eligible?: boolean;
   prospect_id?: string | null;
   qualification_status?: string | null;
   exclusion_reason?: string | null;
   recommended_action?: string | null;
 };
+
 
 type Summary = {
   total_results: number;
@@ -209,8 +212,11 @@ export default function Sourcing() {
                 <th className="text-left p-3">Reason</th>
                 <th className="text-left p-3">Recommended</th>
                 <th className="text-left p-3">Fit</th>
-                <th className="text-left p-3">Score</th>
+                <th className="text-left p-3">Raw opp.</th>
+                <th className="text-left p-3">Lead score</th>
+                <th className="text-left p-3">Clean</th>
                 <th></th>
+
               </tr>
             </thead>
             <tbody>
@@ -237,7 +243,10 @@ export default function Sourcing() {
                   <td className="p-3 text-xs text-muted-foreground max-w-[220px]">{r.exclusion_reason ?? "—"}</td>
                   <td className="p-3 text-xs max-w-[220px]">{r.recommended_action ?? "—"}</td>
                   <td className="p-3">{r.fit_category ?? "—"}</td>
-                  <td className="p-3">{r.lead_score ?? "—"}</td>
+                  <td className="p-3 font-mono text-xs">{r.raw_opportunity_score ?? "—"}</td>
+                  <td className="p-3 font-mono text-xs">{r.lead_score === null || r.lead_score === undefined ? <span className="italic text-muted-foreground">pending</span> : r.lead_score}</td>
+                  <td className="p-3 text-xs">{r.clean_list_eligible ? "✓" : "—"}</td>
+
                   <td className="p-3 text-right">
                     {r.prospect_id && <Link to={`/prospects/${r.prospect_id}`} className="text-accent hover:underline text-xs">Bekijk</Link>}
                   </td>

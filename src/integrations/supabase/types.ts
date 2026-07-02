@@ -184,7 +184,7 @@ export type Database = {
           is_directory_or_leadsite: boolean
           last_verified_at: string | null
           latitude: number | null
-          lead_score: number
+          lead_score: number | null
           longitude: number | null
           notes: string | null
           outreach_status: string
@@ -193,6 +193,7 @@ export type Database = {
           phone_mobile_e164: string | null
           qualification_status: string | null
           rank_overall: number | null
+          raw_opportunity_score: number
           reason_fit: string | null
           redesign_score: number
           region_id: string | null
@@ -226,7 +227,7 @@ export type Database = {
           is_directory_or_leadsite?: boolean
           last_verified_at?: string | null
           latitude?: number | null
-          lead_score?: number
+          lead_score?: number | null
           longitude?: number | null
           notes?: string | null
           outreach_status?: string
@@ -235,6 +236,7 @@ export type Database = {
           phone_mobile_e164?: string | null
           qualification_status?: string | null
           rank_overall?: number | null
+          raw_opportunity_score?: number
           reason_fit?: string | null
           redesign_score?: number
           region_id?: string | null
@@ -268,7 +270,7 @@ export type Database = {
           is_directory_or_leadsite?: boolean
           last_verified_at?: string | null
           latitude?: number | null
-          lead_score?: number
+          lead_score?: number | null
           longitude?: number | null
           notes?: string | null
           outreach_status?: string
@@ -277,6 +279,7 @@ export type Database = {
           phone_mobile_e164?: string | null
           qualification_status?: string | null
           rank_overall?: number | null
+          raw_opportunity_score?: number
           reason_fit?: string | null
           redesign_score?: number
           region_id?: string | null
