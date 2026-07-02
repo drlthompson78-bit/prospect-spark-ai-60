@@ -45,6 +45,43 @@ async function sha256Hex(input: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function auditToTxt(data: any): string {
+  const lines: string[] = [];
+  const push = (s = "") => lines.push(s);
+  const section = (title: string, body: any) => {
+    push("=".repeat(72));
+    push(title.toUpperCase());
+    push("=".repeat(72));
+    if (body === undefined || body === null) { push("(none)"); push(""); return; }
+    if (typeof body === "string") { push(body); push(""); return; }
+    try { push(JSON.stringify(body, null, 2)); } catch { push(String(body)); }
+    push("");
+  };
+  push("FULL AUDIT REPORT");
+  push(`Generated: ${new Date().toISOString()}`);
+  push("");
+  const sections = [
+    "token_and_mode", "system_health", "prospect_database_summary",
+    "google_places_sample", "scoring_formula_tests", "clean_list_recompute_summary",
+    "export_eligibility_verification", "security_compliance_checks",
+    "recent_action_logs", "batch_readiness", "overall_audit_result",
+  ];
+  for (const k of sections) section(k, data?.[k]);
+  // Include any additional keys not listed above
+  for (const k of Object.keys(data ?? {})) {
+    if (!sections.includes(k)) section(k, data[k]);
+  }
+  return lines.join("\n");
+}
+
+function downloadBlob(filename: string, content: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
 export default function AssistantAction() {
   const [enabled, setEnabled] = useState(false);
   const [tokens, setTokens] = useState<Token[]>([]);
