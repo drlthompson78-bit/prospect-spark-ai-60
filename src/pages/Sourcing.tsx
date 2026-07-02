@@ -178,6 +178,21 @@ export default function Sourcing() {
         {status.error && <div className="mt-2 text-destructive">{status.error}</div>}
       </Card>
 
+      {summary && (
+        <Card className="p-4 mb-6 text-sm">
+          <div className="font-semibold mb-2">Kwalificatie samenvatting</div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <div>Total: <b>{summary.total_results}</b></div>
+            <div>Qualified: <b className="text-[hsl(var(--fit-a))]">{summary.qualified_candidates}</b></div>
+            <div>Pending review: <b>{summary.pending_manual_review}</b></div>
+            <div>Rejected — missing website: <b>{summary.rejected_missing_website}</b></div>
+            <div>Rejected — possible leadsite: <b>{summary.rejected_possible_leadsite}</b></div>
+            <div>Rejected — other: <b>{summary.rejected_other}</b></div>
+            <div>Duplicates: <b>{summary.duplicates}</b></div>
+          </div>
+        </Card>
+      )}
+
       {results.length > 0 && (
         <Card className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -190,6 +205,9 @@ export default function Sourcing() {
                 <th className="text-left p-3">★</th>
                 <th className="text-left p-3">Reviews</th>
                 <th className="text-left p-3">Status</th>
+                <th className="text-left p-3">Qualification</th>
+                <th className="text-left p-3">Reason</th>
+                <th className="text-left p-3">Recommended</th>
                 <th className="text-left p-3">Fit</th>
                 <th className="text-left p-3">Score</th>
                 <th></th>
@@ -207,6 +225,17 @@ export default function Sourcing() {
                   <td className="p-3">
                     <Badge variant={r.status === "created" ? "default" : r.status === "duplicate" ? "secondary" : "outline"}>{r.status}</Badge>
                   </td>
+                  <td className="p-3 text-xs">
+                    {r.qualification_status ? (
+                      <Badge variant={
+                        r.qualification_status === "qualified_candidate" ? "default" :
+                        r.qualification_status === "pending_manual_review" ? "secondary" :
+                        "outline"
+                      }>{r.qualification_status}</Badge>
+                    ) : "—"}
+                  </td>
+                  <td className="p-3 text-xs text-muted-foreground max-w-[220px]">{r.exclusion_reason ?? "—"}</td>
+                  <td className="p-3 text-xs max-w-[220px]">{r.recommended_action ?? "—"}</td>
                   <td className="p-3">{r.fit_category ?? "—"}</td>
                   <td className="p-3">{r.lead_score ?? "—"}</td>
                   <td className="p-3 text-right">
