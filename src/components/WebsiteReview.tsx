@@ -73,8 +73,11 @@ export default function WebsiteReview({ prospect, onSaved }: Props) {
     const leadsite = !!p.is_directory_or_leadsite;
     if (leadsite) return 0;
     if (redesignScore < 70) return 0;
-    return Math.min((p.raw_opportunity_score ?? 0) + redesignScore, 120);
+    const raw = p.raw_opportunity_score ?? 0;
+    const combined = Math.round((raw / 100) * 40 + (redesignScore / 100) * 80);
+    return Math.min(combined, 120);
   }, [allFilled, redesignScore, p.is_directory_or_leadsite, p.raw_opportunity_score]);
+
 
   const previewFit = useMemo(() => {
     if (!allFilled) return "pending";
