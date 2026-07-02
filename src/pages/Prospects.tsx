@@ -180,7 +180,7 @@ export default function Prospects() {
                 );
               })}
 
-              {filtered.length === 0 && <tr><td colSpan={14} className="p-8 text-center text-muted-foreground text-sm">Nog geen prospects. Ga naar Sourcing om te starten.</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={15} className="p-8 text-center text-muted-foreground text-sm">Nog geen prospects. Ga naar Sourcing om te starten.</td></tr>}
             </tbody>
           </table>
         </div>
