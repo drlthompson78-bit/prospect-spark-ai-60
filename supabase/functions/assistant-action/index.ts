@@ -386,7 +386,173 @@ Deno.serve(async (req) => {
         await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: id, request_json: body, result_json: result, status: "success" });
         return j(result);
       }
+
+      // ===================== GET SANDBOX LINKS =====================
+
+      case "scoring-dry-run-link": {
+        const raw = Math.max(0, Math.min(Number(qp.get("raw") ?? 0), 100));
+        const redesign = Math.max(0, Math.min(Number(qp.get("redesign") ?? 0), 100));
+        const lead = computeLeadScore(raw, redesign);
+        const eligible = redesign >= 70 && lead >= 70;
+        const result = {
+          status: "success",
+          raw_opportunity_score: raw,
+          redesign_score: redesign,
+          lead_score: eligible ? lead : (redesign < 70 ? 0 : lead),
+          fit_category: eligible ? fitFromLead(lead) : "rejected",
+          clean_list_eligible: eligible,
+        };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, request_json: { raw, redesign }, result_json: result, status: "success" });
+        return j(result);
+      }
+
+      case "create-test-prospect-link": {
+        const insertRow = {
+          company_name: "TEST - Assistant Demo Prospect",
+          segment: "loodgieter",
+          city: "Rotterdam",
+          website_url: "https://example.com",
+          raw_opportunity_score: 100,
+          qualification_status: "pending_manual_review",
+          is_test_record: true,
+          has_own_website: true,
+          has_visible_phone: false,
+          source_type: "assistant_test",
+          permission_status: "not_contacted",
+          import_allowed: false,
+          fit_category: "pending",
+          lead_score: null,
+          website_review_status: "pending",
+          clean_list_eligible: false,
+        };
+        const { data, error } = await admin.from("prospects").insert(insertRow).select("id").single();
+        if (error) throw new Error(error.message);
+        const result = { status: "success", prospect_id: data.id, message: "Sandbox test prospect created" };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: data.id, result_json: result, status: "success" });
+        return j(result);
+      }
+
+      case "review-test-prospect-link": {
+        const id = String(qp.get("prospect_id") ?? "");
+        if (!id) return err("bad_request", "prospect_id is required", 400);
+        const { data: p } = await admin.from("prospects").select("id, is_test_record, raw_opportunity_score").eq("id", id).maybeSingle();
+        if (!p) return err("not_found", "Prospect not found", 404);
+        if (!p.is_test_record) {
+          await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: id, status: "blocked", error_message: "sandbox_only" });
+          return err("sandbox_only", "GET review only allowed on test records", 403);
+        }
+        const visual = 15, mobile = 10, cta = 10, trust = 12, local = 8, conv = 20;
+        const redesign = visual + mobile + cta + trust + local + conv; // 75
+        const raw = p.raw_opportunity_score ?? 0;
+        const leadScore = computeLeadScore(raw, redesign);
+        const fit = fitFromLead(leadScore);
+        const eligible = redesign >= 70 && leadScore >= 70 && fit !== "rejected";
+        const patch = {
+          visual_age_score: visual, mobile_usability_score: mobile, cta_score: cta,
+          trust_score: trust, local_seo_score: local, conversion_opportunity_score: conv,
+          redesign_score: redesign, website_review_status: "reviewed",
+          reviewed_at: new Date().toISOString(),
+          lead_score: leadScore, fit_category: fit,
+          exclusion_reason: null,
+          review_notes: "Sandbox GET link review",
+        };
+        const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
+        if (upErr) throw new Error(upErr.message);
+        await admin.from("prospect_events").insert({
+          prospect_id: id, event_type: "assistant_reviewed",
+          event_note: `Sandbox GET review · redesign=${redesign} · lead=${leadScore} · fit=${fit}`,
+        });
+        const result = {
+          status: "success", prospect_id: id,
+          redesign_score: redesign, lead_score: leadScore, fit_category: fit,
+          clean_list_eligible: eligible,
+        };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: id, result_json: result, status: "success" });
+        return j(result);
+      }
+
+      case "reject-test-prospect-link": {
+        const id = String(qp.get("prospect_id") ?? "");
+        if (!id) return err("bad_request", "prospect_id is required", 400);
+        const { data: p } = await admin.from("prospects").select("id, is_test_record").eq("id", id).maybeSingle();
+        if (!p) return err("not_found", "Prospect not found", 404);
+        if (!p.is_test_record) {
+          await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: id, status: "blocked", error_message: "sandbox_only" });
+          return err("sandbox_only", "GET reject only allowed on test records", 403);
+        }
+        const reason = "Rejected by assistant sandbox test";
+        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason, clean_list_eligible: false };
+        const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
+        if (upErr) throw new Error(upErr.message);
+        await admin.from("prospect_events").insert({ prospect_id: id, event_type: "assistant_rejected", event_note: reason });
+        const result = { status: "success", prospect_id: id, fit_category: "rejected", lead_score: 0, clean_list_eligible: false, exclusion_reason: reason };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: id, result_json: result, status: "success" });
+        return j(result);
+      }
+
+      case "full-sandbox-scenario": {
+        // 1. dry run
+        const dryLead = computeLeadScore(100, 75);
+        const dry_run = {
+          raw_opportunity_score: 100, redesign_score: 75,
+          lead_score: dryLead, fit_category: fitFromLead(dryLead),
+          clean_list_eligible: true,
+        };
+        // 2. create test prospect
+        const { data: created, error: cErr } = await admin.from("prospects").insert({
+          company_name: "TEST - Assistant Demo Prospect",
+          segment: "loodgieter", city: "Rotterdam",
+          website_url: "https://example.com",
+          raw_opportunity_score: 100,
+          qualification_status: "pending_manual_review",
+          is_test_record: true, has_own_website: true, has_visible_phone: false,
+          source_type: "assistant_test", permission_status: "not_contacted",
+          import_allowed: false, fit_category: "pending",
+          lead_score: null, website_review_status: "pending", clean_list_eligible: false,
+        }).select("id").single();
+        if (cErr) throw new Error(cErr.message);
+        const pid = created.id as string;
+
+        // 3. review it
+        const visual = 15, mobile = 10, cta = 10, trust = 12, local = 8, conv = 20;
+        const redesign = visual + mobile + cta + trust + local + conv;
+        const leadScore = computeLeadScore(100, redesign);
+        const fit = fitFromLead(leadScore);
+        const eligible = redesign >= 70 && leadScore >= 70 && fit !== "rejected";
+        const { error: rErr } = await admin.from("prospects").update({
+          visual_age_score: visual, mobile_usability_score: mobile, cta_score: cta,
+          trust_score: trust, local_seo_score: local, conversion_opportunity_score: conv,
+          redesign_score: redesign, website_review_status: "reviewed",
+          reviewed_at: new Date().toISOString(),
+          lead_score: leadScore, fit_category: fit,
+          exclusion_reason: null, review_notes: "Sandbox full scenario",
+        }).eq("id", pid);
+        if (rErr) throw new Error(rErr.message);
+        await admin.from("prospect_events").insert({
+          prospect_id: pid, event_type: "assistant_reviewed",
+          event_note: `Sandbox scenario · redesign=${redesign} · lead=${leadScore} · fit=${fit}`,
+        });
+
+        const review_result = {
+          prospect_id: pid, redesign_score: redesign, lead_score: leadScore,
+          fit_category: fit, clean_list_eligible: eligible,
+        };
+        const expected = { redesign_score: 75, lead_score: 100, fit_category: "A", clean_list_eligible: true };
+        const passed =
+          review_result.redesign_score === expected.redesign_score &&
+          review_result.lead_score === expected.lead_score &&
+          review_result.fit_category === expected.fit_category &&
+          review_result.clean_list_eligible === expected.clean_list_eligible;
+
+        const result = {
+          status: "success", created_prospect_id: pid,
+          dry_run, review_result, expected, passed,
+        };
+        await logAction({ tokenId: v.tokenId, action_type: endpoint, target_table: "prospects", target_id: pid, result_json: result, status: passed ? "success" : "failed" });
+        return j(result);
+      }
     }
+
 
     return err("not_found", "Unknown endpoint", 404);
   } catch (e) {
