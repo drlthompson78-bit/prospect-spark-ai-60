@@ -539,6 +539,14 @@ Deno.serve(async (req) => {
   const requiredScope = ALLOWED_ACTIONS[endpoint];
   if (!requiredScope) return err("not_found", `Unknown endpoint: ${endpoint}`, 404);
 
+  // Permanently disabled endpoints: creating fictive/test prospects in public.prospects
+  // is no longer allowed. public.prospects mag alleen echte prospects bevatten.
+  if (DISABLED_ACTIONS.has(endpoint)) {
+    await logAction({ tokenId: v.tokenId, action_type: endpoint, status: "blocked", error_message: "endpoint_disabled_no_fictive_prospects" });
+    return err("endpoint_disabled", "This endpoint is permanently disabled. public.prospects mag geen fictieve/testrecords bevatten. Gebruik scoring-dry-run of scoring-dry-run-link voor in-memory tests.", 410);
+  }
+
+
   // Scope check
   if (!v.scopes.includes(requiredScope) && !v.scopes.includes("*")) {
     await logAction({ tokenId: v.tokenId, action_type: endpoint, status: "blocked", error_message: "insufficient_scope" });
