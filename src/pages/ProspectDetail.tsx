@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { fitBadgeClass, slugify } from "@/lib/scoring";
 import { toast } from "sonner";
-import { ArrowLeft, ExternalLink, Phone, MessageCircle, Star, ImageOff } from "lucide-react";
+import { ArrowLeft, ExternalLink, Phone, MessageCircle, Star } from "lucide-react";
+import WebsiteReview from "@/components/WebsiteReview";
+
 
 export default function ProspectDetail() {
   const { id } = useParams();
