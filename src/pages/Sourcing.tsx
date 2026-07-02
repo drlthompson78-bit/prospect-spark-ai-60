@@ -181,20 +181,34 @@ export default function Sourcing() {
         {status.error && <div className="mt-2 text-destructive">{status.error}</div>}
       </Card>
 
-      {summary && (
-        <Card className="p-4 mb-6 text-sm">
-          <div className="font-semibold mb-2">Kwalificatie samenvatting</div>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <div>Total: <b>{summary.total_results}</b></div>
-            <div>Qualified: <b className="text-[hsl(var(--fit-a))]">{summary.qualified_candidates}</b></div>
-            <div>Pending review: <b>{summary.pending_manual_review}</b></div>
-            <div>Rejected — missing website: <b>{summary.rejected_missing_website}</b></div>
-            <div>Rejected — possible leadsite: <b>{summary.rejected_possible_leadsite}</b></div>
-            <div>Rejected — other: <b>{summary.rejected_other}</b></div>
-            <div>Duplicates: <b>{summary.duplicates}</b></div>
-          </div>
-        </Card>
-      )}
+      {summary && (() => {
+        const reviewQueueCandidates = summary.pending_manual_review;
+        const cleanOutreachReady = summary.qualified_candidates;
+        const rejectedTotal =
+          summary.rejected_missing_website +
+          summary.rejected_possible_leadsite +
+          summary.rejected_other;
+        const totalFound = summary.total_results;
+        return (
+          <Card className="p-4 mb-6 text-sm">
+            <div className="font-semibold mb-2">Kwalificatie samenvatting</div>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              <div>Total results found: <b>{totalFound}</b></div>
+              <div>Review queue candidates: <b>{reviewQueueCandidates}</b></div>
+              <div>Clean/outreach ready: <b className="text-[hsl(var(--fit-a))]">{cleanOutreachReady}</b></div>
+              <div>Rejected results: <b>{rejectedTotal}</b></div>
+              <div>Rejected — missing website: <b>{summary.rejected_missing_website}</b></div>
+              <div>Rejected — possible leadsite: <b>{summary.rejected_possible_leadsite}</b></div>
+              <div>Duplicates: <b>{summary.duplicates}</b></div>
+            </div>
+            {totalFound > 0 && reviewQueueCandidates === 0 && cleanOutreachReady === 0 && (
+              <div className="mt-3 p-3 rounded border border-border bg-secondary/40 text-xs">
+                Er zijn resultaten gevonden, maar geen bruikbare review-kandidaten. De meeste resultaten zijn afgewezen als leadsite, directory of missing website.
+              </div>
+            )}
+          </Card>
+        );
+      })()}
 
       {results.length > 0 && (
         <Card className="overflow-x-auto">
