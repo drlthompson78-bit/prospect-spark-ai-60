@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      assistant_test_runs: {
+        Row: {
+          created_at: string
+          id: string
+          result_json: Json | null
+          status: string
+          test_type: string
+          token_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          result_json?: Json | null
+          status: string
+          test_type: string
+          token_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          result_json?: Json | null
+          status?: string
+          test_type?: string
+          token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_test_runs_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "assistant_test_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assistant_test_tokens: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string
+          id: string
+          revoked: boolean
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at: string
+          id?: string
+          revoked?: boolean
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          id?: string
+          revoked?: boolean
+          token_hash?: string
+        }
+        Relationships: []
+      }
       exports: {
         Row: {
           created_at: string
