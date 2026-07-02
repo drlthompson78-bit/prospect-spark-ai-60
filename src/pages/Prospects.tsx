@@ -130,6 +130,8 @@ export default function Prospects() {
               <SelectItem value="reviewed_eligible">Reviewed eligible</SelectItem>
               <SelectItem value="reviewed_rejected">Reviewed rejected</SelectItem>
             </SelectContent>
+          </Select>
+
 
           <label className="flex items-center gap-2 text-xs px-2">
             <input type="checkbox" checked={f.cleanOnly} onChange={e => setF({...f, cleanOnly: e.target.checked})}/>
