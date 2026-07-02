@@ -232,6 +232,8 @@ async function runGooglePlaces(query: string, limit: number, segmentHint: string
       (lead_score ?? 0) >= 70 &&
       ["A","B","C"].includes(fit_category);
 
+    const is_test_record = false; // Google Places lookups are not persisted test records
+    const export_eligible = clean_list_eligible && !is_test_record;
     return {
       name,
       address: p.formattedAddress ?? null,
@@ -243,7 +245,10 @@ async function runGooglePlaces(query: string, limit: number, segmentHint: string
       qualification_status,
       exclusion_reason,
       recommended_action,
-      clean_list_eligible,
+      clean_list_eligible,              // computed from this response
+      clean_list_eligible_from_db: null, // not persisted here
+      is_test_record,
+      export_eligible,
       raw_opportunity_score,
       lead_score,
       fit_category,
