@@ -73,7 +73,9 @@ export default function Prospects() {
       <div className="flex items-baseline justify-between mb-4">
         <div>
           <h1 className="text-2xl font-semibold">Prospect Master</h1>
-          <p className="text-sm text-muted-foreground">{filtered.length} van {prospects.length} prospects</p>
+          <p className="text-sm text-muted-foreground">
+            {filtered.length} van {prospects.length} prospects · <b>{cleanCount}</b> voldoen aan clean-criteria (website + telefoon + fit A/B/C + score ≥ 70)
+          </p>
         </div>
       </div>
 
