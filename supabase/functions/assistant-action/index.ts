@@ -337,7 +337,7 @@ Deno.serve(async (req) => {
         if (v.mode === "production" && !v.scopes.includes("production_write")) {
           return err("production_write_required", "Production changes require production_write scope", 403);
         }
-        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason };
+        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason, clean_list_eligible: false };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
         await admin.from("prospect_events").insert({ prospect_id: id, event_type: "assistant_rejected", event_note: reason });
