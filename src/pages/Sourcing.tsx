@@ -94,6 +94,7 @@ export default function Sourcing() {
 
       const rows: ResultRow[] = (data as any).results ?? [];
       setResults(rows);
+      setSummary((data as any).summary ?? null);
 
       const created = rows.filter(r => r.status === "created").length;
       const duplicates = rows.filter(r => r.status === "duplicate").length;
