@@ -37,7 +37,7 @@ type GPPlace = {
   name: string | null; address: string | null; website: string | null;
   phone_masked: string | null; rating: number | null; review_count: number; status: string | null;
   qualification_status: string; exclusion_reason: string | null; recommended_action: string;
-  clean_list_eligible: boolean; lead_score_preliminary: number; fit_category: string;
+  clean_list_eligible: boolean; raw_opportunity_score: number; lead_score: number | null; fit_category: string;
 };
 type GPSummary = {
   total_results: number; qualified_candidates: number; pending_manual_review: number;
