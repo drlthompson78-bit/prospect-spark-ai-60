@@ -11,12 +11,53 @@ const DIRECTORY_DOMAINS = [
   "linkedin.com","instagram.com","google.com","goudengids.nl","telefoonboek.nl"
 ];
 
+// NL city names commonly used in leadsite domains / generic brand names
+const NL_CITIES = [
+  "amsterdam","rotterdam","utrecht","den-haag","denhaag","the-hague","haag",
+  "eindhoven","groningen","tilburg","almere","breda","nijmegen","apeldoorn",
+  "haarlem","arnhem","enschede","zaanstad","amersfoort","zwolle","leiden",
+  "maastricht","dordrecht","ede","alphen","alkmaar","delft","hilversum",
+  "leeuwarden","gouda","hengelo","capelle","spijkenisse","hoofddorp","zoetermeer"
+];
+const GENERIC_TRADE_WORDS = [
+  "loodgieter","dakdekker","elektricien","installateur","klusbedrijf",
+  "aannemer","cv","warmtepomp","groepenkast","onderhoud","goedkope","goedkoop",
+  "spoed","24uur","24-uurs","service"
+];
+
 function isDirectory(url: string | null): boolean {
   if (!url) return false;
   try {
     const host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
     return DIRECTORY_DOMAINS.some((d) => host === d || host.endsWith("." + d));
   } catch { return false; }
+}
+
+// Heuristic: domain or company name looks like a generic city+trade leadsite / SEO doorway.
+function looksLikeLeadsite(url: string | null, companyName: string): { flag: boolean; reason: string } {
+  const name = (companyName || "").toLowerCase();
+  let host = "";
+  let hostCore = "";
+  let utm = false;
+  if (url) {
+    try {
+      const u = new URL(url);
+      host = u.hostname.replace(/^www\./, "").toLowerCase();
+      hostCore = host.split(".")[0] ?? "";
+      utm = Array.from(u.searchParams.keys()).some((k) => k.toLowerCase().startsWith("utm_"));
+    } catch { /* ignore */ }
+  }
+  const cityInHost = NL_CITIES.some((c) => hostCore.includes(c));
+  const tradeInHost = GENERIC_TRADE_WORDS.some((t) => hostCore.includes(t));
+  const cityInName = NL_CITIES.some((c) => name.includes(c.replace("-", " ")));
+  const tradeInName = GENERIC_TRADE_WORDS.some((t) => name.includes(t));
+  const goedkoopInName = /goedkoop|goedkope|spoed|24\s?uur/.test(name);
+
+  if (cityInHost && tradeInHost) return { flag: true, reason: "Domein combineert stad + branche (mogelijk leadsite)" };
+  if (goedkoopInName) return { flag: true, reason: "Naam bevat 'goedkoop/spoed/24uur' (typische leadsite-signalen)" };
+  if (cityInName && tradeInName && name.split(" ").length <= 3) return { flag: true, reason: "Zeer generieke bedrijfsnaam (stad + branche)" };
+  if (utm) return { flag: true, reason: "Website-URL bevat UTM-parameters vanuit Google-profiel" };
+  return { flag: false, reason: "" };
 }
 
 function normalizeNL(phone: string | null): string | null {
@@ -170,12 +211,45 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      const hardOk =
-        !!website &&
-        !isDir &&
-        (!!phoneMain || hasMobile) &&
-        PREMIUM_SEGMENTS.has(seg.toLowerCase());
+      const businessStatus = pl.businessStatus ?? null;
+      const inSegment = PREMIUM_SEGMENTS.has(seg.toLowerCase());
+      const leadsite = looksLikeLeadsite(website, companyName);
 
+      // Determine qualification_status (strict)
+      let qualification_status: string;
+      let exclusionReason: string | null = null;
+      let recommendedAction: string;
+
+      if (!website) {
+        qualification_status = "rejected_missing_website";
+        exclusionReason = "Geen eigen website gevonden via Google Places";
+        recommendedAction = "Overslaan — geen eigen web-aanwezigheid";
+      } else if (isDir) {
+        qualification_status = "rejected_directory";
+        exclusionReason = "Website is een directory/leadplatform";
+        recommendedAction = "Overslaan — directory";
+      } else if (!inSegment) {
+        qualification_status = "rejected_outside_segment";
+        exclusionReason = "Segment buiten scope";
+        recommendedAction = "Overslaan — segment past niet";
+      } else if (!phoneMain && !hasMobile) {
+        qualification_status = "rejected_missing_contact";
+        exclusionReason = "Geen zichtbaar telefoonnummer";
+        recommendedAction = "Overslaan — geen contact";
+      } else if (leadsite.flag) {
+        qualification_status = "rejected_possible_leadsite";
+        exclusionReason = leadsite.reason;
+        recommendedAction = "Handmatig checken — mogelijk leadsite/SEO-doorway";
+      } else if (businessStatus && businessStatus !== "OPERATIONAL") {
+        qualification_status = "pending_manual_review";
+        exclusionReason = `Business status: ${businessStatus}`;
+        recommendedAction = "Handmatig verifiëren — status niet OPERATIONAL";
+      } else {
+        qualification_status = "pending_manual_review";
+        recommendedAction = "Klaar voor handmatige review + website-audit";
+      }
+
+      const hardOk = qualification_status === "pending_manual_review" || qualification_status === "qualified_candidate";
       const score = scoreProspect({
         website_url: website,
         has_mobile_or_whatsapp: hasMobile,
@@ -184,17 +258,15 @@ Deno.serve(async (req) => {
         review_count: reviewCount,
         has_phone: !!phoneMain,
       });
-      const fit = fitCategory(score, hardOk);
-
-      let exclusionReason: string | null = null;
-      if (!hardOk) {
-        if (!website) exclusionReason = "Geen eigen website";
-        else if (isDir) exclusionReason = "Directory/leadsite";
-        else if (!phoneMain && !hasMobile) exclusionReason = "Geen zichtbaar telefoonnummer";
-        else if (!PREMIUM_SEGMENTS.has(seg.toLowerCase())) exclusionReason = "Segment buiten scope";
+      // fit stays pending until manually qualified; only compute A/B/C for pending_manual_review
+      let fit: string;
+      if (qualification_status === "pending_manual_review") {
+        fit = "pending";
+      } else {
+        fit = "rejected";
       }
 
-      const insertRow = {
+      const insertRow: Record<string, unknown> = {
         region_id: region_id ?? null,
         company_name: companyName,
         segment: seg || null,
@@ -209,14 +281,15 @@ Deno.serve(async (req) => {
         whatsapp_visible: hasMobile,
         google_rating: pl.rating ?? null,
         google_review_count: reviewCount,
-        business_status: pl.businessStatus ?? null,
+        business_status: businessStatus,
         source_type: "google_places",
-        is_directory_or_leadsite: isDir,
+        is_directory_or_leadsite: isDir || leadsite.flag,
         has_own_website: !!website,
         has_visible_phone: !!phoneMain,
         has_mobile_or_whatsapp: hasMobile,
         lead_score: score,
         fit_category: fit,
+        qualification_status,
         exclusion_reason: exclusionReason,
         reason_fit: hardOk
           ? `Segment ${seg}, ${hasMobile ? "mobiel zichtbaar" : "vaste lijn"}, ${reviewCount} reviews.`
@@ -235,11 +308,15 @@ Deno.serve(async (req) => {
       await supabase.from("prospect_events").insert({
         prospect_id: inserted!.id,
         event_type: "sourced",
-        event_note: `Sourced via Google Places (query: ${query})`,
+        event_note: `Sourced via Google Places (query: ${query}) → ${qualification_status}`,
         created_by: userId,
       });
 
-      const uiStatus = !website ? "missing_website" : fit === "rejected" ? "pending_review" : "created";
+      const uiStatus =
+        qualification_status === "rejected_missing_website" ? "missing_website" :
+        qualification_status.startsWith("rejected_") ? "pending_review" :
+        "created";
+
       results.push({
         status: uiStatus,
         company_name: companyName,
@@ -251,9 +328,27 @@ Deno.serve(async (req) => {
         prospect_id: inserted!.id,
         fit_category: fit,
         lead_score: score,
+        qualification_status,
+        exclusion_reason: exclusionReason,
+        recommended_action: recommendedAction,
       });
-      created += 1;
+      if (qualification_status === "pending_manual_review") created += 1;
     }
+
+    // Summary
+    const summary = {
+      total_results: results.length,
+      qualified_candidates: results.filter(r => r.qualification_status === "qualified_candidate").length,
+      pending_manual_review: results.filter(r => r.qualification_status === "pending_manual_review").length,
+      rejected_missing_website: results.filter(r => r.qualification_status === "rejected_missing_website").length,
+      rejected_possible_leadsite: results.filter(r => r.qualification_status === "rejected_possible_leadsite").length,
+      rejected_other: results.filter(r =>
+        r.qualification_status && r.qualification_status.startsWith("rejected_") &&
+        r.qualification_status !== "rejected_missing_website" &&
+        r.qualification_status !== "rejected_possible_leadsite"
+      ).length,
+      duplicates: results.filter(r => r.status === "duplicate").length,
+    };
 
     await supabase.from("search_jobs").update({
       status: "completed",
@@ -262,7 +357,7 @@ Deno.serve(async (req) => {
       completed_at: new Date().toISOString(),
     }).eq("id", job!.id);
 
-    return new Response(JSON.stringify({ job_id: job!.id, results }), {
+    return new Response(JSON.stringify({ job_id: job!.id, summary, results }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   } catch (e) {
@@ -271,3 +366,4 @@ Deno.serve(async (req) => {
     });
   }
 });
+

@@ -191,6 +191,7 @@ export type Database = {
           permission_status: string
           phone_main: string | null
           phone_mobile_e164: string | null
+          qualification_status: string | null
           rank_overall: number | null
           reason_fit: string | null
           redesign_score: number
@@ -232,6 +233,7 @@ export type Database = {
           permission_status?: string
           phone_main?: string | null
           phone_mobile_e164?: string | null
+          qualification_status?: string | null
           rank_overall?: number | null
           reason_fit?: string | null
           redesign_score?: number
@@ -273,6 +275,7 @@ export type Database = {
           permission_status?: string
           phone_main?: string | null
           phone_mobile_e164?: string | null
+          qualification_status?: string | null
           rank_overall?: number | null
           reason_fit?: string | null
           redesign_score?: number
