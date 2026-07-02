@@ -168,7 +168,9 @@ export default function Prospects() {
                         <td className="p-2">{p.whatsapp_visible && <Badge variant="outline" className="text-xs">WA</Badge>}</td>
                         <td className="p-2 text-xs">{p.google_rating ?? "—"}</td>
                         <td className="p-2 text-xs">{p.google_review_count ?? 0}</td>
-                        <td className="p-2 font-mono text-xs">{p.lead_score}</td>
+                        <td className="p-2 font-mono text-xs text-muted-foreground">{p.raw_opportunity_score ?? "—"}</td>
+                        <td className="p-2 font-mono text-xs">{p.lead_score === null || p.lead_score === undefined ? <span className="italic text-muted-foreground">pending</span> : p.lead_score}</td>
+
                         <td className="p-2"><Badge className={fitBadgeClass(p.fit_category)}>{p.fit_category}</Badge></td>
                         <td className="p-2 text-xs">{p.permission_status}</td>
                         <td className="p-2 text-xs">{p.outreach_status}</td>
