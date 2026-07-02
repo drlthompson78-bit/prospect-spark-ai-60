@@ -152,7 +152,7 @@ export default function Prospects() {
                 return (
                   <Fragment key={regionId}>
                     <tr>
-                      <td colSpan={14} className="region-header">
+                      <td colSpan={15} className="region-header">
                         === REGIO {String(r?.region_order ?? "??").padStart(2,"0")}: {(r?.region_name ?? "Onbekend").toUpperCase()} ({rows.length}) ===
                       </td>
                     </tr>
