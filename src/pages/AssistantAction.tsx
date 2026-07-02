@@ -415,43 +415,85 @@ export default function AssistantAction() {
       </Card>
 
       <Card className="p-4 space-y-3">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
             <div className="font-medium text-sm">Full Audit Report</div>
             <div className="text-xs text-muted-foreground">
-              Read-only HTML+JSON rapport dat alle system, security, scoring en export checks combineert.
-              Genereert een nieuwe read-only token (24u) en toont een deelbare link.
+              Read-only rapport dat alle system, security, scoring en export checks combineert.
+              Toont de HTML-versie op de pagina en biedt JSON + TXT downloads.
+              Bevat geen secrets, API keys of volledige telefoonnummers.
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={running === "audit"}
-            onClick={async () => {
-              setRunning("audit");
-              try {
-                const token = randomToken();
-                const hash = await sha256Hex(token);
-                const expires_at = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
-                const { data: userRes } = await supabase.auth.getUser();
-                const { error } = await supabase.from("assistant_test_tokens").insert({
-                  token_hash: hash, scopes: ["read"], mode: "sandbox", expires_at,
-                  created_by: userRes.user?.id ?? null, revoked: false,
-                });
-                if (error) throw error;
-                const html = `${FN_URL}/full-audit-report?token=${encodeURIComponent(token)}`;
-                const json = `${FN_URL}/full-audit-report.json?token=${encodeURIComponent(token)}`;
-                setAuditLinks({ html, json });
-                toast.success("Audit link gegenereerd (24u geldig)");
-                load();
-              } catch (e: any) {
-                toast.error(e.message ?? "Kon audit link niet aanmaken");
-              } finally { setRunning(null); }
-            }}
-          >
-            {running === "audit" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Generate Full Audit Report"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={running === "audit"}
+              onClick={async () => {
+                setRunning("audit");
+                setAuditData(null);
+                setAuditHtml(null);
+                try {
+                  const token = randomToken();
+                  const hash = await sha256Hex(token);
+                  const expires_at = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+                  const { data: userRes } = await supabase.auth.getUser();
+                  const { error } = await supabase.from("assistant_test_tokens").insert({
+                    token_hash: hash, scopes: ["read"], mode: "sandbox", expires_at,
+                    created_by: userRes.user?.id ?? null, revoked: false,
+                  });
+                  if (error) throw error;
+                  const htmlUrl = `${FN_URL}/full-audit-report?token=${encodeURIComponent(token)}`;
+                  const jsonUrl = `${FN_URL}/full-audit-report.json?token=${encodeURIComponent(token)}`;
+                  setAuditLinks({ html: htmlUrl, json: jsonUrl });
+
+                  // Fetch both in parallel
+                  const [jsonRes, htmlRes] = await Promise.all([
+                    fetch(jsonUrl),
+                    fetch(htmlUrl),
+                  ]);
+                  if (!jsonRes.ok) throw new Error(`JSON fetch failed: ${jsonRes.status}`);
+                  const jsonData = await jsonRes.json();
+                  const htmlText = htmlRes.ok ? await htmlRes.text() : null;
+                  setAuditData(jsonData);
+                  setAuditHtml(htmlText);
+                  setAuditTimestamp(new Date().toISOString());
+                  toast.success("Audit rapport gegenereerd");
+                  load();
+                } catch (e: any) {
+                  toast.error(e.message ?? "Kon audit rapport niet genereren");
+                } finally { setRunning(null); }
+              }}
+            >
+              {running === "audit" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Generate Full Audit Report"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!auditData}
+              onClick={() => {
+                if (!auditData) return;
+                const ts = (auditTimestamp ?? new Date().toISOString()).replace(/[:.]/g, "-");
+                downloadBlob(`audit-report-${ts}.json`, JSON.stringify(auditData, null, 2), "application/json");
+              }}
+            >
+              Download audit JSON
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!auditData}
+              onClick={() => {
+                if (!auditData) return;
+                const ts = (auditTimestamp ?? new Date().toISOString()).replace(/[:.]/g, "-");
+                downloadBlob(`audit-report-${ts}.txt`, auditToTxt(auditData), "text/plain;charset=utf-8");
+              }}
+            >
+              Download audit TXT
+            </Button>
+          </div>
         </div>
+
         {auditLinks && (
           <div className="space-y-2">
             {[
@@ -475,6 +517,22 @@ export default function AssistantAction() {
               Alleen leestoegang. Bevat geen secrets of volledige telefoonnummers. Token kan via de tokentabel worden ingetrokken.
             </div>
           </div>
+        )}
+
+        {auditHtml && (
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">HTML-versie:</div>
+            <iframe
+              title="Full Audit Report"
+              srcDoc={auditHtml}
+              className="w-full h-[600px] rounded border border-border bg-background"
+              sandbox=""
+            />
+          </div>
+        )}
+
+        {auditData && !auditHtml && (
+          <pre className="bg-secondary rounded p-3 text-xs overflow-x-auto max-h-96">{JSON.stringify(auditData, null, 2)}</pre>
         )}
       </Card>
 
