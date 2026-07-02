@@ -245,6 +245,39 @@ export default function AssistantAction() {
         )}
       </Card>
 
+      <Card className="p-4 space-y-3">
+        <h2 className="text-sm font-semibold uppercase text-muted-foreground">Sandbox GET test links</h2>
+        <p className="text-xs text-muted-foreground">
+          Deze GET action links zijn <strong>alleen voor sandbox-tests</strong>. Production-write via GET is uitgeschakeld.
+          Vul een sandbox token in en kopieer de link.
+        </p>
+        <div>
+          <Label>Sandbox token (voor links)</Label>
+          <Input value={scenarioToken} onChange={e => setScenarioToken(e.target.value)} placeholder="plak sandbox token..." />
+        </div>
+        {[
+          { label: "Capabilities", path: `capabilities` },
+          { label: "Scoring dry-run (raw=100, redesign=75)", path: `scoring-dry-run-link?raw=100&redesign=75` },
+          { label: "Create test prospect", path: `create-test-prospect-link` },
+          { label: "Full sandbox scenario", path: `full-sandbox-scenario` },
+          { label: "Audit log", path: `audit-log` },
+        ].map(({ label, path }) => {
+          const sep = path.includes("?") ? "&" : "?";
+          const link = `${FN_URL}/${path}${sep}token=${encodeURIComponent(scenarioToken || "<TOKEN>")}`;
+          return (
+            <div key={label} className="bg-secondary rounded p-2 text-xs space-y-1">
+              <div className="text-muted-foreground">{label}</div>
+              <div className="flex items-center gap-2">
+                <code className="font-mono break-all flex-1">{link}</code>
+                <Button size="sm" variant="ghost" onClick={() => { navigator.clipboard.writeText(link); toast.success("Link gekopieerd"); }}>
+                  <Copy className="h-3 w-3"/>
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </Card>
+
       <Card className="p-4">
         <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-3">Action log (laatste 30)</h2>
         <div className="overflow-x-auto">
