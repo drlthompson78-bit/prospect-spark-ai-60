@@ -211,12 +211,45 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      const hardOk =
-        !!website &&
-        !isDir &&
-        (!!phoneMain || hasMobile) &&
-        PREMIUM_SEGMENTS.has(seg.toLowerCase());
+      const businessStatus = pl.businessStatus ?? null;
+      const inSegment = PREMIUM_SEGMENTS.has(seg.toLowerCase());
+      const leadsite = looksLikeLeadsite(website, companyName);
 
+      // Determine qualification_status (strict)
+      let qualification_status: string;
+      let exclusionReason: string | null = null;
+      let recommendedAction: string;
+
+      if (!website) {
+        qualification_status = "rejected_missing_website";
+        exclusionReason = "Geen eigen website gevonden via Google Places";
+        recommendedAction = "Overslaan — geen eigen web-aanwezigheid";
+      } else if (isDir) {
+        qualification_status = "rejected_directory";
+        exclusionReason = "Website is een directory/leadplatform";
+        recommendedAction = "Overslaan — directory";
+      } else if (!inSegment) {
+        qualification_status = "rejected_outside_segment";
+        exclusionReason = "Segment buiten scope";
+        recommendedAction = "Overslaan — segment past niet";
+      } else if (!phoneMain && !hasMobile) {
+        qualification_status = "rejected_missing_contact";
+        exclusionReason = "Geen zichtbaar telefoonnummer";
+        recommendedAction = "Overslaan — geen contact";
+      } else if (leadsite.flag) {
+        qualification_status = "rejected_possible_leadsite";
+        exclusionReason = leadsite.reason;
+        recommendedAction = "Handmatig checken — mogelijk leadsite/SEO-doorway";
+      } else if (businessStatus && businessStatus !== "OPERATIONAL") {
+        qualification_status = "pending_manual_review";
+        exclusionReason = `Business status: ${businessStatus}`;
+        recommendedAction = "Handmatig verifiëren — status niet OPERATIONAL";
+      } else {
+        qualification_status = "pending_manual_review";
+        recommendedAction = "Klaar voor handmatige review + website-audit";
+      }
+
+      const hardOk = qualification_status === "pending_manual_review" || qualification_status === "qualified_candidate";
       const score = scoreProspect({
         website_url: website,
         has_mobile_or_whatsapp: hasMobile,
@@ -225,17 +258,15 @@ Deno.serve(async (req) => {
         review_count: reviewCount,
         has_phone: !!phoneMain,
       });
-      const fit = fitCategory(score, hardOk);
-
-      let exclusionReason: string | null = null;
-      if (!hardOk) {
-        if (!website) exclusionReason = "Geen eigen website";
-        else if (isDir) exclusionReason = "Directory/leadsite";
-        else if (!phoneMain && !hasMobile) exclusionReason = "Geen zichtbaar telefoonnummer";
-        else if (!PREMIUM_SEGMENTS.has(seg.toLowerCase())) exclusionReason = "Segment buiten scope";
+      // fit stays pending until manually qualified; only compute A/B/C for pending_manual_review
+      let fit: string;
+      if (qualification_status === "pending_manual_review") {
+        fit = "pending";
+      } else {
+        fit = "rejected";
       }
 
-      const insertRow = {
+      const insertRow: Record<string, unknown> = {
         region_id: region_id ?? null,
         company_name: companyName,
         segment: seg || null,
@@ -250,14 +281,15 @@ Deno.serve(async (req) => {
         whatsapp_visible: hasMobile,
         google_rating: pl.rating ?? null,
         google_review_count: reviewCount,
-        business_status: pl.businessStatus ?? null,
+        business_status: businessStatus,
         source_type: "google_places",
-        is_directory_or_leadsite: isDir,
+        is_directory_or_leadsite: isDir || leadsite.flag,
         has_own_website: !!website,
         has_visible_phone: !!phoneMain,
         has_mobile_or_whatsapp: hasMobile,
         lead_score: score,
         fit_category: fit,
+        qualification_status,
         exclusion_reason: exclusionReason,
         reason_fit: hardOk
           ? `Segment ${seg}, ${hasMobile ? "mobiel zichtbaar" : "vaste lijn"}, ${reviewCount} reviews.`
@@ -276,11 +308,15 @@ Deno.serve(async (req) => {
       await supabase.from("prospect_events").insert({
         prospect_id: inserted!.id,
         event_type: "sourced",
-        event_note: `Sourced via Google Places (query: ${query})`,
+        event_note: `Sourced via Google Places (query: ${query}) → ${qualification_status}`,
         created_by: userId,
       });
 
-      const uiStatus = !website ? "missing_website" : fit === "rejected" ? "pending_review" : "created";
+      const uiStatus =
+        qualification_status === "rejected_missing_website" ? "missing_website" :
+        qualification_status.startsWith("rejected_") ? "pending_review" :
+        "created";
+
       results.push({
         status: uiStatus,
         company_name: companyName,
@@ -292,9 +328,27 @@ Deno.serve(async (req) => {
         prospect_id: inserted!.id,
         fit_category: fit,
         lead_score: score,
+        qualification_status,
+        exclusion_reason: exclusionReason,
+        recommended_action: recommendedAction,
       });
-      created += 1;
+      if (qualification_status === "pending_manual_review") created += 1;
     }
+
+    // Summary
+    const summary = {
+      total_results: results.length,
+      qualified_candidates: results.filter(r => r.qualification_status === "qualified_candidate").length,
+      pending_manual_review: results.filter(r => r.qualification_status === "pending_manual_review").length,
+      rejected_missing_website: results.filter(r => r.qualification_status === "rejected_missing_website").length,
+      rejected_possible_leadsite: results.filter(r => r.qualification_status === "rejected_possible_leadsite").length,
+      rejected_other: results.filter(r =>
+        r.qualification_status && r.qualification_status.startsWith("rejected_") &&
+        r.qualification_status !== "rejected_missing_website" &&
+        r.qualification_status !== "rejected_possible_leadsite"
+      ).length,
+      duplicates: results.filter(r => r.status === "duplicate").length,
+    };
 
     await supabase.from("search_jobs").update({
       status: "completed",
@@ -303,7 +357,7 @@ Deno.serve(async (req) => {
       completed_at: new Date().toISOString(),
     }).eq("id", job!.id);
 
-    return new Response(JSON.stringify({ job_id: job!.id, results }), {
+    return new Response(JSON.stringify({ job_id: job!.id, summary, results }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   } catch (e) {
@@ -312,3 +366,4 @@ Deno.serve(async (req) => {
     });
   }
 });
+
