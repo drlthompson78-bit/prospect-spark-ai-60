@@ -151,16 +151,74 @@ export default function Prospects() {
     return Array.from(g.entries());
   }, [filtered]);
 
+  // ============ EXPORT HANDLERS ============
+  async function handleExportFiltered() {
+    const rows = filtered.map(toExportRow);
+    if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
+    downloadCsv(`prospects-export-${tsStamp()}.csv`, buildCsv(rows, FULL_COLUMNS));
+    await logExport("export_prospects_csv", rows.length, { filters: f });
+    toast.success(`CSV export generated successfully. (${rows.length} records)`);
+  }
+
+  async function handleExportCleanList() {
+    const rows = prospects.filter(p =>
+      p.is_test_record === false &&
+      p.clean_list_eligible === true &&
+      p.website_review_status === "reviewed" &&
+      ["A","B","C"].includes(p.fit_category) &&
+      (p.lead_score ?? 0) >= 70 &&
+      (p.redesign_score ?? 0) >= 70 &&
+      !String(p.qualification_status ?? "").startsWith("rejected")
+    ).map(toExportRow);
+    if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
+    downloadCsv(`clean-prospects-export-${tsStamp()}.csv`, buildCsv(rows, CLEAN_COLUMNS));
+    await logExport("export_clean_list_csv", rows.length);
+    toast.success(`CSV export generated successfully. (${rows.length} records)`);
+  }
+
+  async function handleExportWhatsApp() {
+    const rows = prospects.filter(p =>
+      p.is_test_record === false &&
+      p.clean_list_eligible === true &&
+      p.website_review_status === "reviewed" &&
+      ["A","B","C"].includes(p.fit_category) &&
+      (p.lead_score ?? 0) >= 70 &&
+      (p.redesign_score ?? 0) >= 70 &&
+      p.permission_status === "opt_in" &&
+      p.import_allowed === true &&
+      p.phone_mobile_e164
+    ).map(toExportRow);
+    if (rows.length === 0) {
+      toast.error("Geen WhatsApp-eligible prospects gevonden. WhatsApp-export vereist expliciete opt-in.");
+      return;
+    }
+    downloadCsv(`whatsapp-eligible-export-${tsStamp()}.csv`, buildCsv(rows, WA_COLUMNS));
+    await logExport("export_whatsapp_eligible_csv", rows.length);
+    toast.success(`CSV export generated successfully. (${rows.length} records)`);
+  }
+
   return (
     <div className="p-8">
-      <div className="flex items-baseline justify-between mb-4">
+      <div className="flex items-baseline justify-between mb-4 flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Prospect Master</h1>
           <p className="text-sm text-muted-foreground">
             {filtered.length} van {prospects.length} prospects · <b>{cleanCount}</b> voldoen aan clean-criteria (reviewed · redesign ≥ 70 · fit A/B/C · lead ≥ 70)
           </p>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="outline" onClick={handleExportFiltered} title="Exporteert de huidige gefilterde prospects. Telefoonnummers worden gemaskerd. Geen secrets of API keys.">
+            <Download className="h-3 w-3 mr-1" /> Export prospects CSV
+          </Button>
+          <Button size="sm" variant="outline" onClick={handleExportCleanList} title="Alleen reviewed prospects met fit A/B/C, lead ≥ 70, redesign ≥ 70, niet-rejected en geen testrecords.">
+            <Download className="h-3 w-3 mr-1" /> Export clean list CSV
+          </Button>
+          <Button size="sm" variant="outline" onClick={handleExportWhatsApp} title="Alleen prospects met expliciete opt-in en import_allowed. Bevat nooit prospects zonder toestemming.">
+            <Download className="h-3 w-3 mr-1" /> Export WhatsApp eligible CSV
+          </Button>
+        </div>
       </div>
+
 
       <Card className="p-4 mb-4">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
