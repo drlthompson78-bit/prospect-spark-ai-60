@@ -64,7 +64,7 @@ export default function AssistantAction() {
   async function loadMaintenance() {
     const { data } = await supabase.from("assistant_action_logs")
       .select("*")
-      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility"])
+      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility", "verify_export_eligibility"])
       .order("created_at", { ascending: false }).limit(10);
     setMaintenanceRuns((data ?? []) as LogRow[]);
   }
