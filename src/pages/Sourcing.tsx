@@ -21,6 +21,19 @@ type ResultRow = {
   fit_category?: string | null;
   lead_score?: number | null;
   prospect_id?: string | null;
+  qualification_status?: string | null;
+  exclusion_reason?: string | null;
+  recommended_action?: string | null;
+};
+
+type Summary = {
+  total_results: number;
+  qualified_candidates: number;
+  pending_manual_review: number;
+  rejected_missing_website: number;
+  rejected_possible_leadsite: number;
+  rejected_other: number;
+  duplicates: number;
 };
 
 type TestStatus = {
