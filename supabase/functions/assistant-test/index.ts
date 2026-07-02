@@ -211,12 +211,25 @@ async function runGooglePlaces(query: string, limit: number, segmentHint: string
       recommended_action = "Website visueel beoordelen en leadscore aanvullen";
     }
 
-    const lead_score_preliminary = preliminaryScore(website, !!phone, reviews, inferredSeg);
-    // clean_list_eligible: strict — vereist manual/AI review; blijft false in deze test-preview
+    const raw_opportunity_score = rawOpportunityScore({
+      website, hasPhone: !!phone, reviews, rating: p.rating ?? null,
+      segment: inferredSeg, hasAddress: !!p.formattedAddress,
+    });
+
+    // lead_score: telt alleen mee voor de clean list.
+    // - rejected_* → 0
+    // - pending_manual_review → null (nog niet definitief)
+    // - qualified_candidate → gelijk aan raw_opportunity_score (na review verder aan te vullen)
+    let lead_score: number | null;
+    if (qualification_status.startsWith("rejected_")) lead_score = 0;
+    else if (qualification_status === "pending_manual_review") lead_score = null;
+    else lead_score = raw_opportunity_score;
+
+    // clean_list_eligible alleen bij qualified_candidate + harde criteria
     const clean_list_eligible =
       qualification_status === "qualified_candidate" &&
       !!website && !!phone && !isDir && !lead.flag &&
-      lead_score_preliminary >= 70 &&
+      (lead_score ?? 0) >= 70 &&
       ["A","B","C"].includes(fit_category);
 
     return {
@@ -231,10 +244,12 @@ async function runGooglePlaces(query: string, limit: number, segmentHint: string
       exclusion_reason,
       recommended_action,
       clean_list_eligible,
-      lead_score_preliminary,
+      raw_opportunity_score,
+      lead_score,
       fit_category,
     };
   });
+
 
   const summary = {
     total_results: places.length,
