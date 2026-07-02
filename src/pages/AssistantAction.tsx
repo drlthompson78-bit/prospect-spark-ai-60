@@ -99,6 +99,8 @@ export default function AssistantAction() {
   const [cleanSeedResult, setCleanSeedResult] = useState<any>(null);
   const [fictivePreview, setFictivePreview] = useState<any>(null);
   const [fictiveDeleteResult, setFictiveDeleteResult] = useState<any>(null);
+  const [dupPreview, setDupPreview] = useState<any>(null);
+  const [dupApplyResult, setDupApplyResult] = useState<any>(null);
 
   const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
   const [auditData, setAuditData] = useState<any>(null);
