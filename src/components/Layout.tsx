@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Search, Users, Download, MapPin, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Search, Users, Download, MapPin, LogOut, Menu, X, ShieldCheck } from "lucide-react";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -10,6 +10,7 @@ const nav = [
   { to: "/prospects", label: "Prospects", icon: Users },
   { to: "/exports", label: "Exports", icon: Download },
   { to: "/regions", label: "Regio's", icon: MapPin },
+  { to: "/assistant-test", label: "Assistant Test", icon: ShieldCheck },
 ];
 
 export default function Layout() {
