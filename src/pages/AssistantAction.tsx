@@ -220,9 +220,14 @@ export default function AssistantAction() {
       <div>
         <h1 className="text-2xl font-semibold">Assistant Action Mode</h1>
         <p className="text-sm text-muted-foreground">Beveiligde mutatie-endpoints voor een externe AI-assistent. Standaard uit.</p>
-        <p className="text-xs text-primary mt-2">
-          Download het audit JSON-bestand en upload dit naar ChatGPT voor volledige analyse.
-        </p>
+        <div className="mt-3 rounded border border-primary/40 bg-primary/5 p-3 text-xs space-y-1">
+          <div className="font-semibold text-primary">⚠️ ChatGPT kan Supabase-links niet ophalen ("Failed to fetch / Cache miss")</div>
+          <div className="text-muted-foreground">
+            Deel géén audit-URL met ChatGPT. Klik op <strong>Generate Full Audit Report</strong>,
+            dan op <strong>Download audit JSON</strong> (of TXT), en <strong>upload dat bestand</strong> in het ChatGPT-gesprek.
+            Zo krijgt de assistent de volledige inhoud zonder netwerkcall.
+          </div>
+        </div>
       </div>
 
       <Card className="p-4 flex items-center justify-between">
