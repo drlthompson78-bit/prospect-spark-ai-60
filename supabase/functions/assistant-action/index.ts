@@ -510,7 +510,7 @@ Deno.serve(async (req) => {
           is_test_record: true, has_own_website: true, has_visible_phone: false,
           source_type: "assistant_test", permission_status: "not_contacted",
           import_allowed: false, fit_category: "pending",
-          lead_score: null, website_review_status: "pending",
+          lead_score: null, website_review_status: "pending", clean_list_eligible: false,
         }).select("id").single();
         if (cErr) throw new Error(cErr.message);
         const pid = created.id as string;
