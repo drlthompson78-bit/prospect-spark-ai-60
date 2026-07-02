@@ -19,12 +19,15 @@ type ResultRow = {
   rating?: number | null;
   review_count?: number | null;
   fit_category?: string | null;
+  raw_opportunity_score?: number | null;
   lead_score?: number | null;
+  clean_list_eligible?: boolean;
   prospect_id?: string | null;
   qualification_status?: string | null;
   exclusion_reason?: string | null;
   recommended_action?: string | null;
 };
+
 
 type Summary = {
   total_results: number;
