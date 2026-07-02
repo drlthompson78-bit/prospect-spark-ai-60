@@ -69,6 +69,7 @@ export default function Sourcing() {
   const [maxResults, setMaxResults] = useState(10);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ResultRow[]>([]);
+  const [summary, setSummary] = useState<Summary | null>(null);
   const [status, setStatus] = useState<TestStatus>({
     apiConnected: null, lastQuery: "", resultsFound: 0,
     created: 0, duplicates: 0, missingWebsite: 0, pendingReview: 0, error: null,
