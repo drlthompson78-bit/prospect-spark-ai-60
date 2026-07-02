@@ -53,6 +53,16 @@ export default function AssistantAction() {
   const [running, setRunning] = useState<string | null>(null);
   const [scenarioToken, setScenarioToken] = useState("");
   const [scenarioResult, setScenarioResult] = useState<any>(null);
+  const [recomputeResult, setRecomputeResult] = useState<any>(null);
+  const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
+
+  async function loadMaintenance() {
+    const { data } = await supabase.from("assistant_action_logs")
+      .select("*")
+      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility"])
+      .order("created_at", { ascending: false }).limit(10);
+    setMaintenanceRuns((data ?? []) as LogRow[]);
+  }
 
   async function load() {
     const [s, t, l] = await Promise.all([
@@ -64,7 +74,7 @@ export default function AssistantAction() {
     setTokens((t.data ?? []) as Token[]);
     setLogs((l.data ?? []) as LogRow[]);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); loadMaintenance(); }, []);
 
   async function toggleEnabled(v: boolean) {
     const { data: userRes } = await supabase.auth.getUser();
@@ -175,31 +185,65 @@ export default function AssistantAction() {
         </div>
       </Card>
 
-      <Card className="p-4 flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <div className="font-medium text-sm">Recompute clean-list eligibility</div>
-          <div className="text-xs text-muted-foreground">
-            Zet <code>clean_list_eligible</code> voor alle prospects opnieuw op basis van huidige criteria
-            (reviewed, redesign≥70, lead≥70, fit A/B/C, geen rejected, geen testrecord).
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="font-medium text-sm">Recompute clean-list eligibility</div>
+            <div className="text-xs text-muted-foreground">
+              Zet <code>clean_list_eligible</code> voor alle prospects opnieuw op basis van huidige criteria
+              (reviewed, redesign≥70, lead≥70, fit A/B/C, geen rejected, geen testrecord).
+            </div>
           </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={running === "recompute"}
+            onClick={async () => {
+              setRunning("recompute");
+              setRecomputeResult(null);
+              try {
+                const { data, error } = await supabase.functions.invoke("recompute-clean-list", { body: {} });
+                if (error) throw error;
+                if (data?.status !== "success") throw new Error(data?.error_message ?? "Unknown error");
+                setRecomputeResult(data);
+                toast.success(`Herberekend: ${data.clean_list_eligible_true} eligible / ${data.total_checked} totaal`);
+              } catch (e: any) {
+                setRecomputeResult({ status: "failed", error_message: e.message ?? String(e), timestamp: new Date().toISOString() });
+                toast.error(e.message ?? "Recompute mislukt");
+              } finally { setRunning(null); loadMaintenance(); }
+            }}
+          >
+            {running === "recompute" ? "Bezig…" : "Recompute now"}
+          </Button>
         </div>
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={running === "recompute"}
-          onClick={async () => {
-            setRunning("recompute");
-            try {
-              const { data, error } = await supabase.functions.invoke("recompute-clean-list", { body: {} });
-              if (error) throw error;
-              toast.success(`Herberekend: ${data.clean_list_eligible_true} eligible / ${data.scanned} totaal`);
-            } catch (e: any) {
-              toast.error(e.message ?? "Recompute mislukt");
-            } finally { setRunning(null); }
-          }}
-        >
-          {running === "recompute" ? "Bezig…" : "Recompute now"}
-        </Button>
+
+        {recomputeResult && recomputeResult.status === "success" && (
+          <div className="rounded border border-border p-3 text-xs bg-secondary/40">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge>success</Badge>
+              <span className="text-muted-foreground">last_run_at: {new Date(recomputeResult.last_run_at).toLocaleString()}</span>
+            </div>
+            <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 font-mono">
+              <div><dt className="text-muted-foreground inline">total_checked: </dt><dd className="inline">{recomputeResult.total_checked}</dd></div>
+              <div><dt className="text-muted-foreground inline">clean_list_eligible_true: </dt><dd className="inline">{recomputeResult.clean_list_eligible_true}</dd></div>
+              <div><dt className="text-muted-foreground inline">clean_list_eligible_false: </dt><dd className="inline">{recomputeResult.clean_list_eligible_false}</dd></div>
+              <div><dt className="text-muted-foreground inline">test_records_excluded: </dt><dd className="inline">{recomputeResult.test_records_excluded}</dd></div>
+              <div><dt className="text-muted-foreground inline">rejected_excluded: </dt><dd className="inline">{recomputeResult.rejected_excluded}</dd></div>
+              <div><dt className="text-muted-foreground inline">pending_review_excluded: </dt><dd className="inline">{recomputeResult.pending_review_excluded}</dd></div>
+              <div><dt className="text-muted-foreground inline">reviewed_but_not_eligible: </dt><dd className="inline">{recomputeResult.reviewed_but_not_eligible}</dd></div>
+            </dl>
+          </div>
+        )}
+
+        {recomputeResult && recomputeResult.status === "failed" && (
+          <div className="rounded border border-destructive/40 p-3 text-xs bg-destructive/10 space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="destructive">failed</Badge>
+              <span className="text-muted-foreground">{new Date(recomputeResult.timestamp).toLocaleString()}</span>
+            </div>
+            <div className="font-mono text-destructive">{recomputeResult.error_message}</div>
+          </div>
+        )}
       </Card>
 
       <Card className="p-4 space-y-3">
@@ -323,6 +367,42 @@ export default function AssistantAction() {
                 </tr>
               ))}
               {logs.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-muted-foreground">Nog geen action logs.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card className="p-4">
+        <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-3">Recent maintenance runs (laatste 10)</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-muted-foreground uppercase">
+              <tr>
+                <th className="text-left p-2">Tijd</th>
+                <th className="text-left p-2">Action</th>
+                <th className="text-left p-2">Status</th>
+                <th className="text-left p-2">Eligible / Total</th>
+                <th className="text-left p-2">Excl. (test/rejected/pending/reviewed-not-eligible)</th>
+                <th className="text-left p-2">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              {maintenanceRuns.map(r => {
+                const s = (r.result_json ?? {}) as any;
+                return (
+                  <tr key={r.id} className="border-t">
+                    <td className="p-2 whitespace-nowrap">{new Date(r.created_at).toLocaleString()}</td>
+                    <td className="p-2 font-mono">{r.action_type}</td>
+                    <td className="p-2"><Badge variant={r.status === "success" ? "default" : "destructive"}>{r.status}</Badge></td>
+                    <td className="p-2 font-mono">{s.clean_list_eligible_true ?? "—"} / {s.total_checked ?? "—"}</td>
+                    <td className="p-2 font-mono text-muted-foreground">
+                      {s.test_records_excluded ?? "—"} / {s.rejected_excluded ?? "—"} / {s.pending_review_excluded ?? "—"} / {s.reviewed_but_not_eligible ?? "—"}
+                    </td>
+                    <td className="p-2 text-destructive">{r.error_message ?? "—"}</td>
+                  </tr>
+                );
+              })}
+              {maintenanceRuns.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-muted-foreground">Nog geen maintenance runs.</td></tr>}
             </tbody>
           </table>
         </div>
