@@ -190,7 +190,8 @@ export default function AssistantTest() {
                   <th className="text-left p-2">Tel</th>
                   <th className="text-left p-2">Qualification</th>
                   <th className="text-left p-2">Fit</th>
-                  <th className="text-left p-2">Score</th>
+                  <th className="text-left p-2">Raw opp.</th>
+                  <th className="text-left p-2">Lead score</th>
                   <th className="text-left p-2">Clean</th>
                   <th className="text-left p-2">Reason</th>
                   <th className="text-left p-2">Recommended</th>
