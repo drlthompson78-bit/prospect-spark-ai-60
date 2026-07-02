@@ -371,6 +371,42 @@ export default function AssistantAction() {
           </table>
         </div>
       </Card>
+
+      <Card className="p-4">
+        <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-3">Recent maintenance runs (laatste 10)</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="text-muted-foreground uppercase">
+              <tr>
+                <th className="text-left p-2">Tijd</th>
+                <th className="text-left p-2">Action</th>
+                <th className="text-left p-2">Status</th>
+                <th className="text-left p-2">Eligible / Total</th>
+                <th className="text-left p-2">Excl. (test/rejected/pending/reviewed-not-eligible)</th>
+                <th className="text-left p-2">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              {maintenanceRuns.map(r => {
+                const s = (r.result_json ?? {}) as any;
+                return (
+                  <tr key={r.id} className="border-t">
+                    <td className="p-2 whitespace-nowrap">{new Date(r.created_at).toLocaleString()}</td>
+                    <td className="p-2 font-mono">{r.action_type}</td>
+                    <td className="p-2"><Badge variant={r.status === "success" ? "default" : "destructive"}>{r.status}</Badge></td>
+                    <td className="p-2 font-mono">{s.clean_list_eligible_true ?? "—"} / {s.total_checked ?? "—"}</td>
+                    <td className="p-2 font-mono text-muted-foreground">
+                      {s.test_records_excluded ?? "—"} / {s.rejected_excluded ?? "—"} / {s.pending_review_excluded ?? "—"} / {s.reviewed_but_not_eligible ?? "—"}
+                    </td>
+                    <td className="p-2 text-destructive">{r.error_message ?? "—"}</td>
+                  </tr>
+                );
+              })}
+              {maintenanceRuns.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-muted-foreground">Nog geen maintenance runs.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </div>
   );
 }
