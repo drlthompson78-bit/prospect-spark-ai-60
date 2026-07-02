@@ -32,7 +32,7 @@ export default function Exports() {
   useEffect(() => { loadHistory(); }, []);
 
   async function exportQualified() {
-    const { data } = await supabase.from("prospects").select("*").in("fit_category", ["A","B","C"]);
+    const { data } = await supabase.from("prospects").select("*").in("fit_category", ["A","B","C"]).eq("is_test_record", false);
     if (!data?.length) { toast.error("Geen qualified prospects"); return; }
     const rows = data.map(p => ({
       rank_overall: p.rank_overall, company_name: p.company_name, segment: p.segment, city: p.city,
@@ -50,7 +50,8 @@ export default function Exports() {
 
   async function exportWhatsapp() {
     const { data } = await supabase.from("prospects").select("*, scan_pages(scan_slug, public_url)")
-      .eq("import_allowed", true).eq("permission_status", "opt_in").not("phone_mobile_e164", "is", null);
+      .eq("import_allowed", true).eq("permission_status", "opt_in").eq("is_test_record", false).not("phone_mobile_e164", "is", null);
+
     if (!data?.length) { toast.error("Geen prospects met opt-in + import_allowed + mobiel"); return; }
     const rows = data.map((p: any) => ({
       phone_e164: p.phone_mobile_e164,

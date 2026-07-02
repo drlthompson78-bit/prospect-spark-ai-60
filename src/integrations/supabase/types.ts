@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      assistant_action_logs: {
+        Row: {
+          action_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          request_json: Json | null
+          result_json: Json | null
+          status: string
+          target_id: string | null
+          target_table: string | null
+          token_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          request_json?: Json | null
+          result_json?: Json | null
+          status?: string
+          target_id?: string | null
+          target_table?: string | null
+          token_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          request_json?: Json | null
+          result_json?: Json | null
+          status?: string
+          target_id?: string | null
+          target_table?: string | null
+          token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assistant_action_logs_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "assistant_test_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assistant_action_settings: {
+        Row: {
+          action_mode_enabled: boolean
+          id: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          action_mode_enabled?: boolean
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          action_mode_enabled?: boolean
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       assistant_test_runs: {
         Row: {
           created_at: string
@@ -55,7 +123,9 @@ export type Database = {
           created_by: string
           expires_at: string
           id: string
+          mode: string
           revoked: boolean
+          scopes: string[]
           token_hash: string
         }
         Insert: {
@@ -63,7 +133,9 @@ export type Database = {
           created_by: string
           expires_at: string
           id?: string
+          mode?: string
           revoked?: boolean
+          scopes?: string[]
           token_hash: string
         }
         Update: {
@@ -71,7 +143,9 @@ export type Database = {
           created_by?: string
           expires_at?: string
           id?: string
+          mode?: string
           revoked?: boolean
+          scopes?: string[]
           token_hash?: string
         }
         Relationships: []
@@ -184,6 +258,7 @@ export type Database = {
           id: string
           import_allowed: boolean
           is_directory_or_leadsite: boolean
+          is_test_record: boolean
           last_verified_at: string | null
           latitude: number | null
           lead_score: number | null
@@ -237,6 +312,7 @@ export type Database = {
           id?: string
           import_allowed?: boolean
           is_directory_or_leadsite?: boolean
+          is_test_record?: boolean
           last_verified_at?: string | null
           latitude?: number | null
           lead_score?: number | null
@@ -290,6 +366,7 @@ export type Database = {
           id?: string
           import_allowed?: boolean
           is_directory_or_leadsite?: boolean
+          is_test_record?: boolean
           last_verified_at?: string | null
           latitude?: number | null
           lead_score?: number | null
