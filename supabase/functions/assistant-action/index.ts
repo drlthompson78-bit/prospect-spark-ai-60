@@ -483,7 +483,7 @@ Deno.serve(async (req) => {
           return err("sandbox_only", "GET reject only allowed on test records", 403);
         }
         const reason = "Rejected by assistant sandbox test";
-        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason };
+        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason, clean_list_eligible: false };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
         await admin.from("prospect_events").insert({ prospect_id: id, event_type: "assistant_rejected", event_note: reason });
