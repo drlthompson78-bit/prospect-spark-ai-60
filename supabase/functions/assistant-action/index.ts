@@ -423,7 +423,6 @@ Deno.serve(async (req) => {
           fit_category: "pending",
           lead_score: null,
           website_review_status: "pending",
-          clean_list_eligible: false,
         };
         const { data, error } = await admin.from("prospects").insert(insertRow).select("id").single();
         if (error) throw new Error(error.message);
@@ -481,7 +480,7 @@ Deno.serve(async (req) => {
           return err("sandbox_only", "GET reject only allowed on test records", 403);
         }
         const reason = "Rejected by assistant sandbox test";
-        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason, clean_list_eligible: false };
+        const patch = { fit_category: "rejected", lead_score: 0, exclusion_reason: reason };
         const { error: upErr } = await admin.from("prospects").update(patch).eq("id", id);
         if (upErr) throw new Error(upErr.message);
         await admin.from("prospect_events").insert({ prospect_id: id, event_type: "assistant_rejected", event_note: reason });
@@ -508,7 +507,7 @@ Deno.serve(async (req) => {
           is_test_record: true, has_own_website: true, has_visible_phone: false,
           source_type: "assistant_test", permission_status: "not_contacted",
           import_allowed: false, fit_category: "pending",
-          lead_score: null, website_review_status: "pending", clean_list_eligible: false,
+          lead_score: null, website_review_status: "pending",
         }).select("id").single();
         if (cErr) throw new Error(cErr.message);
         const pid = created.id as string;
