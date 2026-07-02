@@ -97,6 +97,9 @@ export default function AssistantAction() {
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
   const [verifyResult, setVerifyResult] = useState<any>(null);
   const [cleanSeedResult, setCleanSeedResult] = useState<any>(null);
+  const [fictivePreview, setFictivePreview] = useState<any>(null);
+  const [fictiveDeleteResult, setFictiveDeleteResult] = useState<any>(null);
+
   const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
   const [auditData, setAuditData] = useState<any>(null);
   const [auditHtml, setAuditHtml] = useState<string | null>(null);
