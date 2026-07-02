@@ -528,6 +528,7 @@ Deno.serve(async (req) => {
           reviewed_at: new Date().toISOString(),
           lead_score: leadScore, fit_category: fit,
           exclusion_reason: null, review_notes: "Sandbox full scenario",
+          clean_list_eligible: eligible,
         }).eq("id", pid);
         if (rErr) throw new Error(rErr.message);
         await admin.from("prospect_events").insert({
