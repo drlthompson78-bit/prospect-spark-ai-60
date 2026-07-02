@@ -45,6 +45,10 @@ export default function Prospects() {
       if (f.whatsapp === "yes" && !p.whatsapp_visible) return false;
       if (f.whatsapp === "no" && p.whatsapp_visible) return false;
       if (f.permission !== "all" && p.permission_status !== f.permission) return false;
+      if (f.review === "pending" && p.website_review_status === "reviewed") return false;
+      if (f.review === "reviewed_eligible" && !(p.website_review_status === "reviewed" && (p.redesign_score ?? 0) >= 70 && ["A","B","C"].includes(p.fit_category))) return false;
+      if (f.review === "reviewed_rejected" && !(p.website_review_status === "reviewed" && (p.fit_category === "rejected" || (p.redesign_score ?? 0) < 70))) return false;
+
       if (f.q && !(`${p.company_name} ${p.city ?? ""}`.toLowerCase().includes(f.q.toLowerCase()))) return false;
       return true;
     });
