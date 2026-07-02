@@ -576,9 +576,8 @@ export default function AssistantAction() {
         )}
       </Card>
 
-      </Card>
-
       <Card className="p-4 space-y-3 border-destructive/40">
+
         <div>
           <div className="font-medium text-sm">Duplicate / leadsite guard</div>
           <div className="text-xs text-muted-foreground">
