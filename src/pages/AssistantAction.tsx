@@ -53,6 +53,16 @@ export default function AssistantAction() {
   const [running, setRunning] = useState<string | null>(null);
   const [scenarioToken, setScenarioToken] = useState("");
   const [scenarioResult, setScenarioResult] = useState<any>(null);
+  const [recomputeResult, setRecomputeResult] = useState<any>(null);
+  const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
+
+  async function loadMaintenance() {
+    const { data } = await supabase.from("assistant_action_logs")
+      .select("*")
+      .in("action_type", ["recompute_clean_eligibility", "verify_clean_eligibility"])
+      .order("created_at", { ascending: false }).limit(10);
+    setMaintenanceRuns((data ?? []) as LogRow[]);
+  }
 
   async function load() {
     const [s, t, l] = await Promise.all([
