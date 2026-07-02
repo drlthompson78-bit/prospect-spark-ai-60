@@ -163,10 +163,22 @@ Deno.serve(async (req) => {
     }
   }
 
+  // GET link endpoints: always sandbox mode + never production_write
+  if (GET_LINK_ENDPOINTS.has(endpoint)) {
+    if (req.method !== "GET") return err("method_not_allowed", "GET only", 405);
+    if (v.mode !== "sandbox") {
+      await logAction({ tokenId: v.tokenId, action_type: endpoint, status: "blocked", error_message: "sandbox_only" });
+      return err("sandbox_only", "GET links require a sandbox token", 403);
+    }
+  }
+
   let body: any = {};
   if (req.method === "POST") {
     try { body = await req.json(); } catch { body = {}; }
   }
+
+  // For GET link endpoints, hydrate body from query params so downstream logic stays uniform
+  const qp = url.searchParams;
 
   try {
     switch (endpoint) {
