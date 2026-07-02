@@ -45,6 +45,45 @@ async function sha256Hex(input: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function auditToTxt(data: any): string {
+  const lines: string[] = [];
+  const push = (s = "") => lines.push(s);
+  const section = (title: string, body: any) => {
+    push("=".repeat(72));
+    push(title.toUpperCase());
+    push("=".repeat(72));
+    if (body === undefined || body === null) { push("(none)"); push(""); return; }
+    if (typeof body === "string") { push(body); push(""); return; }
+    try { push(JSON.stringify(body, null, 2)); } catch { push(String(body)); }
+    push("");
+  };
+  push("FULL AUDIT REPORT");
+  push(`Generated: ${new Date().toISOString()}`);
+  push("");
+  const sections = [
+    "token_and_mode", "system_health", "prospect_database_summary",
+    "google_places_sample", "scoring_formula_tests", "clean_list_recompute_summary",
+    "export_eligibility_verification", "security_compliance_checks",
+    "recent_action_logs", "batch_readiness", "overall_audit_result",
+  ];
+  for (const k of sections) section(k, data?.[k]);
+  // Include any additional keys not listed above
+  for (const k of Object.keys(data ?? {})) {
+    if (!sections.includes(k)) section(k, data[k]);
+  }
+  return lines.join("\n");
+}
+
+function downloadBlob(filename: string, content: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
 export default function AssistantAction() {
   const [enabled, setEnabled] = useState(false);
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -58,6 +97,9 @@ export default function AssistantAction() {
   const [maintenanceRuns, setMaintenanceRuns] = useState<LogRow[]>([]);
   const [verifyResult, setVerifyResult] = useState<any>(null);
   const [auditLinks, setAuditLinks] = useState<{ html: string; json: string } | null>(null);
+  const [auditData, setAuditData] = useState<any>(null);
+  const [auditHtml, setAuditHtml] = useState<string | null>(null);
+  const [auditTimestamp, setAuditTimestamp] = useState<string | null>(null);
   const [recomputeProgress, setRecomputeProgress] = useState(0);
   const [recomputeElapsed, setRecomputeElapsed] = useState(0);
   const [recomputeTotal, setRecomputeTotal] = useState<number | null>(null);
@@ -178,6 +220,9 @@ export default function AssistantAction() {
       <div>
         <h1 className="text-2xl font-semibold">Assistant Action Mode</h1>
         <p className="text-sm text-muted-foreground">Beveiligde mutatie-endpoints voor een externe AI-assistent. Standaard uit.</p>
+        <p className="text-xs text-primary mt-2">
+          Download het audit JSON-bestand en upload dit naar ChatGPT voor volledige analyse.
+        </p>
       </div>
 
       <Card className="p-4 flex items-center justify-between">
@@ -370,43 +415,85 @@ export default function AssistantAction() {
       </Card>
 
       <Card className="p-4 space-y-3">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
             <div className="font-medium text-sm">Full Audit Report</div>
             <div className="text-xs text-muted-foreground">
-              Read-only HTML+JSON rapport dat alle system, security, scoring en export checks combineert.
-              Genereert een nieuwe read-only token (24u) en toont een deelbare link.
+              Read-only rapport dat alle system, security, scoring en export checks combineert.
+              Toont de HTML-versie op de pagina en biedt JSON + TXT downloads.
+              Bevat geen secrets, API keys of volledige telefoonnummers.
             </div>
           </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            disabled={running === "audit"}
-            onClick={async () => {
-              setRunning("audit");
-              try {
-                const token = randomToken();
-                const hash = await sha256Hex(token);
-                const expires_at = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
-                const { data: userRes } = await supabase.auth.getUser();
-                const { error } = await supabase.from("assistant_test_tokens").insert({
-                  token_hash: hash, scopes: ["read"], mode: "sandbox", expires_at,
-                  created_by: userRes.user?.id ?? null, revoked: false,
-                });
-                if (error) throw error;
-                const html = `${FN_URL}/full-audit-report?token=${encodeURIComponent(token)}`;
-                const json = `${FN_URL}/full-audit-report.json?token=${encodeURIComponent(token)}`;
-                setAuditLinks({ html, json });
-                toast.success("Audit link gegenereerd (24u geldig)");
-                load();
-              } catch (e: any) {
-                toast.error(e.message ?? "Kon audit link niet aanmaken");
-              } finally { setRunning(null); }
-            }}
-          >
-            {running === "audit" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Generate Full Audit Report"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              disabled={running === "audit"}
+              onClick={async () => {
+                setRunning("audit");
+                setAuditData(null);
+                setAuditHtml(null);
+                try {
+                  const token = randomToken();
+                  const hash = await sha256Hex(token);
+                  const expires_at = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+                  const { data: userRes } = await supabase.auth.getUser();
+                  const { error } = await supabase.from("assistant_test_tokens").insert({
+                    token_hash: hash, scopes: ["read"], mode: "sandbox", expires_at,
+                    created_by: userRes.user?.id ?? null, revoked: false,
+                  });
+                  if (error) throw error;
+                  const htmlUrl = `${FN_URL}/full-audit-report?token=${encodeURIComponent(token)}`;
+                  const jsonUrl = `${FN_URL}/full-audit-report.json?token=${encodeURIComponent(token)}`;
+                  setAuditLinks({ html: htmlUrl, json: jsonUrl });
+
+                  // Fetch both in parallel
+                  const [jsonRes, htmlRes] = await Promise.all([
+                    fetch(jsonUrl),
+                    fetch(htmlUrl),
+                  ]);
+                  if (!jsonRes.ok) throw new Error(`JSON fetch failed: ${jsonRes.status}`);
+                  const jsonData = await jsonRes.json();
+                  const htmlText = htmlRes.ok ? await htmlRes.text() : null;
+                  setAuditData(jsonData);
+                  setAuditHtml(htmlText);
+                  setAuditTimestamp(new Date().toISOString());
+                  toast.success("Audit rapport gegenereerd");
+                  load();
+                } catch (e: any) {
+                  toast.error(e.message ?? "Kon audit rapport niet genereren");
+                } finally { setRunning(null); }
+              }}
+            >
+              {running === "audit" ? (<><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Bezig…</>) : "Generate Full Audit Report"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!auditData}
+              onClick={() => {
+                if (!auditData) return;
+                const ts = (auditTimestamp ?? new Date().toISOString()).replace(/[:.]/g, "-");
+                downloadBlob(`audit-report-${ts}.json`, JSON.stringify(auditData, null, 2), "application/json");
+              }}
+            >
+              Download audit JSON
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!auditData}
+              onClick={() => {
+                if (!auditData) return;
+                const ts = (auditTimestamp ?? new Date().toISOString()).replace(/[:.]/g, "-");
+                downloadBlob(`audit-report-${ts}.txt`, auditToTxt(auditData), "text/plain;charset=utf-8");
+              }}
+            >
+              Download audit TXT
+            </Button>
+          </div>
         </div>
+
         {auditLinks && (
           <div className="space-y-2">
             {[
@@ -430,6 +517,22 @@ export default function AssistantAction() {
               Alleen leestoegang. Bevat geen secrets of volledige telefoonnummers. Token kan via de tokentabel worden ingetrokken.
             </div>
           </div>
+        )}
+
+        {auditHtml && (
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">HTML-versie:</div>
+            <iframe
+              title="Full Audit Report"
+              srcDoc={auditHtml}
+              className="w-full h-[600px] rounded border border-border bg-background"
+              sandbox=""
+            />
+          </div>
+        )}
+
+        {auditData && !auditHtml && (
+          <pre className="bg-secondary rounded p-3 text-xs overflow-x-auto max-h-96">{JSON.stringify(auditData, null, 2)}</pre>
         )}
       </Card>
 
