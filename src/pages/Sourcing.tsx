@@ -212,8 +212,11 @@ export default function Sourcing() {
                 <th className="text-left p-3">Reason</th>
                 <th className="text-left p-3">Recommended</th>
                 <th className="text-left p-3">Fit</th>
-                <th className="text-left p-3">Score</th>
+                <th className="text-left p-3">Raw opp.</th>
+                <th className="text-left p-3">Lead score</th>
+                <th className="text-left p-3">Clean</th>
                 <th></th>
+
               </tr>
             </thead>
             <tbody>
