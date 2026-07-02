@@ -21,12 +21,16 @@ export default function Prospects() {
   const regionMap = useMemo(() => Object.fromEntries(regions.map(r => [r.id, r])), [regions]);
 
   // Strict clean-list criteria (voor de 1.000 schone prospects)
+  // Rejected prospects hebben lead_score = 0; pending hebben lead_score = null.
+  // Alleen prospects met een definitieve lead_score >= 70 én fit A/B/C tellen mee.
   const isClean = (p: any) =>
     !!p.website_url &&
     p.has_own_website === true &&
     p.has_visible_phone === true &&
     ["A","B","C"].includes(p.fit_category) &&
+    p.lead_score !== null &&
     (p.lead_score ?? 0) >= 70;
+
 
   const cleanCount = useMemo(() => prospects.filter(isClean).length, [prospects]);
 
