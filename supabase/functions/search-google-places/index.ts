@@ -11,12 +11,53 @@ const DIRECTORY_DOMAINS = [
   "linkedin.com","instagram.com","google.com","goudengids.nl","telefoonboek.nl"
 ];
 
+// NL city names commonly used in leadsite domains / generic brand names
+const NL_CITIES = [
+  "amsterdam","rotterdam","utrecht","den-haag","denhaag","the-hague","haag",
+  "eindhoven","groningen","tilburg","almere","breda","nijmegen","apeldoorn",
+  "haarlem","arnhem","enschede","zaanstad","amersfoort","zwolle","leiden",
+  "maastricht","dordrecht","ede","alphen","alkmaar","delft","hilversum",
+  "leeuwarden","gouda","hengelo","capelle","spijkenisse","hoofddorp","zoetermeer"
+];
+const GENERIC_TRADE_WORDS = [
+  "loodgieter","dakdekker","elektricien","installateur","klusbedrijf",
+  "aannemer","cv","warmtepomp","groepenkast","onderhoud","goedkope","goedkoop",
+  "spoed","24uur","24-uurs","service"
+];
+
 function isDirectory(url: string | null): boolean {
   if (!url) return false;
   try {
     const host = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
     return DIRECTORY_DOMAINS.some((d) => host === d || host.endsWith("." + d));
   } catch { return false; }
+}
+
+// Heuristic: domain or company name looks like a generic city+trade leadsite / SEO doorway.
+function looksLikeLeadsite(url: string | null, companyName: string): { flag: boolean; reason: string } {
+  const name = (companyName || "").toLowerCase();
+  let host = "";
+  let hostCore = "";
+  let utm = false;
+  if (url) {
+    try {
+      const u = new URL(url);
+      host = u.hostname.replace(/^www\./, "").toLowerCase();
+      hostCore = host.split(".")[0] ?? "";
+      utm = Array.from(u.searchParams.keys()).some((k) => k.toLowerCase().startsWith("utm_"));
+    } catch { /* ignore */ }
+  }
+  const cityInHost = NL_CITIES.some((c) => hostCore.includes(c));
+  const tradeInHost = GENERIC_TRADE_WORDS.some((t) => hostCore.includes(t));
+  const cityInName = NL_CITIES.some((c) => name.includes(c.replace("-", " ")));
+  const tradeInName = GENERIC_TRADE_WORDS.some((t) => name.includes(t));
+  const goedkoopInName = /goedkoop|goedkope|spoed|24\s?uur/.test(name);
+
+  if (cityInHost && tradeInHost) return { flag: true, reason: "Domein combineert stad + branche (mogelijk leadsite)" };
+  if (goedkoopInName) return { flag: true, reason: "Naam bevat 'goedkoop/spoed/24uur' (typische leadsite-signalen)" };
+  if (cityInName && tradeInName && name.split(" ").length <= 3) return { flag: true, reason: "Zeer generieke bedrijfsnaam (stad + branche)" };
+  if (utm) return { flag: true, reason: "Website-URL bevat UTM-parameters vanuit Google-profiel" };
+  return { flag: false, reason: "" };
 }
 
 function normalizeNL(phone: string | null): string | null {
