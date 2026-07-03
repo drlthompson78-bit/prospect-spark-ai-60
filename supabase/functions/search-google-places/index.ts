@@ -99,6 +99,36 @@ function rawOpportunityScore(p: {
   return Math.min(score, 100);
 }
 
+function extractCityFromAddress(addr: string | null): string | null {
+  if (!addr) return null;
+  const parts = addr.split(",").map((s) => s.trim()).filter(Boolean);
+  for (const part of parts) {
+    const m = part.match(/^\d{4}\s?[A-Z]{2}\s+(.+)$/i);
+    if (m) return m[1].trim();
+  }
+  if (parts.length >= 2) {
+    const candidate = parts[parts.length - 2];
+    if (candidate && !/nederland|netherlands/i.test(candidate)) return candidate;
+  }
+  return null;
+}
+
+function normalizeCityName(c: string | null): string {
+  return (c ?? "").toLowerCase().replace(/[\s\-']/g, "").trim();
+}
+
+function classifyLocationMatch(target: string | null, actual: string | null): string {
+  if (!target || !actual) return "unknown";
+  const t = normalizeCityName(target);
+  const a = normalizeCityName(actual);
+  if (!t || !a) return "unknown";
+  if (t === a) return "exact_target_city";
+  // Simple containment heuristic (e.g. "Den Haag" vs "'s-Gravenhage" not covered here)
+  if (t.includes(a) || a.includes(t)) return "exact_target_city";
+  // Without a curated regional map we default to nearby_city; caller can refine later.
+  return "nearby_city";
+}
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
