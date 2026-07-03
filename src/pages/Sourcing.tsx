@@ -99,6 +99,14 @@ export default function Sourcing() {
       const rows: ResultRow[] = (data as any).results ?? [];
       setResults(rows);
       setSummary((data as any).summary ?? null);
+      if ((data as any).job_id) {
+        setLastRun({
+          job_id: (data as any).job_id,
+          target_city: (data as any).target_city ?? city ?? null,
+          target_segment: (data as any).target_segment ?? segment ?? null,
+          source_query: (data as any).source_query ?? query,
+        });
+      }
 
       const created = rows.filter(r => r.status === "created").length;
       const duplicates = rows.filter(r => r.status === "duplicate").length;
