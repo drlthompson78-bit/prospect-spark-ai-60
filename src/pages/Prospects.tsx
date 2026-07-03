@@ -395,6 +395,10 @@ export default function Prospects() {
                 <th className="text-left p-2">Bedrijf</th>
                 <th className="text-left p-2">Segment</th>
                 <th className="text-left p-2">Stad</th>
+                <th className="text-left p-2">Target</th>
+                <th className="text-left p-2">Actual</th>
+                <th className="text-left p-2">Match</th>
+                <th className="text-left p-2">Run</th>
                 <th className="text-left p-2">Website</th>
                 <th className="text-left p-2">Telefoon</th>
                 <th className="text-left p-2">Mobiel</th>
