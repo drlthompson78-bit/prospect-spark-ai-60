@@ -374,6 +374,9 @@ Deno.serve(async (req) => {
         qualification_status,
         exclusion_reason: exclusionReason,
         recommended_action: recommendedAction,
+        target_city: targetCity,
+        actual_city: actualCity,
+        location_match: locationMatch,
       });
 
       if (qualification_status === "pending_manual_review") created += 1;
@@ -394,12 +397,33 @@ Deno.serve(async (req) => {
       duplicates: results.filter(r => r.status === "duplicate").length,
     };
 
+    const reviewQueueCandidates = summary.pending_manual_review;
+    const rejectedTotal =
+      summary.rejected_missing_website +
+      summary.rejected_possible_leadsite +
+      summary.rejected_other;
+
     await supabase.from("search_jobs").update({
       status: "completed",
       results_found: places.length,
       prospects_created: created,
+      raw_results_found: places.length,
+      review_queue_candidates: reviewQueueCandidates,
+      rejected_count: rejectedTotal,
+      duplicates_skipped: summary.duplicates,
       completed_at: new Date().toISOString(),
     }).eq("id", job!.id);
+
+    return new Response(JSON.stringify({
+      job_id: job!.id,
+      target_city: targetCity,
+      target_segment: targetSegment,
+      source_query: query,
+      summary,
+      results,
+    }), {
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
 
     return new Response(JSON.stringify({ job_id: job!.id, summary, results }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
