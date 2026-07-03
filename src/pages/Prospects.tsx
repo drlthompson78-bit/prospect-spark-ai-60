@@ -97,7 +97,8 @@ function isCleanOutreach(p: any): boolean {
 
 // ============ EXPORT COLUMNS ============
 const REVIEW_QUEUE_COLUMNS = [
-  "id","company_name","segment","city","address","website_url",
+  "search_job_id","source_query","target_city","target_segment","actual_city","location_match",
+  "company_name","segment","city","address","website_url",
   "phone_main_masked","phone_mobile_masked","whatsapp_visible",
   "google_rating","google_review_count","qualification_status",
   "raw_opportunity_score","website_review_status","fit_category",
@@ -105,7 +106,8 @@ const REVIEW_QUEUE_COLUMNS = [
 ];
 
 const CLEAN_COLUMNS = [
-  "id","company_name","segment","city","address","website_url",
+  "id","search_job_id","source_query","target_city","actual_city","location_match",
+  "company_name","segment","city","address","website_url",
   "phone_main_masked","phone_mobile_masked","whatsapp_visible",
   "google_rating","google_review_count","raw_opportunity_score",
   "redesign_score","lead_score","fit_category","clean_list_eligible",
@@ -113,7 +115,8 @@ const CLEAN_COLUMNS = [
 ];
 
 const DEBUG_COLUMNS = [
-  "id","company_name","segment","city","address","website_url",
+  "id","search_job_id","source_query","target_city","target_segment","actual_city","location_match",
+  "company_name","segment","city","address","website_url",
   "phone_main_masked","phone_mobile_masked","whatsapp_visible",
   "google_rating","google_review_count","qualification_status","exclusion_reason",
   "raw_opportunity_score","website_review_status",
