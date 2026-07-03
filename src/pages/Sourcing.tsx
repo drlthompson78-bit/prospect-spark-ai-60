@@ -210,6 +210,18 @@ export default function Sourcing() {
               <div>Rejected — possible leadsite: <b>{summary.rejected_possible_leadsite}</b></div>
               <div>Duplicates: <b>{summary.duplicates}</b></div>
             </div>
+            {lastRun && (
+              <div className="mt-3 text-xs text-muted-foreground">
+                Run: <span className="font-mono">{lastRun.job_id.slice(0,8)}…</span> · target city: <b>{lastRun.target_city ?? "—"}</b> · segment: <b>{lastRun.target_segment ?? "—"}</b> · query: <span className="font-mono">{lastRun.source_query}</span>
+              </div>
+            )}
+            {lastRun && reviewQueueCandidates > 0 && (
+              <div className="mt-3">
+                <Button size="sm" onClick={exportThisRunReviewQueue}>
+                  Export this run review queue CSV
+                </Button>
+              </div>
+            )}
             {totalFound > 0 && reviewQueueCandidates === 0 && cleanOutreachReady === 0 && (
               <div className="mt-3 p-3 rounded border border-border bg-secondary/40 text-xs">
                 Er zijn resultaten gevonden, maar geen bruikbare review-kandidaten. De meeste resultaten zijn afgewezen als leadsite, directory of missing website.
