@@ -73,6 +73,7 @@ export default function Sourcing() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [lastRun, setLastRun] = useState<{ job_id: string; target_city: string | null; target_segment: string | null; source_query: string } | null>(null);
   const [status, setStatus] = useState<TestStatus>({
     apiConnected: null, lastQuery: "", resultsFound: 0,
     created: 0, duplicates: 0, missingWebsite: 0, pendingReview: 0, error: null,
