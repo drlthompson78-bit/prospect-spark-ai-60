@@ -142,12 +142,18 @@ Deno.serve(async (req) => {
     }
     const maxResults = Math.min(Math.max(Number(max_results) || 20, 1), 20);
 
-    // Create search job
+    const targetCity = (typeof city === "string" && city.trim()) ? city.trim() : null;
+    const targetSegment = (typeof segment === "string" && segment.trim()) ? segment.trim() : null;
+
+    // Create search job with sourcing traceability
     const { data: job } = await supabase.from("search_jobs").insert({
       created_by: userId,
       region_id: region_id ?? null,
-      segment: segment ?? null,
+      segment: targetSegment,
       query,
+      source_query: query,
+      target_city: targetCity,
+      target_segment: targetSegment,
       status: "running",
     }).select().single();
 
