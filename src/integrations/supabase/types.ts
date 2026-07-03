@@ -238,6 +238,7 @@ export type Database = {
       }
       prospects: {
         Row: {
+          actual_city: string | null
           address: string | null
           business_status: string | null
           city: string | null
@@ -264,6 +265,7 @@ export type Database = {
           latitude: number | null
           lead_score: number | null
           local_seo_score: number | null
+          location_match: string | null
           longitude: number | null
           mobile_usability_score: number | null
           notes: string | null
@@ -281,9 +283,13 @@ export type Database = {
           review_notes: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          search_job_id: string | null
           segment: string | null
+          source_query: string | null
           source_type: string
           source_url: string | null
+          target_city: string | null
+          target_segment: string | null
           trust_score: number | null
           updated_at: string
           visual_age_score: number | null
@@ -293,6 +299,7 @@ export type Database = {
           whatsapp_visible: boolean
         }
         Insert: {
+          actual_city?: string | null
           address?: string | null
           business_status?: string | null
           city?: string | null
@@ -319,6 +326,7 @@ export type Database = {
           latitude?: number | null
           lead_score?: number | null
           local_seo_score?: number | null
+          location_match?: string | null
           longitude?: number | null
           mobile_usability_score?: number | null
           notes?: string | null
@@ -336,9 +344,13 @@ export type Database = {
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          search_job_id?: string | null
           segment?: string | null
+          source_query?: string | null
           source_type?: string
           source_url?: string | null
+          target_city?: string | null
+          target_segment?: string | null
           trust_score?: number | null
           updated_at?: string
           visual_age_score?: number | null
@@ -348,6 +360,7 @@ export type Database = {
           whatsapp_visible?: boolean
         }
         Update: {
+          actual_city?: string | null
           address?: string | null
           business_status?: string | null
           city?: string | null
@@ -374,6 +387,7 @@ export type Database = {
           latitude?: number | null
           lead_score?: number | null
           local_seo_score?: number | null
+          location_match?: string | null
           longitude?: number | null
           mobile_usability_score?: number | null
           notes?: string | null
@@ -391,9 +405,13 @@ export type Database = {
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          search_job_id?: string | null
           segment?: string | null
+          source_query?: string | null
           source_type?: string
           source_url?: string | null
+          target_city?: string | null
+          target_segment?: string | null
           trust_score?: number | null
           updated_at?: string
           visual_age_score?: number | null
@@ -408,6 +426,13 @@ export type Database = {
             columns: ["region_id"]
             isOneToOne: false
             referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prospects_search_job_id_fkey"
+            columns: ["search_job_id"]
+            isOneToOne: false
+            referencedRelation: "search_jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -532,40 +557,64 @@ export type Database = {
           completed_at: string | null
           created_at: string
           created_by: string | null
+          duplicates_skipped: number | null
           error_message: string | null
           id: string
           prospects_created: number
           query: string | null
+          raw_results_found: number | null
           region_id: string | null
+          rejected_count: number | null
           results_found: number
+          review_queue_candidates: number | null
           segment: string | null
+          source_query: string | null
+          started_at: string
           status: string
+          target_city: string | null
+          target_segment: string | null
         }
         Insert: {
           completed_at?: string | null
           created_at?: string
           created_by?: string | null
+          duplicates_skipped?: number | null
           error_message?: string | null
           id?: string
           prospects_created?: number
           query?: string | null
+          raw_results_found?: number | null
           region_id?: string | null
+          rejected_count?: number | null
           results_found?: number
+          review_queue_candidates?: number | null
           segment?: string | null
+          source_query?: string | null
+          started_at?: string
           status?: string
+          target_city?: string | null
+          target_segment?: string | null
         }
         Update: {
           completed_at?: string | null
           created_at?: string
           created_by?: string | null
+          duplicates_skipped?: number | null
           error_message?: string | null
           id?: string
           prospects_created?: number
           query?: string | null
+          raw_results_found?: number | null
           region_id?: string | null
+          rejected_count?: number | null
           results_found?: number
+          review_queue_candidates?: number | null
           segment?: string | null
+          source_query?: string | null
+          started_at?: string
           status?: string
+          target_city?: string | null
+          target_segment?: string | null
         }
         Relationships: [
           {

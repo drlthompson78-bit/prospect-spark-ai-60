@@ -99,6 +99,36 @@ function rawOpportunityScore(p: {
   return Math.min(score, 100);
 }
 
+function extractCityFromAddress(addr: string | null): string | null {
+  if (!addr) return null;
+  const parts = addr.split(",").map((s) => s.trim()).filter(Boolean);
+  for (const part of parts) {
+    const m = part.match(/^\d{4}\s?[A-Z]{2}\s+(.+)$/i);
+    if (m) return m[1].trim();
+  }
+  if (parts.length >= 2) {
+    const candidate = parts[parts.length - 2];
+    if (candidate && !/nederland|netherlands/i.test(candidate)) return candidate;
+  }
+  return null;
+}
+
+function normalizeCityName(c: string | null): string {
+  return (c ?? "").toLowerCase().replace(/[\s\-']/g, "").trim();
+}
+
+function classifyLocationMatch(target: string | null, actual: string | null): string {
+  if (!target || !actual) return "unknown";
+  const t = normalizeCityName(target);
+  const a = normalizeCityName(actual);
+  if (!t || !a) return "unknown";
+  if (t === a) return "exact_target_city";
+  // Simple containment heuristic (e.g. "Den Haag" vs "'s-Gravenhage" not covered here)
+  if (t.includes(a) || a.includes(t)) return "exact_target_city";
+  // Without a curated regional map we default to nearby_city; caller can refine later.
+  return "nearby_city";
+}
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -142,12 +172,18 @@ Deno.serve(async (req) => {
     }
     const maxResults = Math.min(Math.max(Number(max_results) || 20, 1), 20);
 
-    // Create search job
+    const targetCity = (typeof city === "string" && city.trim()) ? city.trim() : null;
+    const targetSegment = (typeof segment === "string" && segment.trim()) ? segment.trim() : null;
+
+    // Create search job with sourcing traceability
     const { data: job } = await supabase.from("search_jobs").insert({
       created_by: userId,
       region_id: region_id ?? null,
-      segment: segment ?? null,
+      segment: targetSegment,
       query,
+      source_query: query,
+      target_city: targetCity,
+      target_segment: targetSegment,
       status: "running",
     }).select().single();
 
@@ -260,11 +296,14 @@ Deno.serve(async (req) => {
       const fit: string =
         qualification_status === "pending_manual_review" ? "pending" : "rejected";
 
+      const actualCity = extractCityFromAddress(pl.formattedAddress ?? null);
+      const locationMatch = classifyLocationMatch(targetCity, actualCity);
+
       const insertRow: Record<string, unknown> = {
         region_id: region_id ?? null,
         company_name: companyName,
         segment: seg || null,
-        city: city ?? null,
+        city: actualCity ?? targetCity ?? null,
         address: pl.formattedAddress ?? null,
         latitude: pl.location?.latitude ?? null,
         longitude: pl.location?.longitude ?? null,
@@ -290,6 +329,13 @@ Deno.serve(async (req) => {
           ? `Segment ${seg}, ${hasMobile ? "mobiel zichtbaar" : "vaste lijn"}, ${reviewCount} reviews.`
           : null,
         last_verified_at: new Date().toISOString(),
+        // Sourcing traceability
+        search_job_id: job!.id,
+        source_query: query,
+        target_city: targetCity,
+        target_segment: targetSegment,
+        actual_city: actualCity,
+        location_match: locationMatch,
       };
 
       const { data: inserted, error: insErr } = await supabase.from("prospects")
@@ -328,6 +374,9 @@ Deno.serve(async (req) => {
         qualification_status,
         exclusion_reason: exclusionReason,
         recommended_action: recommendedAction,
+        target_city: targetCity,
+        actual_city: actualCity,
+        location_match: locationMatch,
       });
 
       if (qualification_status === "pending_manual_review") created += 1;
@@ -348,12 +397,33 @@ Deno.serve(async (req) => {
       duplicates: results.filter(r => r.status === "duplicate").length,
     };
 
+    const reviewQueueCandidates = summary.pending_manual_review;
+    const rejectedTotal =
+      summary.rejected_missing_website +
+      summary.rejected_possible_leadsite +
+      summary.rejected_other;
+
     await supabase.from("search_jobs").update({
       status: "completed",
       results_found: places.length,
       prospects_created: created,
+      raw_results_found: places.length,
+      review_queue_candidates: reviewQueueCandidates,
+      rejected_count: rejectedTotal,
+      duplicates_skipped: summary.duplicates,
       completed_at: new Date().toISOString(),
     }).eq("id", job!.id);
+
+    return new Response(JSON.stringify({
+      job_id: job!.id,
+      target_city: targetCity,
+      target_segment: targetSegment,
+      source_query: query,
+      summary,
+      results,
+    }), {
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
 
     return new Response(JSON.stringify({ job_id: job!.id, summary, results }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" }

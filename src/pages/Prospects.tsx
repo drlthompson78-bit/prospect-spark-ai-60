@@ -97,7 +97,8 @@ function isCleanOutreach(p: any): boolean {
 
 // ============ EXPORT COLUMNS ============
 const REVIEW_QUEUE_COLUMNS = [
-  "id","company_name","segment","city","address","website_url",
+  "search_job_id","source_query","target_city","target_segment","actual_city","location_match",
+  "company_name","segment","city","address","website_url",
   "phone_main_masked","phone_mobile_masked","whatsapp_visible",
   "google_rating","google_review_count","qualification_status",
   "raw_opportunity_score","website_review_status","fit_category",
@@ -105,7 +106,8 @@ const REVIEW_QUEUE_COLUMNS = [
 ];
 
 const CLEAN_COLUMNS = [
-  "id","company_name","segment","city","address","website_url",
+  "id","search_job_id","source_query","target_city","actual_city","location_match",
+  "company_name","segment","city","address","website_url",
   "phone_main_masked","phone_mobile_masked","whatsapp_visible",
   "google_rating","google_review_count","raw_opportunity_score",
   "redesign_score","lead_score","fit_category","clean_list_eligible",
@@ -113,7 +115,8 @@ const CLEAN_COLUMNS = [
 ];
 
 const DEBUG_COLUMNS = [
-  "id","company_name","segment","city","address","website_url",
+  "id","search_job_id","source_query","target_city","target_segment","actual_city","location_match",
+  "company_name","segment","city","address","website_url",
   "phone_main_masked","phone_mobile_masked","whatsapp_visible",
   "google_rating","google_review_count","qualification_status","exclusion_reason",
   "raw_opportunity_score","website_review_status",
@@ -136,7 +139,7 @@ export default function Prospects() {
   const [prospects, setProspects] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
   const [showDebug, setShowDebug] = useState(false);
-  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", review: "all", q: "" });
+  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", review: "all", q: "", target_city: "all", actual_city: "all", source_query: "all", search_job: "all" });
 
   useEffect(() => {
     supabase.from("regions").select("*").order("region_order").then(({ data }) => setRegions(data ?? []));
@@ -163,16 +166,31 @@ export default function Prospects() {
     return { reviewQueue, cleanOutreach, rejectedHidden, testHidden, usable };
   }, [prospects]);
 
+  // Scoping filters apply to BOTH the table view AND the export handlers, so a
+  // Schiedam-run stays isolated from earlier Rotterdam-runs.
+  const matchesScope = (p: any) => {
+    if (f.region !== "all" && p.region_id !== f.region) return false;
+    if (f.segment !== "all" && p.segment !== f.segment) return false;
+    if (f.target_city !== "all" && (p.target_city ?? "") !== f.target_city) return false;
+    if (f.actual_city !== "all" && (p.actual_city ?? "") !== f.actual_city) return false;
+    if (f.source_query !== "all" && (p.source_query ?? "") !== f.source_query) return false;
+    if (f.search_job !== "all" && (p.search_job_id ?? "") !== f.search_job) return false;
+    return true;
+  };
+
+  const targetCities = useMemo(() => Array.from(new Set(prospects.map(p => p.target_city).filter(Boolean))).sort(), [prospects]);
+  const actualCities = useMemo(() => Array.from(new Set(prospects.map(p => p.actual_city).filter(Boolean))).sort(), [prospects]);
+  const sourceQueries = useMemo(() => Array.from(new Set(prospects.map(p => p.source_query).filter(Boolean))).sort(), [prospects]);
+  const searchJobs = useMemo(() => Array.from(new Set(prospects.map(p => p.search_job_id).filter(Boolean))), [prospects]);
+
   const filtered = useMemo(() => {
     let list = prospects.filter(p => {
       // Default: alleen bruikbare prospects (review queue OR clean/outreach).
-      // Wanneer showDebug aan staat: toon ook rejected/debug (maar nog steeds geen testrecords — die zijn uit de fetch geweerd).
       if (!showDebug) {
         if (!(isReviewQueue(p) || isCleanOutreach(p))) return false;
       }
 
-      if (f.region !== "all" && p.region_id !== f.region) return false;
-      if (f.segment !== "all" && p.segment !== f.segment) return false;
+      if (!matchesScope(p)) return false;
       if (f.fit !== "all" && p.fit_category !== f.fit) return false;
       if (f.whatsapp === "yes" && !p.whatsapp_visible) return false;
       if (f.whatsapp === "no" && p.whatsapp_visible) return false;
@@ -181,7 +199,7 @@ export default function Prospects() {
       if (f.review === "reviewed_eligible" && !(p.website_review_status === "reviewed" && (p.redesign_score ?? 0) >= 70 && ["A","B","C"].includes(p.fit_category))) return false;
       if (f.review === "reviewed_rejected" && !(p.website_review_status === "reviewed" && (p.fit_category === "rejected" || (p.redesign_score ?? 0) < 70))) return false;
 
-      if (f.q && !(`${p.company_name} ${p.city ?? ""}`.toLowerCase().includes(f.q.toLowerCase()))) return false;
+      if (f.q && !(`${p.company_name} ${p.city ?? ""} ${p.actual_city ?? ""} ${p.target_city ?? ""}`.toLowerCase().includes(f.q.toLowerCase()))) return false;
       return true;
     });
     const fitRank = (fit: string) => fit === "A" ? 0 : fit === "B" ? 1 : fit === "C" ? 2 : 3;
@@ -209,29 +227,46 @@ export default function Prospects() {
   }, [filtered]);
 
   // ============ EXPORT HANDLERS ============
+  // All exports respect the active scoping filters (target_city, search_job,
+  // segment, actual_city, source_query, region) so a Schiedam-run export
+  // NEVER includes older Rotterdam-runs.
+  function scopeSuffix() {
+    const parts: string[] = [];
+    if (f.target_city !== "all") parts.push(f.target_city.toLowerCase().replace(/\s+/g, "-"));
+    if (f.segment !== "all") parts.push(f.segment.toLowerCase().replace(/\s+/g, "-"));
+    if (f.search_job !== "all") parts.push("job-" + f.search_job.slice(0, 8));
+    return parts.length ? parts.join("-") + "-" : "";
+  }
+
   async function handleExportReviewQueue() {
-    const rows = prospects.filter(isReviewQueue).map(toExportRow);
+    const rows = prospects.filter(p => isReviewQueue(p) && matchesScope(p)).map(toExportRow);
     if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
-    downloadCsv(`review-queue-prospects-${tsStamp()}.csv`, buildCsv(rows, REVIEW_QUEUE_COLUMNS));
-    await logExport("export_review_queue_csv", rows.length);
+    downloadCsv(`review-queue-${scopeSuffix()}${tsStamp()}.csv`, buildCsv(rows, REVIEW_QUEUE_COLUMNS));
+    await logExport("export_review_queue_csv", rows.length, {
+      target_city: f.target_city, segment: f.segment, search_job_id: f.search_job,
+      actual_city: f.actual_city, source_query: f.source_query, region: f.region,
+    });
     toast.success(`CSV export generated successfully. (${rows.length} records)`);
   }
 
   async function handleExportCleanOutreach() {
-    const rows = prospects.filter(isCleanOutreach).map(toExportRow);
+    const rows = prospects.filter(p => isCleanOutreach(p) && matchesScope(p)).map(toExportRow);
     if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
-    downloadCsv(`clean-outreach-prospects-${tsStamp()}.csv`, buildCsv(rows, CLEAN_COLUMNS));
-    await logExport("export_clean_outreach_csv", rows.length);
+    downloadCsv(`clean-outreach-${scopeSuffix()}${tsStamp()}.csv`, buildCsv(rows, CLEAN_COLUMNS));
+    await logExport("export_clean_outreach_csv", rows.length, {
+      target_city: f.target_city, segment: f.segment, search_job_id: f.search_job,
+    });
     toast.success(`CSV export generated successfully. (${rows.length} records)`);
   }
 
   async function handleExportRawDebug() {
     if (!confirm("Deze export bevat ook rejected/debug records en is niet bedoeld voor outreach. Doorgaan?")) return;
-    // Debug export: alle zichtbare records inclusief rejected (testrecords zijn al uit de fetch geweerd).
-    const rows = prospects.map(toExportRow);
+    const rows = prospects.filter(matchesScope).map(toExportRow);
     if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
-    downloadCsv(`raw-debug-prospects-${tsStamp()}.csv`, buildCsv(rows, DEBUG_COLUMNS));
-    await logExport("export_raw_debug_csv", rows.length);
+    downloadCsv(`raw-debug-${scopeSuffix()}${tsStamp()}.csv`, buildCsv(rows, DEBUG_COLUMNS));
+    await logExport("export_raw_debug_csv", rows.length, {
+      target_city: f.target_city, segment: f.segment, search_job_id: f.search_job,
+    });
     toast.success(`CSV export generated successfully. (${rows.length} records)`);
   }
 
@@ -298,6 +333,36 @@ export default function Prospects() {
             </SelectContent>
           </Select>
 
+          <Select value={f.target_city} onValueChange={v => setF({...f, target_city: v})}>
+            <SelectTrigger><SelectValue placeholder="Target city"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle target cities</SelectItem>
+              {targetCities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={f.actual_city} onValueChange={v => setF({...f, actual_city: v})}>
+            <SelectTrigger><SelectValue placeholder="Actual city"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle actual cities</SelectItem>
+              {actualCities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={f.source_query} onValueChange={v => setF({...f, source_query: v})}>
+            <SelectTrigger><SelectValue placeholder="Source query"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle queries</SelectItem>
+              {sourceQueries.map(q => <SelectItem key={q} value={q}>{q}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={f.search_job} onValueChange={v => setF({...f, search_job: v})}>
+            <SelectTrigger><SelectValue placeholder="Search job"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle runs</SelectItem>
+              {searchJobs.map(j => <SelectItem key={j} value={j}>{String(j).slice(0, 8)}…</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+
 
           <label className="flex items-center gap-2 text-xs px-2">
             <input type="checkbox" checked={showDebug} onChange={e => setShowDebug(e.target.checked)}/>
@@ -330,6 +395,10 @@ export default function Prospects() {
                 <th className="text-left p-2">Bedrijf</th>
                 <th className="text-left p-2">Segment</th>
                 <th className="text-left p-2">Stad</th>
+                <th className="text-left p-2">Target</th>
+                <th className="text-left p-2">Actual</th>
+                <th className="text-left p-2">Match</th>
+                <th className="text-left p-2">Run</th>
                 <th className="text-left p-2">Website</th>
                 <th className="text-left p-2">Telefoon</th>
                 <th className="text-left p-2">Mobiel</th>
@@ -342,12 +411,13 @@ export default function Prospects() {
                 <th className="text-left p-2">Perm</th>
                 <th className="text-left p-2">Outreach</th>
                 {showDebug && <th className="text-left p-2">Status</th>}
+
               </tr>
             </thead>
             <tbody>
               {grouped.map(([regionId, rows]) => {
                 const r = regionMap[regionId];
-                const colSpan = showDebug ? 16 : 15;
+                const colSpan = showDebug ? 20 : 19;
                 return (
                   <Fragment key={regionId}>
                     <tr>
@@ -370,6 +440,24 @@ export default function Prospects() {
                           </td>
                           <td className="p-2 text-xs">{p.segment}</td>
                           <td className="p-2 text-xs">{p.city}</td>
+                          <td className="p-2 text-xs">{p.target_city ?? "—"}</td>
+                          <td className="p-2 text-xs">{p.actual_city ?? "—"}</td>
+                          <td className="p-2 text-xs">
+                            {p.location_match ? (
+                              <Badge variant={
+                                p.location_match === "exact_target_city" ? "default" :
+                                p.location_match === "nearby_city" ? "secondary" :
+                                p.location_match === "outside_target_area" ? "destructive" : "outline"
+                              } className="text-[10px]">
+                                {p.location_match === "exact_target_city" ? "exact" :
+                                 p.location_match === "nearby_city" ? "buiten target" :
+                                 p.location_match === "outside_target_area" ? "buiten regio" : "?"}
+                              </Badge>
+                            ) : "—"}
+                          </td>
+                          <td className="p-2 text-[10px] font-mono text-muted-foreground" title={`${p.source_query ?? ""}\n${p.search_job_id ?? ""}`}>
+                            {p.search_job_id ? String(p.search_job_id).slice(0, 6) : "—"}
+                          </td>
                           <td className="p-2">{p.website_url && <a href={p.website_url} target="_blank" rel="noreferrer" className="text-accent inline-flex items-center gap-1 text-xs"><ExternalLink className="h-3 w-3"/></a>}</td>
                           <td className="p-2 text-xs">{p.phone_main}</td>
                           <td className="p-2 text-xs">{p.phone_mobile_e164}</td>

@@ -73,6 +73,7 @@ export default function Sourcing() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ResultRow[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [lastRun, setLastRun] = useState<{ job_id: string; target_city: string | null; target_segment: string | null; source_query: string } | null>(null);
   const [status, setStatus] = useState<TestStatus>({
     apiConnected: null, lastQuery: "", resultsFound: 0,
     created: 0, duplicates: 0, missingWebsite: 0, pendingReview: 0, error: null,
@@ -98,6 +99,14 @@ export default function Sourcing() {
       const rows: ResultRow[] = (data as any).results ?? [];
       setResults(rows);
       setSummary((data as any).summary ?? null);
+      if ((data as any).job_id) {
+        setLastRun({
+          job_id: (data as any).job_id,
+          target_city: (data as any).target_city ?? city ?? null,
+          target_segment: (data as any).target_segment ?? segment ?? null,
+          source_query: (data as any).source_query ?? query,
+        });
+      }
 
       const created = rows.filter(r => r.status === "created").length;
       const duplicates = rows.filter(r => r.status === "duplicate").length;
@@ -117,6 +126,62 @@ export default function Sourcing() {
       setStatus(s => ({ ...s, apiConnected: false, error: msg }));
       toast.error(msg);
     } finally { setLoading(false); }
+  }
+
+  async function exportThisRunReviewQueue() {
+    if (!lastRun) return;
+    const { data, error } = await supabase.from("prospects").select("*")
+      .eq("search_job_id", lastRun.job_id)
+      .eq("qualification_status", "pending_manual_review")
+      .eq("is_test_record", false)
+      .not("source_type", "in", "(test_seed,assistant_test,sandbox)")
+      .not("website_url", "is", null);
+    if (error) { toast.error("Export mislukt: " + error.message); return; }
+    const rows = data ?? [];
+    if (!rows.length) { toast.error("Geen review-queue prospects in deze run"); return; }
+
+    const maskPhone = (p: string | null | undefined) => {
+      if (!p) return "";
+      const s = String(p).trim();
+      return s.length <= 6 ? s + "***" : s.slice(0, 6) + "***";
+    };
+    const cols = [
+      "search_job_id","source_query","target_city","target_segment","actual_city","location_match",
+      "company_name","segment","city","address","website_url",
+      "phone_main_masked","phone_mobile_masked","whatsapp_visible",
+      "google_rating","google_review_count","qualification_status","raw_opportunity_score",
+      "website_review_status","fit_category","clean_list_eligible","source_type","created_at","notes",
+    ];
+    const esc = (v: any) => {
+      if (v === null || v === undefined) return "";
+      const s = typeof v === "string" ? v : String(v);
+      return /[",\n\r;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const csv = [cols.join(","), ...rows.map((r: any) => cols.map(c => {
+      if (c === "phone_main_masked") return esc(maskPhone(r.phone_main));
+      if (c === "phone_mobile_masked") return esc(maskPhone(r.phone_mobile_e164));
+      return esc(r[c]);
+    }).join(","))].join("\n");
+
+    const d = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const stamp = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+    const cityPart = (lastRun.target_city ?? "onbekend").toLowerCase().replace(/\s+/g, "-");
+    const segPart = (lastRun.target_segment ?? "algemeen").toLowerCase().replace(/\s+/g, "-");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `review-queue-${cityPart}-${segPart}-${stamp}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    await supabase.from("assistant_action_logs").insert({
+      action_type: "export_run_review_queue_csv",
+      status: "success",
+      request_json: { search_job_id: lastRun.job_id, target_city: lastRun.target_city, target_segment: lastRun.target_segment },
+      result_json: { exported_count: rows.length },
+    });
+    toast.success(`${rows.length} rijen geëxporteerd voor deze run`);
   }
 
   return (
@@ -201,6 +266,18 @@ export default function Sourcing() {
               <div>Rejected — possible leadsite: <b>{summary.rejected_possible_leadsite}</b></div>
               <div>Duplicates: <b>{summary.duplicates}</b></div>
             </div>
+            {lastRun && (
+              <div className="mt-3 text-xs text-muted-foreground">
+                Run: <span className="font-mono">{lastRun.job_id.slice(0,8)}…</span> · target city: <b>{lastRun.target_city ?? "—"}</b> · segment: <b>{lastRun.target_segment ?? "—"}</b> · query: <span className="font-mono">{lastRun.source_query}</span>
+              </div>
+            )}
+            {lastRun && reviewQueueCandidates > 0 && (
+              <div className="mt-3">
+                <Button size="sm" onClick={exportThisRunReviewQueue}>
+                  Export this run review queue CSV
+                </Button>
+              </div>
+            )}
             {totalFound > 0 && reviewQueueCandidates === 0 && cleanOutreachReady === 0 && (
               <div className="mt-3 p-3 rounded border border-border bg-secondary/40 text-xs">
                 Er zijn resultaten gevonden, maar geen bruikbare review-kandidaten. De meeste resultaten zijn afgewezen als leadsite, directory of missing website.
