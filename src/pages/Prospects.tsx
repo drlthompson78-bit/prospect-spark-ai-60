@@ -417,7 +417,7 @@ export default function Prospects() {
             <tbody>
               {grouped.map(([regionId, rows]) => {
                 const r = regionMap[regionId];
-                const colSpan = showDebug ? 16 : 15;
+                const colSpan = showDebug ? 20 : 19;
                 return (
                   <Fragment key={regionId}>
                     <tr>
