@@ -139,7 +139,7 @@ export default function Prospects() {
   const [prospects, setProspects] = useState<any[]>([]);
   const [regions, setRegions] = useState<any[]>([]);
   const [showDebug, setShowDebug] = useState(false);
-  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", review: "all", q: "" });
+  const [f, setF] = useState({ region: "all", segment: "all", fit: "all", whatsapp: "all", permission: "all", review: "all", q: "", target_city: "all", actual_city: "all", source_query: "all", search_job: "all" });
 
   useEffect(() => {
     supabase.from("regions").select("*").order("region_order").then(({ data }) => setRegions(data ?? []));
