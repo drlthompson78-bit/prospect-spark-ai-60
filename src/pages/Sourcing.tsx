@@ -128,6 +128,62 @@ export default function Sourcing() {
     } finally { setLoading(false); }
   }
 
+  async function exportThisRunReviewQueue() {
+    if (!lastRun) return;
+    const { data, error } = await supabase.from("prospects").select("*")
+      .eq("search_job_id", lastRun.job_id)
+      .eq("qualification_status", "pending_manual_review")
+      .eq("is_test_record", false)
+      .not("source_type", "in", "(test_seed,assistant_test,sandbox)")
+      .not("website_url", "is", null);
+    if (error) { toast.error("Export mislukt: " + error.message); return; }
+    const rows = data ?? [];
+    if (!rows.length) { toast.error("Geen review-queue prospects in deze run"); return; }
+
+    const maskPhone = (p: string | null | undefined) => {
+      if (!p) return "";
+      const s = String(p).trim();
+      return s.length <= 6 ? s + "***" : s.slice(0, 6) + "***";
+    };
+    const cols = [
+      "search_job_id","source_query","target_city","target_segment","actual_city","location_match",
+      "company_name","segment","city","address","website_url",
+      "phone_main_masked","phone_mobile_masked","whatsapp_visible",
+      "google_rating","google_review_count","qualification_status","raw_opportunity_score",
+      "website_review_status","fit_category","clean_list_eligible","source_type","created_at","notes",
+    ];
+    const esc = (v: any) => {
+      if (v === null || v === undefined) return "";
+      const s = typeof v === "string" ? v : String(v);
+      return /[",\n\r;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const csv = [cols.join(","), ...rows.map((r: any) => cols.map(c => {
+      if (c === "phone_main_masked") return esc(maskPhone(r.phone_main));
+      if (c === "phone_mobile_masked") return esc(maskPhone(r.phone_mobile_e164));
+      return esc(r[c]);
+    }).join(","))].join("\n");
+
+    const d = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const stamp = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+    const cityPart = (lastRun.target_city ?? "onbekend").toLowerCase().replace(/\s+/g, "-");
+    const segPart = (lastRun.target_segment ?? "algemeen").toLowerCase().replace(/\s+/g, "-");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `review-queue-${cityPart}-${segPart}-${stamp}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    await supabase.from("assistant_action_logs").insert({
+      action_type: "export_run_review_queue_csv",
+      status: "success",
+      request_json: { search_job_id: lastRun.job_id, target_city: lastRun.target_city, target_segment: lastRun.target_segment },
+      result_json: { exported_count: rows.length },
+    });
+    toast.success(`${rows.length} rijen geëxporteerd voor deze run`);
+  }
+
   return (
     <div className="p-4 md:p-8 max-w-6xl">
       <h1 className="text-xl md:text-2xl font-semibold mb-1">Prospect Sourcing</h1>
