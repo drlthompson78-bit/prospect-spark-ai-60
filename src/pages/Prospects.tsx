@@ -166,16 +166,31 @@ export default function Prospects() {
     return { reviewQueue, cleanOutreach, rejectedHidden, testHidden, usable };
   }, [prospects]);
 
+  // Scoping filters apply to BOTH the table view AND the export handlers, so a
+  // Schiedam-run stays isolated from earlier Rotterdam-runs.
+  const matchesScope = (p: any) => {
+    if (f.region !== "all" && p.region_id !== f.region) return false;
+    if (f.segment !== "all" && p.segment !== f.segment) return false;
+    if (f.target_city !== "all" && (p.target_city ?? "") !== f.target_city) return false;
+    if (f.actual_city !== "all" && (p.actual_city ?? "") !== f.actual_city) return false;
+    if (f.source_query !== "all" && (p.source_query ?? "") !== f.source_query) return false;
+    if (f.search_job !== "all" && (p.search_job_id ?? "") !== f.search_job) return false;
+    return true;
+  };
+
+  const targetCities = useMemo(() => Array.from(new Set(prospects.map(p => p.target_city).filter(Boolean))).sort(), [prospects]);
+  const actualCities = useMemo(() => Array.from(new Set(prospects.map(p => p.actual_city).filter(Boolean))).sort(), [prospects]);
+  const sourceQueries = useMemo(() => Array.from(new Set(prospects.map(p => p.source_query).filter(Boolean))).sort(), [prospects]);
+  const searchJobs = useMemo(() => Array.from(new Set(prospects.map(p => p.search_job_id).filter(Boolean))), [prospects]);
+
   const filtered = useMemo(() => {
     let list = prospects.filter(p => {
       // Default: alleen bruikbare prospects (review queue OR clean/outreach).
-      // Wanneer showDebug aan staat: toon ook rejected/debug (maar nog steeds geen testrecords — die zijn uit de fetch geweerd).
       if (!showDebug) {
         if (!(isReviewQueue(p) || isCleanOutreach(p))) return false;
       }
 
-      if (f.region !== "all" && p.region_id !== f.region) return false;
-      if (f.segment !== "all" && p.segment !== f.segment) return false;
+      if (!matchesScope(p)) return false;
       if (f.fit !== "all" && p.fit_category !== f.fit) return false;
       if (f.whatsapp === "yes" && !p.whatsapp_visible) return false;
       if (f.whatsapp === "no" && p.whatsapp_visible) return false;
@@ -184,7 +199,7 @@ export default function Prospects() {
       if (f.review === "reviewed_eligible" && !(p.website_review_status === "reviewed" && (p.redesign_score ?? 0) >= 70 && ["A","B","C"].includes(p.fit_category))) return false;
       if (f.review === "reviewed_rejected" && !(p.website_review_status === "reviewed" && (p.fit_category === "rejected" || (p.redesign_score ?? 0) < 70))) return false;
 
-      if (f.q && !(`${p.company_name} ${p.city ?? ""}`.toLowerCase().includes(f.q.toLowerCase()))) return false;
+      if (f.q && !(`${p.company_name} ${p.city ?? ""} ${p.actual_city ?? ""} ${p.target_city ?? ""}`.toLowerCase().includes(f.q.toLowerCase()))) return false;
       return true;
     });
     const fitRank = (fit: string) => fit === "A" ? 0 : fit === "B" ? 1 : fit === "C" ? 2 : 3;
