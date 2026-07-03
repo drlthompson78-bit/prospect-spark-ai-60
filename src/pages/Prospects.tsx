@@ -440,6 +440,24 @@ export default function Prospects() {
                           </td>
                           <td className="p-2 text-xs">{p.segment}</td>
                           <td className="p-2 text-xs">{p.city}</td>
+                          <td className="p-2 text-xs">{p.target_city ?? "—"}</td>
+                          <td className="p-2 text-xs">{p.actual_city ?? "—"}</td>
+                          <td className="p-2 text-xs">
+                            {p.location_match ? (
+                              <Badge variant={
+                                p.location_match === "exact_target_city" ? "default" :
+                                p.location_match === "nearby_city" ? "secondary" :
+                                p.location_match === "outside_target_area" ? "destructive" : "outline"
+                              } className="text-[10px]">
+                                {p.location_match === "exact_target_city" ? "exact" :
+                                 p.location_match === "nearby_city" ? "buiten target" :
+                                 p.location_match === "outside_target_area" ? "buiten regio" : "?"}
+                              </Badge>
+                            ) : "—"}
+                          </td>
+                          <td className="p-2 text-[10px] font-mono text-muted-foreground" title={`${p.source_query ?? ""}\n${p.search_job_id ?? ""}`}>
+                            {p.search_job_id ? String(p.search_job_id).slice(0, 6) : "—"}
+                          </td>
                           <td className="p-2">{p.website_url && <a href={p.website_url} target="_blank" rel="noreferrer" className="text-accent inline-flex items-center gap-1 text-xs"><ExternalLink className="h-3 w-3"/></a>}</td>
                           <td className="p-2 text-xs">{p.phone_main}</td>
                           <td className="p-2 text-xs">{p.phone_mobile_e164}</td>
