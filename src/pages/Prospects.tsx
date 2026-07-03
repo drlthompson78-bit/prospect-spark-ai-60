@@ -333,6 +333,36 @@ export default function Prospects() {
             </SelectContent>
           </Select>
 
+          <Select value={f.target_city} onValueChange={v => setF({...f, target_city: v})}>
+            <SelectTrigger><SelectValue placeholder="Target city"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle target cities</SelectItem>
+              {targetCities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={f.actual_city} onValueChange={v => setF({...f, actual_city: v})}>
+            <SelectTrigger><SelectValue placeholder="Actual city"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle actual cities</SelectItem>
+              {actualCities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={f.source_query} onValueChange={v => setF({...f, source_query: v})}>
+            <SelectTrigger><SelectValue placeholder="Source query"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle queries</SelectItem>
+              {sourceQueries.map(q => <SelectItem key={q} value={q}>{q}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={f.search_job} onValueChange={v => setF({...f, search_job: v})}>
+            <SelectTrigger><SelectValue placeholder="Search job"/></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle runs</SelectItem>
+              {searchJobs.map(j => <SelectItem key={j} value={j}>{String(j).slice(0, 8)}…</SelectItem>)}
+            </SelectContent>
+          </Select>
+
+
 
           <label className="flex items-center gap-2 text-xs px-2">
             <input type="checkbox" checked={showDebug} onChange={e => setShowDebug(e.target.checked)}/>
