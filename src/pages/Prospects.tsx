@@ -227,29 +227,46 @@ export default function Prospects() {
   }, [filtered]);
 
   // ============ EXPORT HANDLERS ============
+  // All exports respect the active scoping filters (target_city, search_job,
+  // segment, actual_city, source_query, region) so a Schiedam-run export
+  // NEVER includes older Rotterdam-runs.
+  function scopeSuffix() {
+    const parts: string[] = [];
+    if (f.target_city !== "all") parts.push(f.target_city.toLowerCase().replace(/\s+/g, "-"));
+    if (f.segment !== "all") parts.push(f.segment.toLowerCase().replace(/\s+/g, "-"));
+    if (f.search_job !== "all") parts.push("job-" + f.search_job.slice(0, 8));
+    return parts.length ? parts.join("-") + "-" : "";
+  }
+
   async function handleExportReviewQueue() {
-    const rows = prospects.filter(isReviewQueue).map(toExportRow);
+    const rows = prospects.filter(p => isReviewQueue(p) && matchesScope(p)).map(toExportRow);
     if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
-    downloadCsv(`review-queue-prospects-${tsStamp()}.csv`, buildCsv(rows, REVIEW_QUEUE_COLUMNS));
-    await logExport("export_review_queue_csv", rows.length);
+    downloadCsv(`review-queue-${scopeSuffix()}${tsStamp()}.csv`, buildCsv(rows, REVIEW_QUEUE_COLUMNS));
+    await logExport("export_review_queue_csv", rows.length, {
+      target_city: f.target_city, segment: f.segment, search_job_id: f.search_job,
+      actual_city: f.actual_city, source_query: f.source_query, region: f.region,
+    });
     toast.success(`CSV export generated successfully. (${rows.length} records)`);
   }
 
   async function handleExportCleanOutreach() {
-    const rows = prospects.filter(isCleanOutreach).map(toExportRow);
+    const rows = prospects.filter(p => isCleanOutreach(p) && matchesScope(p)).map(toExportRow);
     if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
-    downloadCsv(`clean-outreach-prospects-${tsStamp()}.csv`, buildCsv(rows, CLEAN_COLUMNS));
-    await logExport("export_clean_outreach_csv", rows.length);
+    downloadCsv(`clean-outreach-${scopeSuffix()}${tsStamp()}.csv`, buildCsv(rows, CLEAN_COLUMNS));
+    await logExport("export_clean_outreach_csv", rows.length, {
+      target_city: f.target_city, segment: f.segment, search_job_id: f.search_job,
+    });
     toast.success(`CSV export generated successfully. (${rows.length} records)`);
   }
 
   async function handleExportRawDebug() {
     if (!confirm("Deze export bevat ook rejected/debug records en is niet bedoeld voor outreach. Doorgaan?")) return;
-    // Debug export: alle zichtbare records inclusief rejected (testrecords zijn al uit de fetch geweerd).
-    const rows = prospects.map(toExportRow);
+    const rows = prospects.filter(matchesScope).map(toExportRow);
     if (rows.length === 0) { toast.error("No records match the export criteria."); return; }
-    downloadCsv(`raw-debug-prospects-${tsStamp()}.csv`, buildCsv(rows, DEBUG_COLUMNS));
-    await logExport("export_raw_debug_csv", rows.length);
+    downloadCsv(`raw-debug-${scopeSuffix()}${tsStamp()}.csv`, buildCsv(rows, DEBUG_COLUMNS));
+    await logExport("export_raw_debug_csv", rows.length, {
+      target_city: f.target_city, segment: f.segment, search_job_id: f.search_job,
+    });
     toast.success(`CSV export generated successfully. (${rows.length} records)`);
   }
 
