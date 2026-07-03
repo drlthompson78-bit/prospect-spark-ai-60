@@ -296,11 +296,14 @@ Deno.serve(async (req) => {
       const fit: string =
         qualification_status === "pending_manual_review" ? "pending" : "rejected";
 
+      const actualCity = extractCityFromAddress(pl.formattedAddress ?? null);
+      const locationMatch = classifyLocationMatch(targetCity, actualCity);
+
       const insertRow: Record<string, unknown> = {
         region_id: region_id ?? null,
         company_name: companyName,
         segment: seg || null,
-        city: city ?? null,
+        city: actualCity ?? targetCity ?? null,
         address: pl.formattedAddress ?? null,
         latitude: pl.location?.latitude ?? null,
         longitude: pl.location?.longitude ?? null,
@@ -326,6 +329,13 @@ Deno.serve(async (req) => {
           ? `Segment ${seg}, ${hasMobile ? "mobiel zichtbaar" : "vaste lijn"}, ${reviewCount} reviews.`
           : null,
         last_verified_at: new Date().toISOString(),
+        // Sourcing traceability
+        search_job_id: job!.id,
+        source_query: query,
+        target_city: targetCity,
+        target_segment: targetSegment,
+        actual_city: actualCity,
+        location_match: locationMatch,
       };
 
       const { data: inserted, error: insErr } = await supabase.from("prospects")
