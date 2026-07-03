@@ -411,6 +411,7 @@ export default function Prospects() {
                 <th className="text-left p-2">Perm</th>
                 <th className="text-left p-2">Outreach</th>
                 {showDebug && <th className="text-left p-2">Status</th>}
+
               </tr>
             </thead>
             <tbody>
