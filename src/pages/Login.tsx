@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
+function safeNext(raw: string | null): string {
+  if (!raw) return "/";
+  if (!raw.startsWith("/") || raw.startsWith("//")) return "/";
+  return raw;
+}
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,8 +21,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
   const { user } = useAuth();
+  const [params] = useSearchParams();
+  const next = safeNext(params.get("next"));
 
-  useEffect(() => { if (user) nav("/"); }, [user, nav]);
+  useEffect(() => { if (user) nav(next, { replace: true }); }, [user, nav, next]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,7 +33,7 @@ export default function Login() {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: window.location.origin }
+          options: { emailRedirectTo: window.location.origin + next }
         });
         if (error) throw error;
         toast.success("Account aangemaakt. Je bent ingelogd.");
@@ -33,7 +41,7 @@ export default function Login() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      nav("/");
+      nav(next, { replace: true });
     } catch (err: any) {
       toast.error(err.message ?? "Login mislukt");
     } finally { setLoading(false); }
