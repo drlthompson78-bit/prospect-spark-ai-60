@@ -16,6 +16,7 @@ import Regions from "@/pages/Regions";
 import ScanPage from "@/pages/ScanPage";
 import AssistantTest from "@/pages/AssistantTest";
 import AssistantAction from "@/pages/AssistantAction";
+import OAuthConsent from "@/pages/OAuthConsent";
 
 import NotFound from "@/pages/NotFound";
 
@@ -30,6 +31,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="/scan/:scan_slug" element={<ScanPage />} />
             <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route path="/" element={<Dashboard />} />

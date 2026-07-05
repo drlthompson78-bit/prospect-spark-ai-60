@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://vhsetxtzowqmwwixnxco.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "prospect-os-mcp",
+      "version": "0.1.0",
+      "title": "Prospect OS"
+    },
+    "tools": [
+      {
+        "name": "list_prospects",
+        "title": "List prospects",
+        "description": "List prospects from the Prospect Master. Supports filtering by region, segment, fit category, city, and qualification status. Returns basic fields for each prospect.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "region_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Filter by region UUID."
+            },
+            "segment": {
+              "type": "string",
+              "description": "Filter by segment slug."
+            },
+            "fit_category": {
+              "type": "string",
+              "enum": [
+                "A",
+                "B",
+                "C",
+                "rejected"
+              ],
+              "description": "Filter by lead fit category."
+            },
+            "city": {
+              "type": "string",
+              "description": "Filter by actual city name (case-insensitive contains)."
+            },
+            "qualification_status": {
+              "type": "string",
+              "description": "Filter by qualification_status equal match."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Max rows to return."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_prospect",
+        "title": "Get prospect",
+        "description": "Fetch a single prospect by id, including all stored fields.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Prospect UUID."
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_regions",
+        "title": "List regions",
+        "description": "List all configured sourcing regions.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "active_only": {
+              "type": "boolean",
+              "default": true,
+              "description": "Only return active regions."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
