@@ -156,6 +156,24 @@ Deno.serve(async (req) => {
     }
     const userId = claims.claims.sub;
 
+    // Role check BEFORE calling billed Google Places API
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      { auth: { persistSession: false } }
+    );
+    const [{ data: isAdmin }, { data: isSales }] = await Promise.all([
+      adminClient.rpc("has_role", { _user_id: userId, _role: "admin" }),
+      adminClient.rpc("has_role", { _user_id: userId, _role: "sales" }),
+    ]);
+    if (!isAdmin && !isSales) {
+      return new Response(JSON.stringify({ error: "Forbidden: admin or sales role required" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+
+
     const apiKey = Deno.env.get("GOOGLE_PLACES_API_KEY");
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "GOOGLE_PLACES_API_KEY is not configured. Add it in Project Settings → Secrets." }), {
