@@ -14,6 +14,10 @@ Een award-waardige, cinematografische herontwerp van [hettaartenhuis.nl](https:/
 
 Alle fotografie en de herovideo zijn gegenereerd via de Higgsfield MCP (Soul Cinema / Kling 3.0 Turbo) in een consistente chiaroscuro-stijl. De URL's staan centraal in `src/data/assets.ts` en verwijzen naar de Higgsfield CDN; download ze naar `public/` en pas dat ene bestand aan om ze lokaal te hosten.
 
+## Prospect OS
+
+De oorspronkelijke Prospect OS-app is volledig bewaard in de map [`prospect-os/`](./prospect-os/) als zelfstandige app, zodat een merge van deze branch naar `main` niets overschrijft. Zie de README in die map om hem te draaien.
+
 ## Ontwikkelen
 
 ```sh

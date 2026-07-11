@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 222 47% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 20%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 222 47% 20%;
+
+    --radius: 0.5rem;
+
+    /* Fit category tokens */
+    --fit-a: 142 71% 45%;
+    --fit-a-foreground: 0 0% 100%;
+    --fit-b: 217 91% 60%;
+    --fit-b-foreground: 0 0% 100%;
+    --fit-c: 32 95% 55%;
+    --fit-c-foreground: 0 0% 100%;
+    --fit-rejected: 220 9% 55%;
+    --fit-rejected-foreground: 0 0% 100%;
+    --fit-pending: 220 13% 85%;
+    --fit-pending-foreground: 222 47% 20%;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 220 14% 90%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 47% 18%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 47% 18%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; font-feature-settings: "cv02","cv03","cv04","cv11"; }
+}
+
+@layer components {
+  .region-header {
+    @apply text-xs font-mono font-semibold tracking-wider text-muted-foreground uppercase bg-secondary px-4 py-2 border-y border-border;
+  }
+}
