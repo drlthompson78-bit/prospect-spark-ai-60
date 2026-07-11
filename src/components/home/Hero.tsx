@@ -124,7 +124,7 @@ const Hero = () => {
         {/* Warme lichtvlek achter de taart, wordt sterker tijdens de deconstructie */}
         <motion.div
           style={{ opacity: glowOpacity }}
-          className="absolute left-1/2 top-1/2 h-[90vh] w-[90vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,hsl(30_56%_40%/0.35)_0%,transparent_65%)]"
+          className="absolute left-1/2 top-1/2 h-[90vh] w-[90vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.18)_0%,transparent_65%)]"
           aria-hidden="true"
         />
 
@@ -132,7 +132,7 @@ const Hero = () => {
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.img
             src={cakeWhole}
-            alt="Signatuurtaart van Het Taartenhuis met karamel en verse vijgen"
+            alt="De ijsjestaart van Het Taartenhuis: roze driptaart met ijshoorntje, ijsjes en raketjes"
             style={{ opacity: wholeOpacity, scale: wholeScale, width: "min(58vh, 88vw)" }}
             className="select-none drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
             draggable={false}

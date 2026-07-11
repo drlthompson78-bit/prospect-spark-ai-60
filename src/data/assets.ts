@@ -13,17 +13,21 @@ export const heroAlt = `${CDN}/hf_20260711_152235_1d9e872f-2eb2-4f78-bfb7-9a1d9b
 export const atelierHands = `${CDN}/hf_20260711_152407_ad66e76e-ce48-4909-84ea-1289170c2f21_min.webp`;
 
 /**
- * De signatuurtaart voor de hero-deconstructie: het complete beeld plus de
- * vier losse lagen (transparante PNG's, achtergrond server-side verwijderd).
- * Volgorde: topdek → slagroomvulling → chocoladecake → basis.
+ * De hero-taart: een Higgsfield-reconstructie van de echte IJsjes-taart Loua
+ * (staat ook op de hero van hettaartenhuis.nl). Compleet beeld plus vier
+ * losse lagen als transparante PNG's, voor de scroll-deconstructie.
+ * Volgorde: topdek met hoorntje → slagroomvulling → cake → basis met drip.
  */
-export const cakeWhole = `${CDN}/hf_20260711_220945_9e8fdd0b-f049-494a-8f7a-0ac0ec0d77bf_min.png`;
+export const cakeWhole = `${CDN}/hf_20260711_233854_818d673b-e15f-4eab-99fd-449f774fef1f_min.png`;
 export const cakeLayers = [
-  `${CDN}/hf_20260711_220946_7e07d849-e206-40d2-a768-6c6d5a294b72_min.png`,
-  `${CDN}/hf_20260711_220947_04bb82a1-5ac9-427d-a9a4-cc372fff1665_min.png`,
-  `${CDN}/hf_20260711_220948_34aedc78-0933-4a68-a65c-d728524394d5_min.png`,
-  `${CDN}/hf_20260711_220950_42cf2354-c753-4766-81bf-e72eb46b9039_min.png`,
+  `${CDN}/hf_20260711_233855_d994b79b-5162-41d2-b6be-7809fa2fc06e_min.png`,
+  `${CDN}/hf_20260711_233856_a8189c62-3c36-4290-81d7-b80856d1a97a_min.png`,
+  `${CDN}/hf_20260711_233904_092aeca1-edef-48c2-81a9-a13e2839a76a_min.png`,
+  `${CDN}/hf_20260711_233905_5267eb35-f986-495c-95ba-6bc8a56fbe0a_min.png`,
 ] as const;
+
+/** Donkere (versie 1) taart-assets, bewaard voor de cinematografische variant. */
+export const cakeWholeDark = `${CDN}/hf_20260711_220945_9e8fdd0b-f049-494a-8f7a-0ac0ec0d77bf_min.png`;
 
 /**
  * Echte foto's van hettaartenhuis.nl (uit de wget-mirror), lokaal gehost in
@@ -34,20 +38,26 @@ const FOTOS = `${import.meta.env.BASE_URL}fotos`;
 
 export const siteLogo = `${FOTOS}/logo.png`;
 
+/**
+ * Productknoppen: de echte taarten van Het Taartenhuis, door Higgsfield
+ * herbouwd met een uniforme zachte studio-achtergrond. De klant herkent
+ * zijn eigen werk, maar de frontpagina oogt strak en consistent.
+ * De onbewerkte originelen staan in public/fotos/ (o.a. voor de galerij).
+ */
 export const productImages = {
-  verjaardag: `${FOTOS}/product-verjaardagstaart.jpg`,
-  lagentaart: `${FOTOS}/product-lagentaart.jpg`,
-  cijfertaart: `${FOTOS}/product-cijfertaart.jpg`,
-  bruidstaart: `${FOTOS}/product-bruidstaart.jpg`,
-  dinotaart: `${FOTOS}/product-3d-taart.jpg`,
-  kindertaart: `${FOTOS}/product-kindertaart.jpg`,
-  genderReveal: `${FOTOS}/product-gender-reveal.jpg`,
-  babyshower: `${FOTOS}/product-babyshower.jpg`,
+  verjaardag: `${CDN}/hf_20260711_233727_f5063579-08e3-46de-a352-d8c99c1cca89_min.webp`,
+  lagentaart: `${CDN}/hf_20260711_233730_ddb9be71-ad7c-486d-bbbf-569c9318a240_min.webp`,
+  cijfertaart: `${CDN}/hf_20260711_233732_ba169281-e7bb-4ddb-b1a9-0aef0fbffd17_min.webp`,
+  bruidstaart: `${CDN}/hf_20260711_233734_6e512d19-c213-4727-ab0c-8b4d6af6577f_min.webp`,
+  dinotaart: `${CDN}/hf_20260711_233737_a1b4d250-c838-4fb1-af10-6a7f7cd75a8a_min.webp`,
+  kindertaart: `${CDN}/hf_20260711_234152_c2655fef-7be5-46c5-8983-408718337573_min.webp`,
+  genderReveal: `${CDN}/hf_20260711_233748_38ae5db4-4704-46b9-bc6e-bd3b0d88ee49_min.webp`,
+  babyshower: `${CDN}/hf_20260711_233751_97ab7bc3-6efa-4fc3-98cf-e54f6b6d5dd9_min.webp`,
   geboorte: `${FOTOS}/product-geboortetaart.jpg`,
-  geslaagd: `${FOTOS}/product-geslaagd.jpg`,
-  bedrijfstaart: `${FOTOS}/product-bedrijfstaart.jpg`,
-  cupcakes: `${FOTOS}/product-cupcakes.jpg`,
-  chocoladeDrip: `${FOTOS}/product-lagentaart.jpg`,
+  geslaagd: `${CDN}/hf_20260711_233756_1d3f6129-76e0-4ea7-9ed1-9174b616cf46_min.webp`,
+  bedrijfstaart: `${CDN}/hf_20260711_233825_e5512400-27a3-4e09-8a5f-9d5df3e02613_min.webp`,
+  cupcakes: `${CDN}/hf_20260711_233827_577b27db-4128-4d74-8fdd-f67b744ffdaa_min.webp`,
+  chocoladeDrip: `${CDN}/hf_20260711_233730_ddb9be71-ad7c-486d-bbbf-569c9318a240_min.webp`,
   communie: `${FOTOS}/product-geboortetaart.jpg`,
 } as const;
 
