@@ -74,7 +74,8 @@ const Hero = () => {
           </p>
           <h1 className="mt-5 font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
             {headline.map((line, i) => (
-              <span key={line} className="block overflow-hidden">
+              // pb + negatieve mb geven staartletters (g, j) ruimte binnen het animatiemasker
+              <span key={line} className="block overflow-hidden pb-[0.14em] -mb-[0.14em]">
                 <motion.span
                   className="block"
                   initial={reduced ? false : { y: "110%" }}
