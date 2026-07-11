@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home | Wolverine Worldwide</title>
+  <meta name="description" content="Archival reconstruction of the wolverineworldwide.com homepage. All media replaced by numbered placeholders (see MEDIA-PLACEHOLDERS.md)." />
+  <style>
+    /* ============================================================
+       WOLVERINE WORLDWIDE — HOMEPAGE ARCHIVAL COPY
+       All media are numbered placeholders (badge bottom-left, e.g. #M02).
+       Replace via the manifest in MEDIA-PLACEHOLDERS.md.
+       ============================================================ */
+    :root {
+      --ink: #1a1a1a;
+      --ink-soft: #444;
+      --paper: #ffffff;
+      --grey-1: #f5f5f4;
+      --grey-2: #e7e5e4;
+      --grey-3: #a8a29e;
+      --accent: #c8452c;         /* brand red-orange accent */
+      --accent-dark: #a53a24;
+      --header-h: 76px;
+      --header-h-compact: 60px;
+      --max-w: 1240px;
+      --ease: cubic-bezier(.22,.61,.36,1);
+      --font: "Helvetica Neue", Helvetica, Arial, -apple-system, "Segoe UI", sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); color: var(--ink); background: var(--paper); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+    .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+    /* ---------- Skip link (a11y) ---------- */
+    .skip-link { position: absolute; left: -9999px; top: 0; background: var(--ink); color: #fff; padding: 10px 18px; z-index: 300; }
+    .skip-link:focus { left: 0; }
+
+    /* ---------- Media placeholder system ---------- */
+    .ph {
+      position: relative; overflow: hidden; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #d6d3d1 0%, #b8b3af 55%, #cfcbc8 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: #6b6560; user-select: none;
+    }
+    .ph::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(to top right, transparent calc(50% - 1px), rgba(255,255,255,.45) 50%, transparent calc(50% + 1px)),
+        linear-gradient(to bottom right, transparent calc(50% - 1px), rgba(255,255,255,.45) 50%, transparent calc(50% + 1px));
+    }
+    .ph .ph-type {
+      position: relative; z-index: 1; font-size: 11px; letter-spacing: .2em;
+      text-transform: uppercase; font-weight: 700; background: rgba(255,255,255,.7);
+      padding: 5px 12px; border-radius: 3px;
+    }
+    .ph .ph-id {
+      position: absolute; left: 6px; bottom: 6px; z-index: 2;
+      font-size: 10px; font-weight: 700; letter-spacing: .05em;
+      background: rgba(0,0,0,.68); color: #fff; padding: 2px 6px; border-radius: 3px;
+      line-height: 1.4; pointer-events: none;
+    }
+    .ph--video .ph-type::after { content: " ▶"; }
+    .ph--dark { background: linear-gradient(135deg, #3f3c3a 0%, #2a2827 55%, #454140 100%); color: #b8b3af; }
+    .ph--dark .ph-type { background: rgba(0,0,0,.5); color: #d6d3d1; }
+
+    /* ---------- Cookie banner ---------- */
+    .cookie-banner {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 250;
+      background: var(--ink); color: #e7e5e4; padding: 18px 24px;
+      display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap;
+      font-size: 13px; transform: translateY(0); transition: transform .4s var(--ease);
+    }
+    .cookie-banner.is-hidden { transform: translateY(110%); }
+    .cookie-banner a { text-decoration: underline; }
+    .cookie-banner .btn-row { display: flex; gap: 10px; }
+    .cookie-btn { border: 1px solid #fff; background: transparent; color: #fff; padding: 8px 18px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; transition: all .2s; }
+    .cookie-btn:hover { background: #fff; color: var(--ink); }
+    .cookie-btn--accept { background: #fff; color: var(--ink); }
+    .cookie-btn--accept:hover { background: var(--grey-2); }
+
+    /* ---------- Utility bar (stock ticker) ---------- */
+    .util-bar { background: var(--ink); color: #d6d3d1; font-size: 12px; }
+    .util-bar .wrap { display: flex; justify-content: space-between; align-items: center; height: 34px; }
+    .util-links { display: flex; gap: 18px; }
+    .util-links a:hover { color: #fff; text-decoration: underline; }
+    .ticker { display: flex; gap: 10px; align-items: center; letter-spacing: .04em; }
+    .ticker .sym { font-weight: 700; color: #fff; }
+    .ticker .delta-up { color: #6ee7a0; }
+
+    /* ---------- Header ---------- */
+    header.site-header {
+      position: sticky; top: 0; z-index: 200; background: rgba(255,255,255,.97);
+      border-bottom: 1px solid var(--grey-2); backdrop-filter: blur(8px);
+      transition: box-shadow .3s var(--ease);
+    }
+    header.site-header.is-scrolled { box-shadow: 0 4px 24px rgba(0,0,0,.09); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); transition: height .3s var(--ease); }
+    header.is-scrolled .header-inner { height: var(--header-h-compact); }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-ph { position: relative; width: 190px; height: 40px; }
+    .logo-ph .ph .ph-type { font-size: 8px; padding: 2px 6px; }
+    .logo-ph .ph .ph-id { font-size: 9px; left: 4px; bottom: 4px; padding: 1px 4px; }
+
+    nav.main-nav { display: flex; align-items: center; gap: 4px; }
+    .nav-item { position: relative; }
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;
+      font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      background: none; border: 0; color: var(--ink); position: relative;
+    }
+    .nav-link::after {
+      content: ""; position: absolute; left: 16px; right: 16px; bottom: 4px; height: 2px;
+      background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease);
+    }
+    .nav-item:hover > .nav-link::after, .nav-link:focus-visible::after, .nav-item.is-open > .nav-link::after { transform: scaleX(1); }
+    .caret { border: solid var(--ink); border-width: 0 1.5px 1.5px 0; padding: 2.5px; transform: rotate(45deg) translateY(-2px); transition: transform .25s; }
+    .nav-item:hover .caret, .nav-item.is-open .caret { transform: rotate(225deg) translateY(-2px); }
+
+    /* Dropdown / mega menu */
+    .dropdown {
+      position: absolute; top: 100%; left: 50%; transform: translate(-50%, 8px);
+      min-width: 240px; background: #fff; border: 1px solid var(--grey-2);
+      box-shadow: 0 18px 44px rgba(0,0,0,.14); padding: 12px 0;
+      opacity: 0; visibility: hidden; transition: all .25s var(--ease);
+    }
+    .nav-item:hover > .dropdown, .nav-item:focus-within > .dropdown, .nav-item.is-open > .dropdown { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+    .dropdown a { display: block; padding: 9px 22px; font-size: 13px; font-weight: 500; letter-spacing: .03em; }
+    .dropdown a:hover { background: var(--grey-1); color: var(--accent-dark); padding-left: 28px; transition: all .18s var(--ease); }
+    .dropdown .dd-label { padding: 6px 22px 10px; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--grey-3); border-bottom: 1px solid var(--grey-1); margin-bottom: 6px; }
+
+    .header-actions { display: flex; align-items: center; gap: 6px; }
+    .icon-btn { background: none; border: 0; padding: 10px; display: inline-flex; border-radius: 50%; transition: background .2s; }
+    .icon-btn:hover { background: var(--grey-1); }
+    .icon-btn svg { width: 19px; height: 19px; stroke: var(--ink); fill: none; stroke-width: 2; }
+    .hamburger { display: none; }
+
+    /* ---------- Search overlay ---------- */
+    .search-overlay {
+      position: fixed; inset: 0; z-index: 260; background: rgba(20,20,20,.96);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: opacity .3s var(--ease);
+    }
+    .search-overlay.is-open { opacity: 1; visibility: visible; }
+    .search-box { width: min(680px, 88vw); }
+    .search-box label { display: block; color: var(--grey-3); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 14px; }
+    .search-box input {
+      width: 100%; background: transparent; border: 0; border-bottom: 2px solid #fff;
+      color: #fff; font-size: clamp(22px, 4vw, 38px); padding: 10px 2px; outline: none; font-family: inherit;
+    }
+    .search-close { position: absolute; top: 26px; right: 30px; background: none; border: 0; color: #fff; font-size: 34px; line-height: 1; }
+
+    /* ---------- Mobile drawer ---------- */
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 88vw); z-index: 270;
+      background: #fff; box-shadow: -12px 0 40px rgba(0,0,0,.2);
+      transform: translateX(105%); transition: transform .35s var(--ease);
+      overflow-y: auto; padding: 24px;
+    }
+    .drawer.is-open { transform: translateX(0); }
+    .drawer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 265; opacity: 0; visibility: hidden; transition: opacity .3s; }
+    .drawer-backdrop.is-open { opacity: 1; visibility: visible; }
+    .drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .drawer nav a, .drawer nav button.acc {
+      display: flex; width: 100%; justify-content: space-between; align-items: center; text-align: left;
+      padding: 14px 4px; border: 0; border-bottom: 1px solid var(--grey-2); background: none;
+      font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .drawer .acc-panel { max-height: 0; overflow: hidden; transition: max-height .35s var(--ease); }
+    .drawer .acc-panel.is-open { max-height: 640px; }
+    .drawer .acc-panel a { padding: 11px 16px; font-size: 13px; font-weight: 500; text-transform: none; letter-spacing: .02em; border-bottom: 1px solid var(--grey-1); }
+
+    /* ---------- Hero ---------- */
+    .hero { position: relative; height: calc(100svh - var(--header-h) - 34px); min-height: 540px; max-height: 860px; overflow: hidden; }
+    .hero .hero-media { position: absolute; inset: 0; }
+    .hero .hero-media .ph { transform: scale(1.06); animation: heroZoom 14s var(--ease) forwards; }
+    @keyframes heroZoom { to { transform: scale(1); } }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.62) 0%, rgba(0,0,0,.18) 55%, rgba(0,0,0,.28) 100%); z-index: 1; }
+    .hero-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 84px; color: #fff; }
+    .hero-eyebrow { font-size: 12px; letter-spacing: .3em; text-transform: uppercase; font-weight: 700; color: #e7e5e4; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(34px, 5.6vw, 66px); line-height: 1.06; font-weight: 800; letter-spacing: -.015em; max-width: 15ch; text-transform: uppercase; }
+    .hero p.sub { margin-top: 18px; font-size: clamp(15px, 1.6vw, 19px); max-width: 52ch; color: #f5f5f4; }
+    .hero-ctas { margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px;
+      font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      border: 2px solid transparent; transition: all .25s var(--ease);
+    }
+    .btn .arr { transition: transform .25s var(--ease); }
+    .btn:hover .arr { transform: translateX(5px); }
+    .btn--solid { background: #fff; color: var(--ink); }
+    .btn--solid:hover { background: var(--accent); color: #fff; }
+    .btn--ghost { border-color: #fff; color: #fff; }
+    .btn--ghost:hover { background: #fff; color: var(--ink); }
+    .btn--dark { background: var(--ink); color: #fff; }
+    .btn--dark:hover { background: var(--accent); }
+    .btn--outline { border-color: var(--ink); color: var(--ink); }
+    .btn--outline:hover { background: var(--ink); color: #fff; }
+    .scroll-cue {
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 2;
+      width: 26px; height: 42px; border: 2px solid rgba(255,255,255,.8); border-radius: 14px;
+    }
+    .scroll-cue::after { content: ""; position: absolute; top: 7px; left: 50%; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: #fff; animation: cue 1.8s infinite var(--ease); }
+    @keyframes cue { 0% { opacity: 1; transform: translateY(0);} 70% { opacity: 0; transform: translateY(14px);} 100% { opacity: 0; } }
+
+    /* ---------- Section scaffolding + reveal ---------- */
+    section.block { padding: 92px 0; }
+    .eyebrow { font-size: 12px; letter-spacing: .28em; text-transform: uppercase; font-weight: 700; color: var(--accent); margin-bottom: 14px; }
+    h2.title { font-size: clamp(28px, 3.6vw, 44px); font-weight: 800; line-height: 1.1; letter-spacing: -.01em; text-transform: uppercase; }
+    p.lead { margin-top: 18px; font-size: 17px; color: var(--ink-soft); max-width: 62ch; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    .reveal[data-delay="1"] { transition-delay: .12s; } .reveal[data-delay="2"] { transition-delay: .24s; }
+    .reveal[data-delay="3"] { transition-delay: .36s; } .reveal[data-delay="4"] { transition-delay: .48s; }
+
+    /* ---------- Stats strip ---------- */
+    .stats { background: var(--ink); color: #fff; padding: 54px 0; }
+    .stats .wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center; }
+    .stat .num { font-size: clamp(30px, 3.4vw, 46px); font-weight: 800; letter-spacing: -.02em; }
+    .stat .lbl { margin-top: 6px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--grey-3); }
+
+    /* ---------- Brands grid ---------- */
+    .brands-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 44px; }
+    .brands-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .brand-card { position: relative; aspect-ratio: 4 / 3; overflow: hidden; display: block; }
+    .brand-card .ph { transition: transform .6s var(--ease); }
+    .brand-card:hover .ph, .brand-card:focus-visible .ph { transform: scale(1.07); }
+    .brand-card .veil { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0,0,0,.66), rgba(0,0,0,.05) 55%); transition: background .4s; }
+    .brand-card:hover .veil { background: linear-gradient(to top, rgba(200,69,44,.82), rgba(0,0,0,.12) 70%); }
+    .brand-card .meta { position: absolute; left: 18px; right: 18px; bottom: 16px; z-index: 2; color: #fff; }
+    .brand-card .meta .name { display: block; font-size: 17px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .brand-card .meta .cat { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #e7e5e4; margin-top: 3px; }
+    .brand-card .meta .go { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; opacity: 0; transform: translateY(8px); transition: all .35s var(--ease); }
+    .brand-card:hover .meta .go { opacity: 1; transform: none; }
+
+    /* ---------- Purpose (split) ---------- */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .split .media { position: relative; aspect-ratio: 5 / 4; overflow: hidden; }
+    .split.flip .media { order: 2; }
+    .checklist { margin-top: 26px; display: grid; gap: 12px; list-style: none; }
+    .checklist li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; color: var(--ink-soft); }
+    .checklist li::before { content: "—"; color: var(--accent); font-weight: 800; }
+
+    /* ---------- News carousel ---------- */
+    .news { background: var(--grey-1); }
+    .news-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+    .car { position: relative; overflow: hidden; }
+    .car-track { display: flex; gap: 20px; transition: transform .55s var(--ease); }
+    .news-card { flex: 0 0 calc((100% - 40px) / 3); background: #fff; border: 1px solid var(--grey-2); display: flex; flex-direction: column; transition: box-shadow .3s, transform .3s; }
+    .news-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,.1); transform: translateY(-4px); }
+    .news-card .media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+    .news-card .body { padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .news-card .date { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--grey-3); font-weight: 700; }
+    .news-card h3 { font-size: 17px; line-height: 1.35; font-weight: 700; }
+    .news-card .read { margin-top: auto; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-dark); }
+    .car-nav { display: flex; gap: 10px; }
+    .car-btn { width: 46px; height: 46px; border: 1px solid var(--ink); background: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; transition: all .2s; }
+    .car-btn:hover:not(:disabled) { background: var(--ink); color: #fff; }
+    .car-btn:disabled { opacity: .3; cursor: default; }
+    .car-dots { display: flex; gap: 8px; justify-content: center; margin-top: 28px; }
+    .car-dot { width: 9px; height: 9px; border-radius: 50%; border: 0; background: var(--grey-2); transition: all .25s; }
+    .car-dot.is-active { background: var(--ink); transform: scale(1.25); }
+
+    /* ---------- Careers banner ---------- */
+    .careers { position: relative; min-height: 460px; display: flex; align-items: center; overflow: hidden; color: #fff; }
+    .careers .bg { position: absolute; inset: 0; }
+    .careers .bg .ph { transition: transform 1.2s var(--ease); }
+    .careers .veil { position: absolute; inset: 0; background: rgba(15,15,15,.62); z-index: 1; }
+    .careers .wrap { position: relative; z-index: 2; padding-top: 80px; padding-bottom: 80px; }
+    .careers h2 { color: #fff; }
+    .careers p.lead { color: var(--grey-2); }
+
+    /* ---------- Email alerts ---------- */
+    .alerts { background: var(--grey-1); border-top: 1px solid var(--grey-2); }
+    .alerts .inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; }
+    .alert-form { display: flex; gap: 0; }
+    .alert-form input {
+      flex: 1; padding: 15px 18px; font-size: 15px; border: 2px solid var(--ink); border-right: 0; outline: none; font-family: inherit; background: #fff;
+    }
+    .alert-form input:focus { border-color: var(--accent); }
+    .alert-form .btn { border-width: 2px; }
+    .form-note { margin-top: 10px; font-size: 12px; color: var(--grey-3); }
+    .form-msg { margin-top: 12px; font-size: 14px; font-weight: 600; color: #1c7c43; display: none; }
+    .form-msg.is-visible { display: block; }
+
+    /* ---------- Footer ---------- */
+    footer.site-footer { background: var(--ink); color: #d6d3d1; padding: 76px 0 0; font-size: 14px; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 56px; }
+    .footer-brand .logo-ph { width: 200px; height: 42px; margin-bottom: 18px; }
+    .footer-brand p { font-size: 13px; color: var(--grey-3); max-width: 34ch; }
+    .footer-col h4 { color: #fff; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: grid; gap: 10px; }
+    .footer-col a { color: #b8b3af; font-size: 13px; transition: color .2s, padding-left .2s; }
+    .footer-col a:hover { color: #fff; padding-left: 4px; }
+    .socials { display: flex; gap: 12px; margin-top: 22px; }
+    .socials a { width: 38px; height: 38px; border: 1px solid #57534e; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all .25s; }
+    .socials a:hover { background: #fff; border-color: #fff; }
+    .socials a:hover svg { stroke: var(--ink); fill: var(--ink); }
+    .socials svg { width: 16px; height: 16px; fill: #d6d3d1; stroke: none; }
+    .footer-legal { border-top: 1px solid #33302e; padding: 24px 0; }
+    .footer-legal .wrap { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; font-size: 12px; color: var(--grey-3); }
+    .legal-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .legal-links a:hover { color: #fff; text-decoration: underline; }
+
+    /* ---------- Back to top ---------- */
+    .to-top {
+      position: fixed; right: 22px; bottom: 22px; z-index: 190; width: 48px; height: 48px;
+      border: 0; border-radius: 50%; background: var(--ink); color: #fff; font-size: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25); opacity: 0; visibility: hidden; transform: translateY(14px);
+      transition: all .3s var(--ease);
+    }
+    .to-top.is-visible { opacity: 1; visibility: visible; transform: none; }
+    .to-top:hover { background: var(--accent); }
+
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1080px) {
+      .brands-grid { grid-template-columns: repeat(3, 1fr); }
+      .news-card { flex-basis: calc((100% - 20px) / 2); }
+    }
+    @media (max-width: 900px) {
+      nav.main-nav { display: none; }
+      .hamburger { display: inline-flex; }
+      .split, .alerts .inner { grid-template-columns: 1fr; gap: 36px; }
+      .split.flip .media { order: 0; }
+      .stats .wrap { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      section.block { padding: 64px 0; }
+      .brands-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .news-card { flex-basis: 100%; }
+      .util-links { display: none; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .alert-form { flex-direction: column; }
+      .alert-form input { border-right: 2px solid var(--ink); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ===== Utility bar with stock ticker ===== -->
+  <div class="util-bar" role="complementary" aria-label="Utility">
+    <div class="wrap">
+      <div class="ticker" aria-label="Stock quote">
+        <span class="sym">NYSE: WWW</span>
+        <span id="ticker-price">$—.—</span>
+        <span class="delta-up" id="ticker-delta">▲ —%</span>
+      </div>
+      <div class="util-links">
+        <a href="#investors">Investor Relations</a>
+        <a href="#news">Newsroom</a>
+        <a href="#contact">Contact Us</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header" id="site-header">
+    <div class="wrap header-inner">
+      <a class="logo" href="#" aria-label="Wolverine Worldwide — Home">
+        <span class="logo-ph"><span class="ph"><span class="ph-type">Logo</span><span class="ph-id">#M01</span></span></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary">
+        <div class="nav-item">
+          <button class="nav-link" aria-expanded="false" aria-haspopup="true">About Us <span class="caret" aria-hidden="true"></span></button>
+          <div class="dropdown" role="menu">
+            <div class="dd-label">Who We Are</div>
+            <a href="#purpose" role="menuitem">Our Company</a>
+            <a href="#purpose" role="menuitem">Our History</a>
+            <a href="#purpose" role="menuitem">Management Team</a>
+            <a href="#purpose" role="menuitem">Board of Directors</a>
+            <a href="#contact" role="menuitem">Contact Us</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button class="nav-link" aria-expanded="false" aria-haspopup="true">Our Brands <span class="caret" aria-hidden="true"></span></button>
+          <div class="dropdown" role="menu">
+            <div class="dd-label">A portfolio built for every step.</div>
+            <a href="#brands" role="menuitem">Merrell</a>
+            <a href="#brands" role="menuitem">Saucony</a>
+            <a href="#brands" role="menuitem">Sweaty Betty</a>
+            <a href="#brands" role="menuitem">Wolverine</a>
+            <a href="#brands" role="menuitem">Chaco</a>
+            <a href="#brands" role="menuitem">Hush Puppies</a>
+            <a href="#brands" role="menuitem">Bates</a>
+            <a href="#brands" role="menuitem">HYTEST</a>
+            <a href="#brands" role="menuitem">Stride Rite</a>
+            <a href="#brands" role="menuitem">Cat Footwear</a>
+            <a href="#brands" role="menuitem">Harley-Davidson Footwear</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <button class="nav-link" aria-expanded="false" aria-haspopup="true">Responsibility <span class="caret" aria-hidden="true"></span></button>
+          <div class="dropdown" role="menu">
+            <div class="dd-label">Lasting Positive Impact</div>
+            <a href="#responsibility" role="menuitem">Our Approach</a>
+            <a href="#responsibility" role="menuitem">Our Team</a>
+            <a href="#responsibility" role="menuitem">Our Communities</a>
+            <a href="#responsibility" role="menuitem">Our Planet</a>
+            <a href="#responsibility" role="menuitem">Reports &amp; Policies</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" href="#investors">Investor Relations</a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" href="#careers">Careers</a>
+        </div>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="search-open" aria-label="Open search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        </button>
+        <button class="icon-btn hamburger" id="drawer-open" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Search overlay ===== -->
+  <div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search">
+    <button class="search-close" id="search-close" aria-label="Close search">&times;</button>
+    <div class="search-box">
+      <label for="site-search">Search Wolverine Worldwide</label>
+      <input type="search" id="site-search" placeholder="What are you looking for?" />
+    </div>
+  </div>
+
+  <!-- ===== Mobile drawer ===== -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer" id="drawer" aria-label="Mobile menu">
+    <div class="drawer-head">
+      <strong style="letter-spacing:.14em; font-size:13px;">MENU</strong>
+      <button class="icon-btn" id="drawer-close" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+    <nav>
+      <button class="acc" aria-expanded="false">About Us <span>+</span></button>
+      <div class="acc-panel">
+        <a href="#purpose">Our Company</a><a href="#purpose">Our History</a><a href="#purpose">Management Team</a><a href="#purpose">Board of Directors</a><a href="#contact">Contact Us</a>
+      </div>
+      <button class="acc" aria-expanded="false">Our Brands <span>+</span></button>
+      <div class="acc-panel">
+        <a href="#brands">Merrell</a><a href="#brands">Saucony</a><a href="#brands">Sweaty Betty</a><a href="#brands">Wolverine</a><a href="#brands">Chaco</a><a href="#brands">Hush Puppies</a><a href="#brands">Bates</a><a href="#brands">HYTEST</a><a href="#brands">Stride Rite</a><a href="#brands">Cat Footwear</a><a href="#brands">Harley-Davidson Footwear</a>
+      </div>
+      <button class="acc" aria-expanded="false">Responsibility <span>+</span></button>
+      <div class="acc-panel">
+        <a href="#responsibility">Our Approach</a><a href="#responsibility">Our Team</a><a href="#responsibility">Our Communities</a><a href="#responsibility">Our Planet</a><a href="#responsibility">Reports &amp; Policies</a>
+      </div>
+      <a href="#investors">Investor Relations</a>
+      <a href="#careers">Careers</a>
+      <a href="#news">Newsroom</a>
+    </nav>
+  </aside>
+
+  <main id="main">
+    <!-- ===== Hero (video) ===== -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-media"><span class="ph ph--video ph--dark"><span class="ph-type">Video — Hero</span><span class="ph-id">#M02</span></span></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="wrap hero-content">
+        <p class="hero-eyebrow">Wolverine Worldwide · Est. 1883</p>
+        <h1>Grounded in craftsmanship. Driven by innovation.</h1>
+        <p class="sub">We build and grow high-energy footwear, apparel and accessories brands that inspire and empower consumers to explore and enjoy their active lives.</p>
+        <div class="hero-ctas">
+          <a class="btn btn--solid" href="#brands">Explore Our Brands <span class="arr">→</span></a>
+          <a class="btn btn--ghost" href="#purpose">Who We Are <span class="arr">→</span></a>
+        </div>
+      </div>
+      <div class="scroll-cue" aria-hidden="true"></div>
+    </section>
+
+    <!-- ===== Stats strip ===== -->
+    <section class="stats" aria-label="Key figures">
+      <div class="wrap">
+        <div class="stat reveal"><div class="num" data-count="1883">0</div><div class="lbl">Founded in Michigan</div></div>
+        <div class="stat reveal" data-delay="1"><div class="num" data-count="11">0</div><div class="lbl">Global Brands</div></div>
+        <div class="stat reveal" data-delay="2"><div class="num" data-count="170">0</div><div class="lbl">Countries &amp; Territories</div></div>
+        <div class="stat reveal" data-delay="3"><div class="num" data-count="140">0</div><div class="lbl">Years of Craftsmanship</div></div>
+      </div>
+    </section>
+
+    <!-- ===== Brands ===== -->
+    <section class="block" id="brands" aria-label="Our brands">
+      <div class="wrap">
+        <div class="brands-head">
+          <div class="reveal">
+            <p class="eyebrow">Our Brands</p>
+            <h2 class="title">A portfolio built for every step.</h2>
+            <p class="lead">Each brand has its own identity and strengths — together they lead across performance, work, and lifestyle categories.</p>
+          </div>
+          <a class="btn btn--dark reveal" data-delay="1" href="#brands">View All Brands <span class="arr">→</span></a>
+        </div>
+        <div class="brands-grid">
+          <a class="brand-card reveal" href="#"><span class="ph"><span class="ph-type">Foto — Merrell</span><span class="ph-id">#M03</span></span><span class="veil"></span><span class="meta"><span class="name">Merrell</span><span class="cat">Outdoor</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="1" href="#"><span class="ph"><span class="ph-type">Foto — Saucony</span><span class="ph-id">#M04</span></span><span class="veil"></span><span class="meta"><span class="name">Saucony</span><span class="cat">Running</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="2" href="#"><span class="ph"><span class="ph-type">Foto — Sweaty Betty</span><span class="ph-id">#M05</span></span><span class="veil"></span><span class="meta"><span class="name">Sweaty Betty</span><span class="cat">Activewear</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="3" href="#"><span class="ph"><span class="ph-type">Foto — Wolverine</span><span class="ph-id">#M06</span></span><span class="veil"></span><span class="meta"><span class="name">Wolverine</span><span class="cat">Work</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" href="#"><span class="ph"><span class="ph-type">Foto — Chaco</span><span class="ph-id">#M07</span></span><span class="veil"></span><span class="meta"><span class="name">Chaco</span><span class="cat">Outdoor Lifestyle</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="1" href="#"><span class="ph"><span class="ph-type">Foto — Hush Puppies</span><span class="ph-id">#M08</span></span><span class="veil"></span><span class="meta"><span class="name">Hush Puppies</span><span class="cat">Casual</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="2" href="#"><span class="ph"><span class="ph-type">Foto — Bates</span><span class="ph-id">#M09</span></span><span class="veil"></span><span class="meta"><span class="name">Bates</span><span class="cat">Uniform</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="3" href="#"><span class="ph"><span class="ph-type">Foto — HYTEST</span><span class="ph-id">#M10</span></span><span class="veil"></span><span class="meta"><span class="name">HYTEST</span><span class="cat">Safety</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" href="#"><span class="ph"><span class="ph-type">Foto — Stride Rite</span><span class="ph-id">#M11</span></span><span class="veil"></span><span class="meta"><span class="name">Stride Rite</span><span class="cat">Kids</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="1" href="#"><span class="ph"><span class="ph-type">Foto — Cat Footwear</span><span class="ph-id">#M12</span></span><span class="veil"></span><span class="meta"><span class="name">Cat Footwear</span><span class="cat">Licensed · Work</span><span class="go">Discover →</span></span></a>
+          <a class="brand-card reveal" data-delay="2" href="#"><span class="ph"><span class="ph-type">Foto — Harley-Davidson</span><span class="ph-id">#M13</span></span><span class="veil"></span><span class="meta"><span class="name">Harley-Davidson Footwear</span><span class="cat">Licensed · Lifestyle</span><span class="go">Discover →</span></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Purpose / About ===== -->
+    <section class="block" id="purpose" style="background: var(--grey-1);" aria-label="Our purpose">
+      <div class="wrap split">
+        <div class="media reveal"><span class="ph"><span class="ph-type">Foto — Our Company</span><span class="ph-id">#M14</span></span></div>
+        <div class="reveal" data-delay="1">
+          <p class="eyebrow">Who We Are</p>
+          <h2 class="title">Good products for good people.</h2>
+          <p class="lead">Founded in 1883 on the simple desire to create good products for good people, Wolverine Worldwide has grown into one of the world's leading marketers and licensors of branded casual, active lifestyle, work, outdoor sport, athletic, children's and uniform footwear and apparel — reaching consumers in approximately 170 countries and territories.</p>
+          <ul class="checklist">
+            <li>Headquartered in Rockford, Michigan, USA</li>
+            <li>Listed on the New York Stock Exchange (NYSE: WWW)</li>
+            <li>Named 2025 Company of the Year by Footwear News</li>
+          </ul>
+          <div style="margin-top: 30px;"><a class="btn btn--dark" href="#purpose">About Wolverine Worldwide <span class="arr">→</span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Responsibility ===== -->
+    <section class="block" id="responsibility" aria-label="Responsibility">
+      <div class="wrap split flip">
+        <div class="media reveal"><span class="ph"><span class="ph-type">Foto — Responsibility</span><span class="ph-id">#M15</span></span></div>
+        <div class="reveal" data-delay="1">
+          <p class="eyebrow">Responsibility</p>
+          <h2 class="title">A cause worth investing in.</h2>
+          <p class="lead">We believe social responsibility creates lasting positive impact — on our people, our communities, and the planet. Through community programs and outdoor initiatives, we empower individuals to lead healthier, more active lives.</p>
+          <ul class="checklist">
+            <li>Our Team — an inclusive, high-energy workplace</li>
+            <li>Our Communities — giving back where we live and work</li>
+            <li>Our Planet — responsible materials and operations</li>
+          </ul>
+          <div style="margin-top: 30px;"><a class="btn btn--outline" href="#responsibility">Explore Our Approach <span class="arr">→</span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== News carousel ===== -->
+    <section class="block news" id="news" aria-label="Newsroom">
+      <div class="wrap">
+        <div class="news-head">
+          <div class="reveal">
+            <p class="eyebrow">Newsroom</p>
+            <h2 class="title">The latest from Wolverine Worldwide.</h2>
+          </div>
+          <div class="car-nav reveal" data-delay="1">
+            <button class="car-btn" id="car-prev" aria-label="Previous">←</button>
+            <button class="car-btn" id="car-next" aria-label="Next">→</button>
+          </div>
+        </div>
+        <div class="car reveal" data-delay="1">
+          <div class="car-track" id="car-track">
+            <article class="news-card">
+              <div class="media"><span class="ph"><span class="ph-type">Foto — News 1</span><span class="ph-id">#M16</span></span></div>
+              <div class="body"><span class="date">Press Release</span><h3>Wolverine Worldwide Named Company of the Year by Footwear News</h3><a class="read" href="#news">Read More →</a></div>
+            </article>
+            <article class="news-card">
+              <div class="media"><span class="ph"><span class="ph-type">Foto — News 2</span><span class="ph-id">#M17</span></span></div>
+              <div class="body"><span class="date">Financial News</span><h3>Wolverine Worldwide Reports Third Quarter 2025 Results</h3><a class="read" href="#news">Read More →</a></div>
+            </article>
+            <article class="news-card">
+              <div class="media"><span class="ph"><span class="ph-type">Foto — News 3</span><span class="ph-id">#M18</span></span></div>
+              <div class="body"><span class="date">Press Release</span><h3>Wolverine Worldwide Advances Strategic Transformation With New Licensing Agreements</h3><a class="read" href="#news">Read More →</a></div>
+            </article>
+            <article class="news-card">
+              <div class="media"><span class="ph"><span class="ph-type">Foto — News 4</span><span class="ph-id">#M19</span></span></div>
+              <div class="body"><span class="date">Awards</span><h3>Recognized by Forbes as One of America's Dream Employers</h3><a class="read" href="#news">Read More →</a></div>
+            </article>
+            <article class="news-card">
+              <div class="media"><span class="ph"><span class="ph-type">Foto — News 5</span><span class="ph-id">#M20</span></span></div>
+              <div class="body"><span class="date">Company News</span><h3>A Video Tour of the Renovated Rockford Headquarters</h3><a class="read" href="#news">Read More →</a></div>
+            </article>
+            <article class="news-card">
+              <div class="media"><span class="ph"><span class="ph-type">Foto — News 6</span><span class="ph-id">#M21</span></span></div>
+              <div class="body"><span class="date">Brand News</span><h3>Saucony Wins Two "Best Shoes" Awards from Runner's World</h3><a class="read" href="#news">Read More →</a></div>
+            </article>
+          </div>
+          <div class="car-dots" id="car-dots" role="tablist" aria-label="News pages"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Investors ===== -->
+    <section class="block" id="investors" aria-label="Investor relations">
+      <div class="wrap split">
+        <div class="reveal">
+          <p class="eyebrow">Investor Relations</p>
+          <h2 class="title">Driving shareholder value.</h2>
+          <p class="lead">Access stock information, dividends, SEC filings, annual reports, webcasts and presentations, corporate governance and analyst coverage on our Investor Relations portal.</p>
+          <div style="margin-top: 30px; display:flex; gap:14px; flex-wrap:wrap;">
+            <a class="btn btn--dark" href="#investors">Visit Investor Relations <span class="arr">→</span></a>
+            <a class="btn btn--outline" href="#investors">Latest Annual Report <span class="arr">→</span></a>
+          </div>
+        </div>
+        <div class="media reveal" data-delay="1" style="aspect-ratio: 5/4; position: relative; overflow: hidden;">
+          <span class="ph"><span class="ph-type">Foto — Investors</span><span class="ph-id">#M22</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Careers banner ===== -->
+    <section class="careers" id="careers" aria-label="Careers">
+      <div class="bg" data-parallax><span class="ph ph--dark"><span class="ph-type">Foto — Careers Banner</span><span class="ph-id">#M23</span></span></div>
+      <div class="veil" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="reveal" style="max-width: 640px;">
+          <p class="eyebrow" style="color:#f0b7a8;">Careers</p>
+          <h2 class="title">Come build the future of active lifestyles with us.</h2>
+          <p class="lead">Join a team recognized as one of America's best employers for culture — and help empower people everywhere to live healthier, more active lives.</p>
+          <div style="margin-top: 30px;"><a class="btn btn--solid" href="#careers">Search Open Roles <span class="arr">→</span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Email alerts ===== -->
+    <section class="block alerts" id="contact" aria-label="Email alerts">
+      <div class="wrap inner">
+        <div class="reveal">
+          <p class="eyebrow">Stay Informed</p>
+          <h2 class="title">Sign up for email alerts.</h2>
+          <p class="lead">Receive press releases, financial news and company updates directly in your inbox.</p>
+        </div>
+        <div class="reveal" data-delay="1">
+          <form class="alert-form" id="alert-form" novalidate>
+            <input type="email" id="alert-email" placeholder="Enter your email address" aria-label="Email address" required />
+            <button class="btn btn--dark" type="submit">Subscribe</button>
+          </form>
+          <p class="form-note">By subscribing you agree to our Privacy Policy. Unsubscribe at any time.</p>
+          <p class="form-msg" id="form-msg" role="status">Thank you — your subscription has been registered.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div class="footer-brand">
+        <span class="logo-ph"><span class="ph ph--dark"><span class="ph-type">Logo</span><span class="ph-id">#M24</span></span></span>
+        <p>Wolverine World Wide, Inc. — designing, marketing and licensing branded footwear and apparel since 1883. Rockford, Michigan, USA.</p>
+        <div class="socials" aria-label="Social media">
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.2 8h4.6v14H.2V8zm7.6 0h4.4v1.9h.1c.6-1.1 2.1-2.3 4.3-2.3 4.6 0 5.4 3 5.4 6.9V22h-4.6v-6.6c0-1.6 0-3.6-2.2-3.6s-2.6 1.7-2.6 3.5V22H7.8V8z"/></svg></a>
+          <a href="#" aria-label="X (Twitter)"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.4 22H3.3l7.3-8.3L1.2 2h6.4l4.4 5.9L18.9 2zm-1.1 18h1.7L7.1 3.9H5.3L17.8 20z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.4 4 4 2.4 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zm0 3.6a6.2 6.2 0 100 12.4 6.2 6.2 0 000-12.4zm0 10.2a4 4 0 110-8 4 4 0 010 8zm6.4-10.5a1.4 1.4 0 100 2.9 1.4 1.4 0 000-2.9z"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 10-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.6-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.3l-.5 3.5h-2.8v8.4A12 12 0 0024 12z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.2C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.2 31.2 0 000 12a31.2 31.2 0 00.5 5.8 3 3 0 002.1 2.2c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.2A31.2 31.2 0 0024 12a31.2 31.2 0 00-.5-5.8zM9.5 15.6V8.4L15.8 12l-6.3 3.6z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>About Us</h4>
+        <ul>
+          <li><a href="#purpose">Our Company</a></li>
+          <li><a href="#purpose">Management Team</a></li>
+          <li><a href="#purpose">Board of Directors</a></li>
+          <li><a href="#responsibility">Responsibility</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Our Brands</h4>
+        <ul>
+          <li><a href="#brands">Merrell</a></li>
+          <li><a href="#brands">Saucony</a></li>
+          <li><a href="#brands">Sweaty Betty</a></li>
+          <li><a href="#brands">Wolverine</a></li>
+          <li><a href="#brands">View All Brands</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Investors</h4>
+        <ul>
+          <li><a href="#investors">Stock Info &amp; Dividends</a></li>
+          <li><a href="#investors">SEC Filings</a></li>
+          <li><a href="#investors">Annual Reports</a></li>
+          <li><a href="#investors">Webcasts &amp; Presentations</a></li>
+          <li><a href="#investors">Corporate Governance</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Careers</h4>
+        <ul>
+          <li><a href="#careers">Who We Are</a></li>
+          <li><a href="#careers">Search Jobs</a></li>
+          <li><a href="#careers">Life at Wolverine</a></li>
+          <li><a href="#news">Newsroom</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <div class="wrap">
+        <span id="copyright">© 2026 Wolverine World Wide, Inc. All rights reserved.</span>
+        <div class="legal-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Accessibility</a>
+          <a href="#">Cookie Preferences</a>
+          <a href="#">California Supply Chains Act</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Cookie banner ===== -->
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
+    <span>We use cookies to improve your experience and analyze site traffic. See our <a href="#">Privacy Policy</a>.</span>
+    <div class="btn-row">
+      <button class="cookie-btn cookie-btn--accept" id="cookie-accept">Accept All</button>
+      <button class="cookie-btn" id="cookie-decline">Decline</button>
+    </div>
+  </div>
+
+  <button class="to-top" id="to-top" aria-label="Back to top">↑</button>
+
+  <script>
+    // ---------- Sticky header state ----------
+    const header = document.getElementById('site-header');
+    const toTop = document.getElementById('to-top');
+    addEventListener('scroll', () => {
+      const y = scrollY;
+      header.classList.toggle('is-scrolled', y > 10);
+      toTop.classList.toggle('is-visible', y > 600);
+    }, { passive: true });
+    toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // ---------- Scroll-reveal (IntersectionObserver) ----------
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.16 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ---------- Animated counters ----------
+    const counterIO = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        counterIO.unobserve(e.target);
+        const end = +e.target.dataset.count, dur = 1400, t0 = performance.now();
+        const tick = now => {
+          const p = Math.min((now - t0) / dur, 1);
+          e.target.textContent = String(Math.round(end * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(el => counterIO.observe(el));
+
+    // ---------- Search overlay ----------
+    const searchOverlay = document.getElementById('search-overlay');
+    document.getElementById('search-open').addEventListener('click', () => {
+      searchOverlay.classList.add('is-open');
+      document.getElementById('site-search').focus();
+    });
+    document.getElementById('search-close').addEventListener('click', () => searchOverlay.classList.remove('is-open'));
+    addEventListener('keydown', e => {
+      if (e.key === 'Escape') { searchOverlay.classList.remove('is-open'); closeDrawer(); }
+    });
+
+    // ---------- Mobile drawer + accordions ----------
+    const drawer = document.getElementById('drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const openDrawer = () => { drawer.classList.add('is-open'); backdrop.classList.add('is-open'); };
+    const closeDrawer = () => { drawer.classList.remove('is-open'); backdrop.classList.remove('is-open'); };
+    document.getElementById('drawer-open').addEventListener('click', openDrawer);
+    document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+    drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeDrawer));
+    drawer.querySelectorAll('.acc').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        btn.querySelector('span').textContent = open ? '+' : '–';
+        btn.nextElementSibling.classList.toggle('is-open', !open);
+      });
+    });
+
+    // ---------- Desktop dropdown keyboard support ----------
+    document.querySelectorAll('.nav-item > button.nav-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const open = item.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        document.querySelectorAll('.nav-item.is-open').forEach(o => { if (o !== item) o.classList.remove('is-open'); });
+      });
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.nav-item')) document.querySelectorAll('.nav-item.is-open').forEach(o => o.classList.remove('is-open'));
+    });
+
+    // ---------- News carousel ----------
+    const track = document.getElementById('car-track');
+    const cards = [...track.children];
+    const dotsWrap = document.getElementById('car-dots');
+    const prevBtn = document.getElementById('car-prev');
+    const nextBtn = document.getElementById('car-next');
+    let page = 0;
+    const perPage = () => matchMedia('(max-width: 640px)').matches ? 1 : matchMedia('(max-width: 1080px)').matches ? 2 : 3;
+    const pages = () => Math.ceil(cards.length / perPage());
+    function renderCar() {
+      const n = pages();
+      page = Math.min(page, n - 1);
+      const gap = 20, step = track.clientWidth + gap;
+      track.style.transform = `translateX(-${page * step}px)`;
+      prevBtn.disabled = page === 0;
+      nextBtn.disabled = page === n - 1;
+      dotsWrap.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        const d = document.createElement('button');
+        d.className = 'car-dot' + (i === page ? ' is-active' : '');
+        d.setAttribute('aria-label', `Page ${i + 1}`);
+        d.addEventListener('click', () => { page = i; renderCar(); });
+        dotsWrap.appendChild(d);
+      }
+    }
+    prevBtn.addEventListener('click', () => { page = Math.max(0, page - 1); renderCar(); });
+    nextBtn.addEventListener('click', () => { page = Math.min(pages() - 1, page + 1); renderCar(); });
+    addEventListener('resize', renderCar);
+    renderCar();
+    // Touch swipe
+    let touchX = null;
+    track.addEventListener('touchstart', e => touchX = e.touches[0].clientX, { passive: true });
+    track.addEventListener('touchend', e => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 48) { page = Math.max(0, Math.min(pages() - 1, page + (dx < 0 ? 1 : -1))); renderCar(); }
+      touchX = null;
+    }, { passive: true });
+
+    // ---------- Careers parallax ----------
+    const parallax = document.querySelector('[data-parallax] .ph');
+    if (parallax && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      addEventListener('scroll', () => {
+        const r = parallax.closest('.careers').getBoundingClientRect();
+        if (r.top < innerHeight && r.bottom > 0) {
+          parallax.style.transform = `translateY(${(r.top / innerHeight) * 36}px) scale(1.12)`;
+        }
+      }, { passive: true });
+    }
+
+    // ---------- Stock ticker (placeholder values) ----------
+    document.getElementById('ticker-price').textContent = '$——.——';
+    document.getElementById('ticker-delta').textContent = '▲ —.—%';
+
+    // ---------- Email alerts form ----------
+    document.getElementById('alert-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const input = document.getElementById('alert-email');
+      if (!input.value || !input.checkValidity()) { input.focus(); input.style.borderColor = 'var(--accent)'; return; }
+      document.getElementById('form-msg').classList.add('is-visible');
+      input.value = '';
+    });
+
+    // ---------- Cookie banner ----------
+    const banner = document.getElementById('cookie-banner');
+    const dismiss = () => banner.classList.add('is-hidden');
+    document.getElementById('cookie-accept').addEventListener('click', dismiss);
+    document.getElementById('cookie-decline').addEventListener('click', dismiss);
+  </script>
+</body>
+</html>
