@@ -3,15 +3,15 @@ import Reveal from "@/components/shop/Reveal";
 const steps = [
   {
     title: "Vertel je idee",
-    text: "Kies een taart uit de collectie of beschrijf je eigen ontwerp. Elke aanvraag is vrijblijvend.",
+    text: "Kies een taart uit de collectie of beschrijf je eigen ontwerp. Elke aanvraag is vrijblijvend en geldt nog niet als definitieve bestelling.",
   },
   {
     title: "Wij bevestigen",
-    text: "Binnen 24 uur ontvang je per e-mail de mogelijkheden, de prijs en het voorstel voor jouw taart.",
+    text: "Je ontvangt eerst een e-mail met de mogelijkheden en bijbehorende prijzen. Pas na jouw akkoord wordt de bestelling definitief, met betaalgegevens, ophaaladres en afhaaltijdstip.",
   },
   {
-    title: "Vers gebakken, klaar om te vieren",
-    text: "Na jouw akkoord bakken wij dagvers. Je haalt de taart op in het atelier of we bezorgen in overleg.",
+    title: "Dagvers ophalen",
+    text: "Je haalt de taart op in Rotterdam; de locatie is goed bereikbaar, met parkeergelegenheid voor de deur. Mits koel bewaard blijft de taart nog ruim drie dagen goed.",
   },
 ];
 

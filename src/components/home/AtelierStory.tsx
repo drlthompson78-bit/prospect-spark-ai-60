@@ -30,12 +30,9 @@ const AtelierStory = () => {
           <Reveal delay={0.16}>
             <blockquote className="mt-10 border-l-2 border-primary pl-6">
               <p className="font-display text-xl leading-relaxed text-foreground">
-                &ldquo;Een taart is het middelpunt van een feest. Die verantwoordelijkheid
-                proef je in elk detail.&rdquo;
+                &ldquo;Elke taart is maatwerk! Wij denken graag met u mee om samen een
+                persoonlijke en onvergetelijke taart samen te stellen.&rdquo;
               </p>
-              <footer className="mt-3 text-sm text-muted-foreground">
-                Het team van Het Taartenhuis
-              </footer>
             </blockquote>
           </Reveal>
           <Reveal delay={0.24}>

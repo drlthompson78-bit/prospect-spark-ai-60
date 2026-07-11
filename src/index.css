@@ -35,6 +35,41 @@
 
     --radius: 0.75rem;
   }
+
+  /*
+   * Lichte variant: ivoor en bone met dezelfde karamel-familie, als
+   * doorontwikkeling van de huidige (lichte) site van Het Taartenhuis.
+   * Wordt geschakeld via de themaknop in de header.
+   */
+  :root.theme-light {
+    --background: 36 42% 96%;
+    --foreground: 24 30% 13%;
+
+    --card: 36 40% 99%;
+    --card-foreground: 24 30% 13%;
+
+    --popover: 36 40% 98%;
+    --popover-foreground: 24 30% 13%;
+
+    --primary: 28 62% 42%;
+    --primary-foreground: 36 42% 97%;
+
+    --secondary: 33 32% 90%;
+    --secondary-foreground: 24 30% 13%;
+
+    --muted: 33 32% 90%;
+    --muted-foreground: 26 14% 38%;
+
+    --accent: 28 62% 42%;
+    --accent-foreground: 36 42% 97%;
+
+    --destructive: 0 62% 42%;
+    --destructive-foreground: 36 42% 97%;
+
+    --border: 31 24% 82%;
+    --input: 31 24% 78%;
+    --ring: 28 62% 42%;
+  }
 }
 
 @layer base {
@@ -98,13 +133,14 @@
     -webkit-text-stroke-color: transparent;
   }
 
+  /* Volgt het actieve thema, zodat het beeld in beide varianten in de pagina overloopt */
   .hero-scrim {
     background: linear-gradient(
       100deg,
-      hsl(20 16% 5% / 0.92) 0%,
-      hsl(20 16% 5% / 0.55) 42%,
-      hsl(20 16% 5% / 0.15) 70%,
-      hsl(20 16% 5% / 0.45) 100%
+      hsl(var(--background) / 0.92) 0%,
+      hsl(var(--background) / 0.55) 42%,
+      hsl(var(--background) / 0.15) 70%,
+      hsl(var(--background) / 0.45) 100%
     );
   }
 }

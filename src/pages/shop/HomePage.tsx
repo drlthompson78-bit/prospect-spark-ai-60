@@ -4,7 +4,7 @@ import SignatureRail from "@/components/home/SignatureRail";
 import CollectionGrid from "@/components/home/CollectionGrid";
 import AtelierStory from "@/components/home/AtelierStory";
 import Werkwijze from "@/components/home/Werkwijze";
-import Reviews from "@/components/home/Reviews";
+import Smaakbelofte from "@/components/home/Smaakbelofte";
 import CtaBand from "@/components/home/CtaBand";
 
 const HomePage = () => (
@@ -15,7 +15,7 @@ const HomePage = () => (
     <CollectionGrid />
     <AtelierStory />
     <Werkwijze />
-    <Reviews />
+    <Smaakbelofte />
     <Marquee angle={2} reverse />
     <CtaBand />
   </>

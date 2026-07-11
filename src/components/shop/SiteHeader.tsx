@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, Moon, ShoppingBag, Sun, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
+import { useTheme } from "@/hooks/useTheme";
 import { cakeWhole } from "@/data/assets";
 
 const navItems = [
@@ -29,6 +30,7 @@ const SiteHeader = () => {
   const { scrollY } = useScroll();
   const location = useLocation();
   const reduced = useReducedMotion();
+  const { theme, toggle } = useTheme();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
@@ -78,6 +80,15 @@ const SiteHeader = () => {
         </nav>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggle}
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary"
+            aria-label={theme === "dark" ? "Schakel naar lichte weergave" : "Schakel naar donkere weergave"}
+            title={theme === "dark" ? "Lichte versie" : "Donkere versie"}
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
           <button
             type="button"
             onClick={() => {

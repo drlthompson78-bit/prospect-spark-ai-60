@@ -13,7 +13,7 @@ import ProductCard from "@/components/shop/ProductCard";
 import Reveal from "@/components/shop/Reveal";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
-import { categories, formatPrice, getProduct, products } from "@/data/products";
+import { cakeTypes, categories, formatPrice, getProduct, products } from "@/data/products";
 
 const ProductPage = () => {
   const { slug } = useParams();
@@ -29,7 +29,8 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
   const { add } = useCart();
 
   const [sizeId, setSizeId] = useState(product.sizes[0]?.id ?? "s");
-  const [flavor, setFlavor] = useState(product.flavors[0] ?? "");
+  const [cake, setCake] = useState<string>(cakeTypes[0]);
+  const [flavorLabel, setFlavorLabel] = useState(product.flavors[0]?.label ?? "");
   const [quantity, setQuantity] = useState(1);
 
   const related = useMemo(
@@ -38,6 +39,8 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
   );
 
   const size = product.sizes.find((s) => s.id === sizeId) ?? product.sizes[0];
+  const vulling = product.flavors.find((f) => f.label === flavorLabel) ?? product.flavors[0];
+  const unitPrice = size.price + (vulling?.surcharge ?? 0);
   const categoryLabel = categories.find((c) => c.slug === product.category)?.label;
 
   const handleAdd = () => {
@@ -48,8 +51,8 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
       sizeId: size.id,
       sizeLabel: size.label,
       serves: size.serves,
-      flavor,
-      unitPrice: size.price,
+      flavor: `${cake} · ${vulling.label}`,
+      unitPrice,
       quantity,
     });
     toast.success(`${product.name} toegevoegd aan je winkelwagen`);
@@ -115,19 +118,45 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
             </div>
           </fieldset>
 
+          <fieldset className="mt-6">
+            <legend className="text-sm font-semibold text-foreground">Cake</legend>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {cakeTypes.map((c) => (
+                <label
+                  key={c}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-center rounded-xl border px-4 py-3 text-sm font-semibold transition-colors",
+                    cake === c ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:border-foreground/40"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="cake"
+                    value={c}
+                    checked={cake === c}
+                    onChange={() => setCake(c)}
+                    className="sr-only"
+                  />
+                  {c}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
           <div className="mt-6">
-            <label htmlFor="smaak" className="text-sm font-semibold text-foreground">
-              Smaak
+            <label htmlFor="vulling" className="text-sm font-semibold text-foreground">
+              Keuzevulling
             </label>
             <select
-              id="smaak"
-              value={flavor}
-              onChange={(e) => setFlavor(e.target.value)}
+              id="vulling"
+              value={flavorLabel}
+              onChange={(e) => setFlavorLabel(e.target.value)}
               className="mt-3 w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
               {product.flavors.map((f) => (
-                <option key={f} value={f}>
-                  {f}
+                <option key={f.label} value={f.label}>
+                  {f.label}
+                  {f.surcharge > 0 ? ` (+ ${formatPrice(f.surcharge)} per taart)` : ""}
                 </option>
               ))}
             </select>
@@ -156,9 +185,14 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
               </button>
             </div>
             <Button size="lg" className="h-12 flex-1 text-base active:scale-[0.98]" onClick={handleAdd}>
-              In winkelwagen &middot; {formatPrice(size.price * quantity)}
+              In winkelwagen &middot; {formatPrice(unitPrice * quantity)}
             </Button>
           </div>
+
+          <p className="mt-3 text-xs text-muted-foreground">
+            Alle prijzen zijn vanafprijzen incl. 9% btw, exclusief decoratie. Voor afbeeldingen,
+            teksten, bloemen of figuren geldt een meerprijs; die bevestigen we in de prijsopgave.
+          </p>
 
           {product.quoteOnly && (
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -171,17 +205,19 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
             <AccordionItem value="bestellen">
               <AccordionTrigger className="text-sm font-semibold">Bestellen en ophalen</AccordionTrigger>
               <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                Je plaatst eerst een vrijblijvende bestelaanvraag. Binnen 24 uur ontvang je
-                onze bevestiging met betaalinformatie, het ophaaladres en het tijdstip.
-                Bestel op tijd, zeker voor drukke periodes.
+                Je plaatst eerst een vrijblijvende bestelaanvraag; die geldt nog niet als
+                definitieve bestelling. Je ontvangt van ons eerst een e-mail met de
+                mogelijkheden en bijbehorende prijzen. Pas na jouw akkoord wordt de bestelling
+                definitief en ontvang je een bevestiging met betaalgegevens, het volledige
+                ophaaladres en het afhaaltijdstip. De taart haal je op in Rotterdam; de locatie
+                is goed bereikbaar, met parkeergelegenheid voor de deur.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="allergenen">
-              <AccordionTrigger className="text-sm font-semibold">Allergenen en bewaren</AccordionTrigger>
+            <AccordionItem value="bewaren">
+              <AccordionTrigger className="text-sm font-semibold">Vers en houdbaar</AccordionTrigger>
               <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                Onze taarten bevatten gluten, ei, melk en kunnen sporen van noten bevatten.
-                Glutenvrij, lactosevrij of vegan is op aanvraag mogelijk. Bewaar de taart
-                gekoeld en haal hem 30 minuten voor het serveren uit de koelkast.
+                Onze taarten worden ambachtelijk bereid en vers geleverd. Mits koel bewaard
+                blijven ze nog ruim drie dagen goed.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
