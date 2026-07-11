@@ -13,7 +13,7 @@ import NotFound from "@/pages/NotFound";
 const App = () => (
   <TooltipProvider>
     <Sonner position="bottom-center" />
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<ShopLayout />}>
           <Route path="/" element={<HomePage />} />
