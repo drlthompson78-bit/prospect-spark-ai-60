@@ -1,24 +1,19 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
-const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
-
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
-        <a href="/" className="text-primary underline hover:text-primary/90">
-          Return to Home
-        </a>
-      </div>
-    </div>
-  );
-};
+const NotFound = () => (
+  <div className="mx-auto flex min-h-[70dvh] max-w-[760px] flex-col items-start justify-center px-5 pt-20 md:px-8">
+    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">404</p>
+    <h1 className="mt-4 font-display text-4xl leading-tight tracking-tight text-foreground md:text-5xl">
+      Deze pagina is op
+    </h1>
+    <p className="mt-4 max-w-[48ch] text-base leading-relaxed text-muted-foreground">
+      Net als een goede taart aan het einde van het feest. De collectie staat gelukkig nog vol.
+    </p>
+    <Button asChild size="lg" className="mt-8">
+      <Link to="/collectie">Bekijk de collectie</Link>
+    </Button>
+  </div>
+);
 
 export default NotFound;
