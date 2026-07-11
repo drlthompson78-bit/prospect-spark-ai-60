@@ -5,7 +5,7 @@ import { Menu, Moon, ShoppingBag, Sun, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { useTheme } from "@/hooks/useTheme";
-import { cakeWhole } from "@/data/assets";
+import { cakeWhole, siteLogo } from "@/data/assets";
 
 const navItems = [
   { label: "Collectie", to: "/collectie" },
@@ -64,7 +64,11 @@ const SiteHeader = () => {
     >
       <div className="relative z-10 mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-[72px] md:px-8">
         <Link to="/" className="font-display text-lg tracking-tight text-foreground md:text-xl" onClick={() => setMenuOpen(false)}>
-          Het Taartenhuis
+          {theme === "light" ? (
+            <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-9 w-auto md:h-10" />
+          ) : (
+            "Het Taartenhuis"
+          )}
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Hoofdnavigatie">
@@ -72,7 +76,7 @@ const SiteHeader = () => {
             <Link
               key={item.to}
               to={item.to}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="nav-link text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               {item.label}
             </Link>

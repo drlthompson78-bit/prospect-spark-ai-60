@@ -37,38 +37,38 @@
   }
 
   /*
-   * Lichte variant: ivoor en bone met dezelfde karamel-familie, als
-   * doorontwikkeling van de huidige (lichte) site van Het Taartenhuis.
+   * Lichte variant: wit met het roze uit het originele logo van
+   * Het Taartenhuis, als directe doorontwikkeling van de huidige site.
    * Wordt geschakeld via de themaknop in de header.
    */
   :root.theme-light {
-    --background: 36 42% 96%;
-    --foreground: 24 30% 13%;
+    --background: 340 30% 98%;
+    --foreground: 240 10% 12%;
 
-    --card: 36 40% 99%;
-    --card-foreground: 24 30% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 12%;
 
-    --popover: 36 40% 98%;
-    --popover-foreground: 24 30% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 12%;
 
-    --primary: 28 62% 42%;
-    --primary-foreground: 36 42% 97%;
+    --primary: 314 70% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 33 32% 90%;
-    --secondary-foreground: 24 30% 13%;
+    --secondary: 330 30% 94%;
+    --secondary-foreground: 240 10% 12%;
 
-    --muted: 33 32% 90%;
-    --muted-foreground: 26 14% 38%;
+    --muted: 330 30% 94%;
+    --muted-foreground: 240 6% 40%;
 
-    --accent: 28 62% 42%;
-    --accent-foreground: 36 42% 97%;
+    --accent: 314 70% 45%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62% 42%;
-    --destructive-foreground: 36 42% 97%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 31 24% 82%;
-    --input: 31 24% 78%;
-    --ring: 28 62% 42%;
+    --border: 330 22% 88%;
+    --input: 330 22% 84%;
+    --ring: 314 70% 45%;
   }
 }
 
@@ -119,6 +119,28 @@
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
+  }
+
+  /* Navigatielink met onderstreping die van links naar rechts onthult */
+  .nav-link {
+    position: relative;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1.5px;
+    background: hsl(var(--primary));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after,
+  .nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
   }
 
   /* Outlined display-tekst voor de fullscreen menu-overlay */

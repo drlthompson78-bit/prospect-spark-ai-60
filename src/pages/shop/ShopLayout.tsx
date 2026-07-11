@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { motion, useReducedMotion } from "motion/react";
 import Lenis from "lenis";
 import SiteHeader from "@/components/shop/SiteHeader";
 import SiteFooter from "@/components/shop/SiteFooter";
@@ -9,6 +10,7 @@ import { CartProvider } from "@/context/CartContext";
 /** Schil rond alle shop-pagina's: navigatie, soepel scrollen, winkelwagen, footer. */
 const ShopLayout = () => {
   const location = useLocation();
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -40,9 +42,15 @@ const ShopLayout = () => {
     <CartProvider>
       <div className="grain-overlay" aria-hidden="true" />
       <SiteHeader />
-      <main>
+      {/* Zachte overgang bij elke paginawissel; key op pathname hertriggert de animatie */}
+      <motion.main
+        key={location.pathname}
+        initial={reduced ? false : { opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      >
         <Outlet />
-      </main>
+      </motion.main>
       <SiteFooter />
       <CartDrawer />
     </CartProvider>

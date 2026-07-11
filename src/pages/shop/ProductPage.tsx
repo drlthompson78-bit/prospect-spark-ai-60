@@ -74,7 +74,7 @@ const ProductDetail = ({ product }: { product: NonNullable<ReturnType<typeof get
             <img
               src={product.image}
               alt={product.name}
-              className="aspect-[3/4] w-full object-cover"
+              className="aspect-square w-full object-cover"
             />
           </div>
         </Reveal>

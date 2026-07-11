@@ -186,7 +186,7 @@ export const products: Product[] = [
       "tot voetbalclub. Voor afbeeldingen en figuren geldt een meerprijs; die bevestigen we " +
       "vooraf. " +
       basisBeschrijving,
-    image: productImages.babyshower,
+    image: productImages.kindertaart,
     priceFrom: 34.5,
     sizes: rondeSizes,
     flavors: vullingen,
@@ -214,7 +214,7 @@ export const products: Product[] = [
       "Een feestelijke taart voor de babyshower, in zachte tinten en naar wens met naam of " +
       "thema. " +
       basisBeschrijving,
-    image: productImages.geboorte,
+    image: productImages.babyshower,
     priceFrom: 34.5,
     sizes: rondeSizes,
     flavors: vullingen,
@@ -227,7 +227,7 @@ export const products: Product[] = [
     description:
       "Om de geboorte te vieren, met de naam van de kleine in het ontwerp verwerkt. " +
       basisBeschrijving,
-    image: productImages.communie,
+    image: productImages.geboorte,
     priceFrom: 34.5,
     sizes: rondeSizes,
     flavors: vullingen,

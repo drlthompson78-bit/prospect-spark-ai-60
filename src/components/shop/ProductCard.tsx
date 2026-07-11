@@ -14,8 +14,15 @@ const ProductCard = ({ product }: { product: Product }) => {
           src={product.image}
           alt={product.name}
           loading="lazy"
-          className="aspect-[3/4] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          className="aspect-square w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
         />
+        {/* Bekijk-hint die bij hover van onderen in glijdt */}
+        <span
+          className="pointer-events-none absolute inset-x-3 bottom-3 flex translate-y-2 items-center justify-center rounded-lg bg-background/85 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-foreground opacity-0 backdrop-blur-sm transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100"
+          aria-hidden="true"
+        >
+          Bekijk taart
+        </span>
       </div>
       <div className="flex items-baseline justify-between gap-3 pt-4">
         <div>

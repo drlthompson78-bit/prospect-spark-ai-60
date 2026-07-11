@@ -25,17 +25,43 @@ export const cakeLayers = [
   `${CDN}/hf_20260711_220950_42cf2354-c753-4766-81bf-e72eb46b9039_min.png`,
 ] as const;
 
+/**
+ * Echte foto's van hettaartenhuis.nl (uit de wget-mirror), lokaal gehost in
+ * public/fotos/. De klant herkent hierdoor zijn eigen werk in de webshop.
+ * BASE_URL houdt rekening met de GitHub Pages preview-basis.
+ */
+const FOTOS = `${import.meta.env.BASE_URL}fotos`;
+
+export const siteLogo = `${FOTOS}/logo.png`;
+
 export const productImages = {
-  bruidstaart: `${CDN}/hf_20260711_152251_74233181-7fca-4b7b-a4f2-a497e7ed017f_min.webp`,
-  dinotaart: `${CDN}/hf_20260711_152252_77be5d6b-ffe5-444d-ab85-0bfbb3704c0d_min.webp`,
-  cijfertaart: `${CDN}/hf_20260711_152254_83e4f193-8ab0-4256-9ab6-5611667686dc_min.webp`,
-  babyshower: `${CDN}/hf_20260711_152256_ba416870-c060-48a5-a32f-fa999763b30d_min.webp`,
-  genderReveal: `${CDN}/hf_20260711_152258_f111ee65-d4ee-4668-a63b-ac1310d30fd9_min.webp`,
-  chocoladeDrip: `${CDN}/hf_20260711_152300_1ae9fadb-e85d-4e3a-b2c6-f8f2bd119194_min.webp`,
-  cupcakes: `${CDN}/hf_20260711_152309_3aae239a-1bb6-45bd-90d9-d698d67881b5_min.webp`,
-  bedrijfstaart: `${CDN}/hf_20260711_152311_9978066d-635e-4b30-8255-f19492b89783_min.webp`,
-  geslaagd: `${CDN}/hf_20260711_152313_242ed9ac-1b8a-4019-b57f-1bec80737417_min.webp`,
-  communie: `${CDN}/hf_20260711_152402_2a60c775-db12-416f-a439-cf2c52576836_min.webp`,
-  geboorte: `${CDN}/hf_20260711_152404_79ac7f2e-c0bb-46c0-96e7-24fe47f44770_min.webp`,
-  verjaardag: `${CDN}/hf_20260711_152405_7e688777-c735-4ebc-a9af-8f8b75c1f2b0_min.webp`,
+  verjaardag: `${FOTOS}/product-verjaardagstaart.jpg`,
+  lagentaart: `${FOTOS}/product-lagentaart.jpg`,
+  cijfertaart: `${FOTOS}/product-cijfertaart.jpg`,
+  bruidstaart: `${FOTOS}/product-bruidstaart.jpg`,
+  dinotaart: `${FOTOS}/product-3d-taart.jpg`,
+  kindertaart: `${FOTOS}/product-kindertaart.jpg`,
+  genderReveal: `${FOTOS}/product-gender-reveal.jpg`,
+  babyshower: `${FOTOS}/product-babyshower.jpg`,
+  geboorte: `${FOTOS}/product-geboortetaart.jpg`,
+  geslaagd: `${FOTOS}/product-geslaagd.jpg`,
+  bedrijfstaart: `${FOTOS}/product-bedrijfstaart.jpg`,
+  cupcakes: `${FOTOS}/product-cupcakes.jpg`,
+  chocoladeDrip: `${FOTOS}/product-lagentaart.jpg`,
+  communie: `${FOTOS}/product-geboortetaart.jpg`,
 } as const;
+
+/** De taart van de originele hero (IJsjes taart Loua), referentie voor de reconstructie. */
+export const louaFoto = `${FOTOS}/ijsjes-taart-loua.jpg`;
+
+/** Recentste echte werk, in de volgorde van de galerij op hettaartenhuis.nl/onze-taarten. */
+export const galerij = [
+  { src: `${FOTOS}/galerij-01.jpg`, alt: "Dierentaart" },
+  { src: `${FOTOS}/galerij-02.jpg`, alt: "Combinatie-lagentaart" },
+  { src: `${FOTOS}/galerij-03.jpg`, alt: "K-Pop Demon Hunters taart" },
+  { src: `${FOTOS}/galerij-04.jpg`, alt: "T-shirt taart Suriname" },
+  { src: `${FOTOS}/galerij-05.jpg`, alt: "Simba taart" },
+  { src: `${FOTOS}/galerij-06.jpg`, alt: "De Zoete Zusjes taart" },
+  { src: `${FOTOS}/galerij-07.jpg`, alt: "Ajax taart" },
+  { src: `${FOTOS}/galerij-08.jpg`, alt: "Madeliefjes taart" },
+] as const;
