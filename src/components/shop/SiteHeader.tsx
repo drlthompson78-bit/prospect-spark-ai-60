@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
+import { cakeWhole } from "@/data/assets";
 
 const navItems = [
   { label: "Collectie", to: "/collectie" },
@@ -12,16 +13,43 @@ const navItems = [
   { label: "Contact", to: "/#contact" },
 ];
 
+/** Items voor de fullscreen overlay, met het bestellen erbij als afsluiter. */
+const overlayItems = [
+  { nr: "01", label: "Collectie", to: "/collectie" },
+  { nr: "02", label: "Taart op maat", to: "/op-maat" },
+  { nr: "03", label: "Ons verhaal", to: "/#atelier" },
+  { nr: "04", label: "Contact", to: "/#contact" },
+  { nr: "05", label: "Bestellen", to: "/bestellen" },
+];
+
 const SiteHeader = () => {
   const { count, openCart } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const location = useLocation();
+  const reduced = useReducedMotion();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
   });
+
+  // Scroll-lock zolang de overlay open staat
+  useEffect(() => {
+    document.documentElement.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   const solid = scrolled || location.pathname !== "/";
 
@@ -29,10 +57,10 @@ const SiteHeader = () => {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
-        solid ? "bg-background/90 backdrop-blur-md border-b border-border" : "bg-transparent"
+        solid && !menuOpen ? "bg-background/90 backdrop-blur-md border-b border-border" : "bg-transparent"
       )}
     >
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-[72px] md:px-8">
+      <div className="relative z-10 mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-[72px] md:px-8">
         <Link to="/" className="font-display text-lg tracking-tight text-foreground md:text-xl" onClick={() => setMenuOpen(false)}>
           Het Taartenhuis
         </Link>
@@ -52,7 +80,10 @@ const SiteHeader = () => {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={openCart}
+            onClick={() => {
+              setMenuOpen(false);
+              openCart();
+            }}
             className="relative flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary"
             aria-label={`Winkelwagen openen, ${count} ${count === 1 ? "artikel" : "artikelen"}`}
           >
@@ -71,7 +102,7 @@ const SiteHeader = () => {
           </button>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? "Menu sluiten" : "Menu openen"}
             aria-expanded={menuOpen}
@@ -81,26 +112,72 @@ const SiteHeader = () => {
         </div>
       </div>
 
-      {menuOpen && (
-        <nav
-          className="border-b border-border bg-background/95 px-5 pb-6 pt-2 backdrop-blur-md md:hidden"
-          aria-label="Mobiele navigatie"
-        >
-          <ul className="flex flex-col gap-1">
-            {navItems.map((item) => (
-              <li key={item.to}>
-                <Link
-                  to={item.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="block rounded-xl px-3 py-3 text-base text-foreground transition-colors hover:bg-secondary"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+      {/* Fullscreen overlay: grote outlined navigatie links, de signatuurtaart rechts */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="fixed inset-0 bg-background/95 backdrop-blur-xl"
+            aria-label="Menu"
+          >
+            <div className="mx-auto flex h-full max-w-[1400px] flex-col justify-between px-5 pb-10 pt-24 md:flex-row md:items-center md:px-8 md:pt-16">
+              <ul className="flex flex-col gap-1 md:gap-2">
+                {overlayItems.map((item, i) => (
+                  <motion.li
+                    key={item.to}
+                    initial={reduced ? false : { y: 32, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.55, delay: 0.08 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <Link
+                      to={item.to}
+                      onClick={() => setMenuOpen(false)}
+                      className="group flex items-baseline gap-4"
+                    >
+                      <span className="text-xs font-semibold tracking-[0.25em] text-primary">{item.nr}</span>
+                      <span className="text-outline font-display text-4xl uppercase leading-[1.15] tracking-tight md:text-6xl lg:text-7xl">
+                        {item.label}
+                      </span>
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+
+              <motion.div
+                initial={reduced ? false : { opacity: 0, scale: 0.92, rotate: 3 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="relative mx-auto hidden w-[min(34vw,420px)] md:block"
+                aria-hidden="true"
+              >
+                <img src={cakeWhole} alt="" className="w-full select-none drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]" draggable={false} />
+                <span className="absolute -left-6 top-8 rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-lg -rotate-6">
+                  Populair deze week
+                </span>
+                <span className="absolute -right-4 bottom-12 rounded-full border border-border bg-card px-4 py-2 text-xs text-card-foreground shadow-lg rotate-3">
+                  Taarten vanaf € 24,50
+                </span>
+              </motion.div>
+
+              <motion.div
+                initial={reduced ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-muted-foreground md:absolute md:bottom-10 md:left-1/2 md:-translate-x-1/2"
+              >
+                <span className="italic text-primary">Vrijblijvende prijsopgave</span>
+                <a href="mailto:info@hettaartenhuis.nl" className="transition-colors hover:text-foreground">
+                  info@hettaartenhuis.nl
+                </a>
+                <span>www.hettaartenhuis.nl</span>
+              </motion.div>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

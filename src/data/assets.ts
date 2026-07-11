@@ -12,6 +12,19 @@ export const heroPosterMin = `${CDN}/hf_20260711_152235_4a772b9f-14b5-4bf0-bf37-
 export const heroAlt = `${CDN}/hf_20260711_152235_1d9e872f-2eb2-4f78-bfb7-9a1d9bf4ae0c_min.webp`;
 export const atelierHands = `${CDN}/hf_20260711_152407_ad66e76e-ce48-4909-84ea-1289170c2f21_min.webp`;
 
+/**
+ * De signatuurtaart voor de hero-deconstructie: het complete beeld plus de
+ * vier losse lagen (transparante PNG's, achtergrond server-side verwijderd).
+ * Volgorde: topdek → slagroomvulling → chocoladecake → basis.
+ */
+export const cakeWhole = `${CDN}/hf_20260711_220945_9e8fdd0b-f049-494a-8f7a-0ac0ec0d77bf_min.png`;
+export const cakeLayers = [
+  `${CDN}/hf_20260711_220946_7e07d849-e206-40d2-a768-6c6d5a294b72_min.png`,
+  `${CDN}/hf_20260711_220947_04bb82a1-5ac9-427d-a9a4-cc372fff1665_min.png`,
+  `${CDN}/hf_20260711_220948_34aedc78-0933-4a68-a65c-d728524394d5_min.png`,
+  `${CDN}/hf_20260711_220950_42cf2354-c753-4766-81bf-e72eb46b9039_min.png`,
+] as const;
+
 export const productImages = {
   bruidstaart: `${CDN}/hf_20260711_152251_74233181-7fca-4b7b-a4f2-a497e7ed017f_min.webp`,
   dinotaart: `${CDN}/hf_20260711_152252_77be5d6b-ffe5-444d-ab85-0bfbb3704c0d_min.webp`,
