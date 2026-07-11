@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 316" width="500" height="316">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="500" height="316" fill="url(#g)"/>
+<line x1="0" y1="0" x2="500" y2="316" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.264"/>
+<line x1="500" y1="0" x2="0" y2="316" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.264"/>
+
+<text x="250" y="151.048" font-family="Helvetica,Arial,sans-serif" font-size="17.38" font-weight="700" letter-spacing="2.6069999999999998" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="250" y="177.118" font-family="Helvetica,Arial,sans-serif" font-size="12.513599999999999" fill="#78716c" text-anchor="middle">The-Agency-Careers-v2.webp</text>
+<rect x="7.742" y="286.138" width="45.25752000000001" height="22.12" rx="3.9816000000000003" fill="#000000" fill-opacity=".7"/>
+<text x="30.370760000000004" y="301.62199999999996" font-family="Helvetica,Arial,sans-serif" font-size="13.714400000000001" font-weight="700" fill="#ffffff" text-anchor="middle">#M175</text>
+</svg>

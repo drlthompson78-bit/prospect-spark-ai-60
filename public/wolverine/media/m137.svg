@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5745 3835" width="5745" height="3835">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="5745" height="3835" fill="url(#g)"/>
+<line x1="0" y1="0" x2="5745" y2="3835" stroke="#ffffff" stroke-opacity=".45" stroke-width="15.34"/>
+<line x1="5745" y1="0" x2="0" y2="3835" stroke="#ffffff" stroke-opacity=".45" stroke-width="15.34"/>
+
+<text x="2872.5" y="1833.13" font-family="Helvetica,Arial,sans-serif" font-size="210.925" font-weight="700" letter-spacing="31.63875" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="2872.5" y="2149.5175" font-family="Helvetica,Arial,sans-serif" font-size="151.866" fill="#78716c" text-anchor="middle">Hytest-Welder.jpg</text>
+<rect x="9.1" y="3799.9" width="53.196000000000005" height="26" rx="4.68" fill="#000000" fill-opacity=".7"/>
+<text x="35.698" y="3818.1" font-family="Helvetica,Arial,sans-serif" font-size="16.12" font-weight="700" fill="#ffffff" text-anchor="middle">#M137</text>
+</svg>

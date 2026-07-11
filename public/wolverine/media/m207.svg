@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1265" width="1920" height="1265">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="1920" height="1265" fill="url(#g)"/>
+<line x1="0" y1="0" x2="1920" y2="1265" stroke="#ffffff" stroke-opacity=".45" stroke-width="5.0600000000000005"/>
+<line x1="1920" y1="0" x2="0" y2="1265" stroke="#ffffff" stroke-opacity=".45" stroke-width="5.0600000000000005"/>
+
+<text x="960" y="604.67" font-family="Helvetica,Arial,sans-serif" font-size="69.575" font-weight="700" letter-spacing="10.43625" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="960" y="709.0325" font-family="Helvetica,Arial,sans-serif" font-size="50.094" fill="#78716c" text-anchor="middle">ressources.webp</text>
+<rect x="9.1" y="1229.9" width="53.196000000000005" height="26" rx="4.68" fill="#000000" fill-opacity=".7"/>
+<text x="35.698" y="1248.1000000000001" font-family="Helvetica,Arial,sans-serif" font-size="16.12" font-weight="700" fill="#ffffff" text-anchor="middle">#M207</text>
+</svg>

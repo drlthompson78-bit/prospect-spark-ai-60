@@ -1,68 +1,239 @@
-# Media-placeholder manifest — Wolverine Worldwide homepage-kopie
+# Media-placeholder manifest — exacte kopie wolverineworldwide.com
 
-Elke media-uiting op de pagina is vervangen door een placeholder met een klein
-maar zichtbaar nummer **linksonder** (badge, bv. `#M03`). Vervang de placeholder
-door het echte bestand en verwijder daarna de badge (`<span class="ph-id">`).
+Gearchiveerd op 2026-07-11 vanaf een wget-mirror van de live site.
+Elke placeholder heeft een klein nummer linksonder (bv. #M001).
+Vervangen = het bestand in `media/` overschrijven met het origineel (zelfde bestandsnaam),
+of de originele URL hieronder downloaden. HTML hoeft niet aangepast te worden zolang
+de bestandsnaam gelijk blijft (behalve video's: daar wijs je de <source> naar je eigen mp4).
 
-| Nr.  | Type  | Locatie op de pagina           | Inhoud (origineel)                                   | Aanbevolen formaat |
-|------|-------|--------------------------------|------------------------------------------------------|--------------------|
-| #M01 | Logo  | Header, linksboven             | Wolverine Worldwide wordmark (donker op wit)         | SVG, ±190×40       |
-| #M02 | Video | Hero, full-bleed achtergrond   | Sfeer-/merkenvideo (autoplay, muted, loop)           | MP4/WebM, 1920×1080|
-| #M03 | Foto  | Merkengrid, tegel 1            | Merrell — outdoor beeld + merklogo                   | JPG, 1200×900      |
-| #M04 | Foto  | Merkengrid, tegel 2            | Saucony — running beeld + merklogo                   | JPG, 1200×900      |
-| #M05 | Foto  | Merkengrid, tegel 3            | Sweaty Betty — activewear beeld + merklogo           | JPG, 1200×900      |
-| #M06 | Foto  | Merkengrid, tegel 4            | Wolverine — workwear beeld + merklogo                | JPG, 1200×900      |
-| #M07 | Foto  | Merkengrid, tegel 5            | Chaco — outdoor lifestyle beeld + merklogo           | JPG, 1200×900      |
-| #M08 | Foto  | Merkengrid, tegel 6            | Hush Puppies — casual beeld + merklogo               | JPG, 1200×900      |
-| #M09 | Foto  | Merkengrid, tegel 7            | Bates — uniform/tactical beeld + merklogo            | JPG, 1200×900      |
-| #M10 | Foto  | Merkengrid, tegel 8            | HYTEST — safety footwear beeld + merklogo            | JPG, 1200×900      |
-| #M11 | Foto  | Merkengrid, tegel 9            | Stride Rite — kinderschoenen beeld + merklogo        | JPG, 1200×900      |
-| #M12 | Foto  | Merkengrid, tegel 10           | Cat Footwear (licentie) — work beeld + merklogo      | JPG, 1200×900      |
-| #M13 | Foto  | Merkengrid, tegel 11           | Harley-Davidson Footwear (licentie) — beeld + logo   | JPG, 1200×900      |
-| #M14 | Foto  | Sectie "Who We Are", links     | Bedrijfsfoto (HQ Rockford / heritage / team)         | JPG, 1250×1000     |
-| #M15 | Foto  | Sectie "Responsibility", rechts| Community/outdoor/duurzaamheidsbeeld                 | JPG, 1250×1000     |
-| #M16 | Foto  | Nieuwscarrousel, kaart 1       | Beeld bij "Company of the Year — Footwear News"      | JPG, 1280×720      |
-| #M17 | Foto  | Nieuwscarrousel, kaart 2       | Beeld bij "Q3 2025 Results"                          | JPG, 1280×720      |
-| #M18 | Foto  | Nieuwscarrousel, kaart 3       | Beeld bij "Licensing Agreements"                     | JPG, 1280×720      |
-| #M19 | Foto  | Nieuwscarrousel, kaart 4       | Beeld bij "Forbes Dream Employers"                   | JPG, 1280×720      |
-| #M20 | Foto  | Nieuwscarrousel, kaart 5       | Beeld bij "HQ-renovatie Rockford"                    | JPG, 1280×720      |
-| #M21 | Foto  | Nieuwscarrousel, kaart 6       | Beeld bij "Saucony Runner's World Awards"            | JPG, 1280×720      |
-| #M22 | Foto  | Sectie "Investor Relations"    | Financieel/kantoorbeeld                              | JPG, 1250×1000     |
-| #M23 | Foto  | Careers-banner, full-bleed     | Team-/werkplekfoto (donkere overlay eroverheen)      | JPG, 1920×900      |
-| #M24 | Logo  | Footer, linksboven             | Wolverine Worldwide wordmark (wit op donker)         | SVG, ±200×42       |
+Totaal: 226 unieke mediabestanden (foto's: 219, video's: 3, videoposters: 4).
+Een nummer dat op meerdere pagina's voorkomt is hetzelfde bestand.
 
-## Vervangen — zo werkt het
-
-1. Zoek in `index.html` naar het nummer, bv. `#M03`.
-2. Vervang het `<span class="ph">…</span>`-blok door een `<img>` (of `<video>` voor #M02), bv.:
-   `<img src="media/m03-merrell.jpg" alt="Merrell" loading="lazy" />`
-3. Voor de hero-video (#M02):
-   `<video autoplay muted loop playsinline src="media/m02-hero.mp4"></video>`
-4. De omliggende CSS (hover-zoom, overlays, aspect-ratio) blijft gewoon werken.
-
-## Overgenomen UX-features
-
-- Sticky header die krimpt en schaduw krijgt bij scrollen
-- Dropdown-menu's (hover + klik + toetsenbord, Esc sluit) met alle 11 merken
-- Utility-bar met beursticker (NYSE: WWW — placeholderwaarden)
-- Fullscreen zoek-overlay
-- Mobiel hamburger-menu met uitschuiflade en accordeons
-- Hero met langzame zoom-animatie, gradient-overlay en scroll-indicator
-- Scroll-reveal animaties (IntersectionObserver, met vertraging per element)
-- Tellende cijfers in de statistiekenbalk
-- Merktegels met hover-zoom, kleuroverlay en "Discover →" die inschuift
-- Nieuwscarrousel: pijlen, dots, responsief (3/2/1 kaarten) en touch-swipe
-- Parallax-effect op de careers-banner
-- E-mailalerts formulier met validatie en bevestiging
-- Cookie-consent banner (Accept/Decline)
-- "Terug naar boven"-knop na 600px scrollen
-- Toegankelijkheid: skip-link, focus-stijlen, aria-labels, `prefers-reduced-motion`
-
-## Herkomst / voorbehoud
-
-Deze kopie is op 2026-07-11 gereconstrueerd. De live site (wolverineworldwide.com)
-blokkeert geautomatiseerde toegang (WAF 403), en ook webarchieven waren vanuit de
-bouw-omgeving niet bereikbaar. Structuur, navigatie, merkenportfolio, sectietitels
-en footer zijn gereconstrueerd uit openbare bronnen (zoekresultaten, paginatitels,
-IR-site-structuur). Controleer bij gelegenheid tegen de live site en corrigeer
-afwijkingen in tekst/sectievolgorde.
+| Nr. | Type | Afmeting | Placeholder | Pagina's | Originele URL |
+|---|---|---|---|---|---|
+| #M001 | foto | 600×400 | `media/m001.svg` | index, about-us, brands, ca-supply, careers, contact, customer-returns, investors-contact, patents, privacy-policy, responsibility, retail-vendor-partners, terms-and-conditions | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/main-menu/responsibility/_600x400_crop_center-center_none/100/menu-reponsibility-1.webp |
+| #M002 | foto | 600×400 | `media/m002.svg` | index, about-us, brands, ca-supply, careers, contact, customer-returns, investors-contact, patents, privacy-policy, responsibility, retail-vendor-partners, terms-and-conditions | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/main-menu/responsibility/_600x400_crop_center-center_none/103/menu-reponsibility-2.webp |
+| #M003 | foto | 600×400 | `media/m003.svg` | index, about-us, brands, ca-supply, careers, contact, customer-returns, investors-contact, patents, privacy-policy, responsibility, retail-vendor-partners, terms-and-conditions | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/main-menu/responsibility/_600x400_crop_center-center_none/104/menu-reponsibility-3.webp |
+| #M004 | foto | 400×300 | `media/m004.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/homepage/_400x300_crop_center-center_none/1953/ThumbnailMRL-1H26-PerformanceInitiative-J00003483-02.webp |
+| #M005 | foto | 400×300 | `media/m005.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2742/SB_OG_Campaign_Yoga_Outfit2_02_FINAL_RGB.webp |
+| #M006 | foto | 400×267 | `media/m006.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2464/1H26_MBZ_Wheatland_W261051-W260003-20251027-1361.webp |
+| #M007 | foto | 400×225 | `media/m007.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2746/HP-R-1H26-Bounce-Mens-Sneaker-Rendering-01.webp |
+| #M008 | foto | 400×267 | `media/m008.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2765/Theorem-Graffiti_P726944-P726946-P726945_2H26-GBC-12256.webp |
+| #M009 | foto | 400×267 | `media/m009.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2747/Chaco-2026-ZSandal-08.webp |
+| #M010 | foto | 400×267 | `media/m010.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2749/Script_White_P312472_1H26-0925_2.webp |
+| #M011 | foto | 400×267 | `media/m011.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2745/MRL_1H26_NothingButTheRun_J00003278_J00005009_1-1.webp |
+| #M012 | foto | 400×267 | `media/m012.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2701/2025-12_Wolverine-4096-1.webp |
+| #M013 | foto | 400×267 | `media/m013.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2467/VERSAGE-MID_2H25_RUGGED-CASUALS_012.webp |
+| #M014 | foto | 400×600 | `media/m014.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_400xAUTO_crop_center-center_100_none/2699/SB_OG_Campaign_Run_Outfit2_03_FINAL_RGB.webp |
+| #M015 | foto | 400×267 | `media/m015.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2768/2025-12_Wolverine-6046-1.webp |
+| #M016 | foto | 400×267 | `media/m016.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2741/2025-12_Wolverine-9335.webp |
+| #M017 | foto | 400×267 | `media/m017.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2695/Cat-Power-Spring-20206-2.webp |
+| #M018 | foto | 400×267 | `media/m018.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2737/Amperage_P726918_2H26-GBC-1903.webp |
+| #M019 | foto | 400×500 | `media/m019.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2720/Intruder-Lightning-Mesh_2H25-WOMENS-17_2026-04-07-120830_prgf.webp |
+| #M020 | foto | 400×287 | `media/m020.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2700/2H26-Chaco-GBC-outside13995-RT.webp |
+| #M021 | foto | 400×310 | `media/m021.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2473/Saucony-1.webp |
+| #M022 | foto | 400×375 | `media/m022.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2471/MRL-2.webp |
+| #M023 | foto | 400×286 | `media/m023.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2469/ZSandal_SS26_CampingShoot_81.webp |
+| #M024 | foto | 400×267 | `media/m024.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2740/2025-12_Wolverine-6310-2.webp |
+| #M025 | foto | 400×280 | `media/m025.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2744/MRL-1H26-PerformanceInitiative-J00003608-01.webp |
+| #M026 | foto | 400×351 | `media/m026.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2470/MRL-1.webp |
+| #M027 | foto | 400×267 | `media/m027.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2748/Chaco-2026-ZSandal-10.webp |
+| #M028 | foto | 400×600 | `media/m028.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2466/SAU_SS26_Lifestyle_001.webp |
+| #M029 | foto | 400×267 | `media/m029.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2743/SAU_SS26_EndorphinAzura_043.webp |
+| #M030 | foto | 400×600 | `media/m030.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2715/MRL-1H26-GetGoing-J60787-02_2026-04-07-120752_iemy.webp |
+| #M031 | foto | 400×267 | `media/m031.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2770/MRL-1H26-ItStartsOutside-08-1.webp |
+| #M032 | foto | 400×267 | `media/m032.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2468/HP-R-2H26-LS-EnjoyTheJourney-BounceDress_01-1.webp |
+| #M033 | foto | 400×300 | `media/m033.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2702/HP-R-2H26-LS-EnjoyTheJourney-Excel_01.webp |
+| #M034 | foto | 400×267 | `media/m034.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2769/SAU_SS26_Lifestyle_002-1.webp |
+| #M035 | foto | 400×292 | `media/m035.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2472/Chaco-2026-ZSandal-09-1.webp |
+| #M036 | foto | 1000×1000 | `media/m036.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1000x1000_crop_center-center_none/1649/MRL-1H26-PerformanceInitiative-J00003483-02.webp |
+| #M037 | foto | 900×676 | `media/m037.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_900x676_crop_center-center_none/3073/Untitled-June-09-2026-at-10.54.59-2.webp |
+| #M038 | foto | 900×676 | `media/m038.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_900x676_crop_center-center_none/3055/6.1.26-FN-June-26-issue_Merrell-excerpt1.webp |
+| #M039 | foto | 900×676 | `media/m039.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_900x676_crop_center-center_none/3044/Shock-Capsule-SS26.webp |
+| #M040 | foto | 900×676 | `media/m040.svg` | index, careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_900x676_crop_center-center_none/2891/568521751_18530440852037224_6610715734387623678_n.webp |
+| #M041 | foto | 900×676 | `media/m041.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1701/Home_Article-1_image.webp |
+| #M042 | foto | 900×676 | `media/m042.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1705/Home_Article-2_image.webp |
+| #M043 | foto | 900×676 | `media/m043.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1707/Home_Article-3_image.webp |
+| #M044 | foto | 900×676 | `media/m044.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/homepage/_900x676_crop_center-center_none/1939/Company-of-the-year.webp |
+| #M045 | foto | 1920×1281 | `media/m045.svg` | index, careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/push/_1920xAUTO_crop_center-center_100_none/679/push-3.webp |
+| #M046 | foto | 1920×1080 | `media/m046.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/footer/_1920x1080_crop_center-center_none/2685/SB_OG_Campaign_Live_Outfit1_01_FINAL_26x9_Flora-1.webp |
+| #M047 | video-poster | 1920×1080 | `media/m047.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/Homepage-Fallback-Image.png |
+| #M048 | video | 1280×720 | `media/m048.mp4` | index | https://player.vimeo.com/progressive_redirect/playback/1177303164/rendition/720p/file.mp4%20%28720p%29.mp4?loc=external&log_user=0&signature=69c98ebd10c0326826e0ec794eabdce0326590d3aba33e00d8702ac4c42fa73d |
+| #M049 | foto | 1200×630 | `media/m049.svg` | index, about-us, brands, ca-supply, careers, contact, customer-returns, investors-contact, patents, privacy-policy, responsibility, retail-vendor-partners, terms-and-conditions | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x627_crop_center-center_none/wolverinemeta01.jpg |
+| #M050 | foto | 1200×630 | `media/m050.svg` | index | https://d3ql15awrosklt.cloudfront.net/medias/Annual-Report-2026.pdf |
+| #M051 | foto | 600×454 | `media/m051.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2492/WWW-About_1883-timeline.webp |
+| #M052 | foto | 600×446 | `media/m052.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2501/WWW-About_1901-timeline.webp |
+| #M053 | foto | 600×471 | `media/m053.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2569/WWW-About_Timeline-1903.webp |
+| #M054 | foto | 600×446 | `media/m054.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2502/WWW-About_1908-timeline.webp |
+| #M055 | foto | 600×909 | `media/m055.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2503/WWW-About_1914-timeline.webp |
+| #M056 | foto | 600×782 | `media/m056.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2499/WWW-About_1916-1923-timeline.webp |
+| #M057 | foto | 600×397 | `media/m057.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2504/WWW-About_1921-timeline.webp |
+| #M058 | foto | 600×755 | `media/m058.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2498/WWW-About_1928-timeline.webp |
+| #M059 | foto | 600×478 | `media/m059.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2493/WWW-About_1941-timeline.webp |
+| #M060 | foto | 600×395 | `media/m060.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2494/WWW-About_1958-timeline.webp |
+| #M061 | foto | 600×400 | `media/m061.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2495/WWW-About_1965-timeline.webp |
+| #M062 | foto | 600×400 | `media/m062.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2497/WWW-About_1994-timeline.webp |
+| #M063 | foto | 600×840 | `media/m063.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2849/Merrell-1997-Timeline_smaller-size.webp |
+| #M064 | foto | 600×400 | `media/m064.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2490/WWW-About_1998-timeline.webp |
+| #M065 | foto | 600×400 | `media/m065.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2496/WWW-About_2012-timeline.webp |
+| #M066 | foto | 600×600 | `media/m066.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2500/WWW-About_2021-timeline.webp |
+| #M067 | foto | 600×439 | `media/m067.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/Timeline/_600xAUTO_crop_center-center_none/2489/WWW-About_2025-timeline.webp |
+| #M068 | foto | 500×500 | `media/m068.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_500xAUTO_crop_center-center_none/256/Frame-2147230056.webp |
+| #M069 | foto | 500×500 | `media/m069.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_500xAUTO_crop_center-center_none/241/win-together.webp |
+| #M070 | foto | 500×500 | `media/m070.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_500xAUTO_crop_center-center_none/242/make-amazing.webp |
+| #M071 | foto | 500×500 | `media/m071.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_500xAUTO_crop_center-center_none/243/stay-curious.webp |
+| #M072 | foto | 500×500 | `media/m072.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_500xAUTO_crop_center-center_none/244/act-now.webp |
+| #M073 | foto | 500×500 | `media/m073.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_500xAUTO_crop_center-center_none/245/deliver-results.webp |
+| #M074 | foto | 600×800 | `media/m074.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3126/Long.webp |
+| #M075 | foto | 600×800 | `media/m075.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3179/Abel-Hodges_2.webp |
+| #M076 | foto | 600×800 | `media/m076.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3130/Andersen.webp |
+| #M077 | foto | 600×800 | `media/m077.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3133/Boromisa.webp |
+| #M078 | foto | 600×800 | `media/m078.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3136/Boyle.webp |
+| #M079 | foto | 600×800 | `media/m079.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3109/Gerber.webp |
+| #M080 | foto | 600×800 | `media/m080.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3191/Hufnagel_3.webp |
+| #M081 | foto | 600×800 | `media/m081.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3112/Lauderback.webp |
+| #M082 | foto | 600×800 | `media/m082.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3123/Price.webp |
+| #M083 | foto | 600×800 | `media/m083.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3182/Wilson-Thompson_2.webp |
+| #M084 | foto | 600×800 | `media/m084.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3185/Hufnagel_2.webp |
+| #M085 | foto | 600×800 | `media/m085.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3155/Cupps.webp |
+| #M086 | foto | 600×800 | `media/m086.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3158/Jayaram.webp |
+| #M087 | foto | 600×800 | `media/m087.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3161/Klimek.webp |
+| #M088 | foto | 600×800 | `media/m088.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3164/Kuhn.webp |
+| #M089 | foto | 600×800 | `media/m089.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3167/Latchana.webp |
+| #M090 | foto | 600×800 | `media/m090.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3170/Miller.webp |
+| #M091 | foto | 600×800 | `media/m091.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3173/Parent.webp |
+| #M092 | foto | 600×800 | `media/m092.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600x800_crop_center-center_none/3176/Slater.webp |
+| #M093 | foto | 1200×800 | `media/m093.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200xAUTO_crop_center-center_100_none/2688/MRL-1H16-GetGoing-J00003661-02.webp |
+| #M094 | foto | 1200×800 | `media/m094.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200xAUTO_crop_center-center_100_none/2691/SAU_SS26_Lifestyle_006.webp |
+| #M095 | foto | 1920×1080 | `media/m095.svg` | about-us, brands, contact, customer-returns, investors-contact, patents, retail-vendor-partners, terms-and-conditions | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/post-footer/_1920x1080_crop_center-center_none/208/post-footer-2.webp |
+| #M096 | video-poster | 1920×1080 | `media/m096.svg` | about-us | https://d3ql15awrosklt.cloudfront.net/medias/About-Page-Fallback-Image.png |
+| #M097 | video | 1280×720 | `media/m097.mp4` | about-us | https://player.vimeo.com/progressive_redirect/playback/1179888994/rendition/1080p/file.mp4%20%281080p%29.mp4?loc=external&log_user=0&signature=a18bdba5a857fe4920c1dc858d44ecf41e47c0e59da8a3df0272ff12ec0ccf97 |
+| #M098 | foto | 400×267 | `media/m098.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2758/MRL_1H26_NothingButTheRun_J00003278_J00005009_1-1_2026-04-07-131640_lbxq.webp |
+| #M099 | foto | 400×267 | `media/m099.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2752/2025-12_Wolverine-6310-2_2026-04-07-131627_psxz.webp |
+| #M100 | foto | 400×267 | `media/m100.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2774/Chaco-2026-ZSandal-03.webp |
+| #M101 | foto | 400×267 | `media/m101.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2777/2025-12_Wolverine-6046-1_2026-04-07-134434_dwte.webp |
+| #M102 | foto | 400×300 | `media/m102.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2755/SB_OG_Campaign_Yoga_Outfit2_02_FINAL_RGB_2026-04-07-131632_txxa.webp |
+| #M103 | foto | 400×600 | `media/m103.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2711/SB_OG_Campaign_Run_Outfit2_03_FINAL_RGB.webp |
+| #M104 | foto | 400×267 | `media/m104.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2762/Script_White_P312472_1H26-0925_2_2026-04-07-131646_cqbi.webp |
+| #M105 | foto | 400×351 | `media/m105.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2478/MRL-1_2026-04-03-150947_shdq.webp |
+| #M106 | foto | 400×267 | `media/m106.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2712/Surge_Dark-Shadow_P726585_1H26_0925_11.webp |
+| #M107 | foto | 400×267 | `media/m107.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2754/2025-12_Wolverine-9335_2026-04-07-131629_pdxh.webp |
+| #M108 | foto | 400×225 | `media/m108.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2759/HP-R-1H26-Bounce-Mens-Sneaker-Rendering-01_2026-04-07-131641_yixd.webp |
+| #M109 | foto | 400×500 | `media/m109.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2486/Intruder-Lightning-Mesh_2H25-WOMENS-17.webp |
+| #M110 | foto | 400×267 | `media/m110.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2756/SAU_SS26_EndorphinAzura_043_2026-04-07-131636_cfxh.webp |
+| #M111 | foto | 400×600 | `media/m111.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2482/SAU_SS26_Lifestyle_001_2026-04-03-151012_smcz.webp |
+| #M112 | foto | 400×267 | `media/m112.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2706/Cat-Power-Spring-20206-2_2026-04-07-120529_kvnw.webp |
+| #M113 | foto | 400×267 | `media/m113.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2778/SAU_SS26_Lifestyle_002-1_2026-04-07-134436_pyzs.webp |
+| #M114 | foto | 400×267 | `media/m114.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2480/1H26_MBZ_Wheatland_W261051-W260003-20251027-1361_2026-04-03-151009_gsmw.webp |
+| #M115 | foto | 400×286 | `media/m115.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2484/ZSandal_SS26_CampingShoot_81_2026-04-03-151027_jkvo.webp |
+| #M116 | foto | 400×267 | `media/m116.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2776/Theorem-Graffiti_P726944-P726946-P726945_2H26-GBC-12256_2026-04-07-134431_atpo.webp |
+| #M117 | foto | 400×287 | `media/m117.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2710/2H26-Chaco-GBC-outside13995-RT_2026-04-07-120538_qwct.webp |
+| #M118 | foto | 400×267 | `media/m118.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2760/Chaco-2026-ZSandal-08_2026-04-07-131642_tkbq.webp |
+| #M119 | foto | 400×280 | `media/m119.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2757/MRL-1H26-PerformanceInitiative-J00003608-01_2026-04-07-131638_vksr.webp |
+| #M120 | foto | 400×267 | `media/m120.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2763/Amperage_P726918_2H26-GBC-1903_2026-04-07-131647_zqwv.webp |
+| #M121 | foto | 400×267 | `media/m121.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2761/Chaco-2026-ZSandal-10_2026-04-07-131644_yisk.webp |
+| #M122 | foto | 400×375 | `media/m122.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2479/MRL-2_2026-04-03-150949_jceq.webp |
+| #M123 | foto | 400×267 | `media/m123.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2708/2025-12_Wolverine-4096-1_2026-04-07-120536_rncc.webp |
+| #M124 | foto | 400×267 | `media/m124.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2485/VERSAGE-MID_2H25_RUGGED-CASUALS_012_2026-04-03-151029_klea.webp |
+| #M125 | foto | 400×300 | `media/m125.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2707/HP-R-2H26-LS-EnjoyTheJourney-Excel_01_2026-04-07-120534_yegz.webp |
+| #M126 | foto | 400×600 | `media/m126.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2481/Q126-S_LOOK31_MARCH_LIVE_013_UNCROPPED_2026-04-03-151011_ezhw.webp |
+| #M127 | foto | 400×600 | `media/m127.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2713/MRL-1H26-GetGoing-J60787-02.webp |
+| #M128 | foto | 400×310 | `media/m128.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_400xAUTO_crop_center-center_100_none/2477/Saucony-1_2026-04-03-150945_zklb.webp |
+| #M129 | foto | 8256×5504 | `media/m129.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/about/MRL-1H26-ItStartsOutside-09.jpg |
+| #M130 | foto | 6000×4002 | `media/m130.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/16-IX7A0919_v3_grain.jpg |
+| #M131 | foto | 1440×850 | `media/m131.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/about/Rectangle-3150-1.png |
+| #M132 | foto | 1440×850 | `media/m132.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/about/Sweaty-Betty-Image.png |
+| #M133 | foto | 1440×850 | `media/m133.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/CAT.png |
+| #M134 | foto | 2159×1440 | `media/m134.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/Chaco-2026-ZSandal-06.jpg |
+| #M135 | foto | 1440×850 | `media/m135.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/Hush-Puppies.png |
+| #M136 | foto | 3000×2001 | `media/m136.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/careers/srt_sm_artie_bb047101_stone_019.jpg |
+| #M137 | foto | 5745×3835 | `media/m137.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/Hytest-Welder.jpg |
+| #M138 | foto | 4724×3144 | `media/m138.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/HD_BenC_L1142159.jpg |
+| #M139 | foto | 4724×3150 | `media/m139.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/S26_Bates_Rush2.0_Tall_E02278_DSC05687.jpg |
+| #M140 | foto | 90×10 | `media/m140.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-merrell.svg |
+| #M141 | foto | 90×17 | `media/m141.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-saucony.svg |
+| #M142 | foto | 90×22 | `media/m142.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-wolverine.svg |
+| #M143 | foto | 90×8 | `media/m143.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/Vector.svg |
+| #M144 | foto | 90×52 | `media/m144.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-cat.svg |
+| #M145 | foto | 905×713 | `media/m145.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/Chaco-Lizard.png |
+| #M146 | foto | 90×13 | `media/m146.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-hush-puppies.svg |
+| #M147 | foto | 90×55 | `media/m147.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-stride-rite.svg |
+| #M148 | foto | 90×24 | `media/m148.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-hytest.svg |
+| #M149 | foto | 90×78 | `media/m149.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-harley-davidson.svg |
+| #M150 | foto | 90×25 | `media/m150.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/brands-logo/logo-bates.svg |
+| #M151 | foto | 1920×1280 | `media/m151.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_1920xAUTO_crop_center-center_none/1439/MRL-1H26-ItStartsOutside-09.webp |
+| #M152 | foto | 1920×1281 | `media/m152.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/brands-logo/_1920xAUTO_crop_center-center_none/2682/16-IX7A0919_v3_grain.webp |
+| #M153 | foto | 1920×1133 | `media/m153.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_1920xAUTO_crop_center-center_none/1452/Rectangle-3150-1.webp |
+| #M154 | foto | 1920×1133 | `media/m154.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_1920xAUTO_crop_center-center_none/1458/Sweaty-Betty-Image.webp |
+| #M155 | foto | 1920×1133 | `media/m155.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/brands-logo/_1920xAUTO_crop_center-center_none/1462/CAT.webp |
+| #M156 | foto | 1920×1281 | `media/m156.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_none/1621/Chaco-2026-ZSandal-06.webp |
+| #M157 | foto | 1920×1133 | `media/m157.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_none/1633/Hush-Puppies.webp |
+| #M158 | foto | 1920×1281 | `media/m158.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/careers/_1920xAUTO_crop_center-center_none/2782/srt_sm_artie_bb047101_stone_019.webp |
+| #M159 | foto | 1920×1282 | `media/m159.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/brands-logo/_1920xAUTO_crop_center-center_none/2679/Hytest-Welder.webp |
+| #M160 | foto | 1920×1278 | `media/m160.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_none/1627/HD_BenC_L1142159.webp |
+| #M161 | foto | 1920×1280 | `media/m161.svg` | brands | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_none/1646/S26_Bates_Rush2.0_Tall_E02278_DSC05687.webp |
+| #M162 | foto | 200×67 | `media/m162.svg` | ca-supply | https://d3ql15awrosklt.cloudfront.net/medias/Chris-Singature-V2-small.png |
+| #M163 | foto | 132×32 | `media/m163.svg` | ca-supply | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_maxWidth200/2081/Dave-signature.webp?transformId=493 |
+| #M164 | foto | 1920×1080 | `media/m164.svg` | ca-supply, privacy-policy | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/post-footer/_1920x1080_crop_center-center_none/209/post-footer-1.webp |
+| #M165 | foto | 1000×650 | `media/m165.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1000x650_crop_center-center_none/1654/SAU_SS26_Lifestyle_002.webp |
+| #M166 | foto | 1000×650 | `media/m166.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/careers/_1000x650_crop_center-center_none/2446/Wolverine_2025_1000-Mile-Icon-Classic_W40048_Rusty_Sidnaw_Hi-Res_36.webp |
+| #M167 | foto | 1000×650 | `media/m167.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/careers/_1000x650_crop_center-center_none/2450/MRL-1H26-GetGoing-J00003365-J036015-J036015-01.webp |
+| #M168 | foto | 600×400 | `media/m168.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600xAUTO_crop_center-center_none/581/4d7466b605a2ebb3099ee0973f8e6c83af8c47f4.webp |
+| #M169 | foto | 600×400 | `media/m169.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600xAUTO_crop_center-center_none/583/workforce-tile-1.webp |
+| #M170 | foto | 600×450 | `media/m170.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600xAUTO_crop_center-center_none/1660/Chaco_RapidPro_SS26_Zeppelin_3.webp |
+| #M171 | foto | 600×400 | `media/m171.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600xAUTO_crop_center-center_none/1663/ZSandal_SS26_CampingShoot_79.webp |
+| #M172 | foto | 600×600 | `media/m172.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_600xAUTO_crop_center-center_none/587/workforce-tile-2.webp |
+| #M173 | foto | 1600×1067 | `media/m173.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1600xAUTO_crop_center-center_none/1837/WWW-Office2522-1v2.webp |
+| #M174 | foto | 500×333 | `media/m174.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_500xAUTO_crop_center-center_none/1824/WWW-Office17517.webp |
+| #M175 | foto | 500×316 | `media/m175.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/careers/_500xAUTO_crop_center-center_none/1880/The-Agency-Careers-v2.webp |
+| #M176 | foto | 500×333 | `media/m176.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_500xAUTO_crop_center-center_none/1830/WWW-Office2485.webp |
+| #M177 | foto | 900×676 | `media/m177.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1745/Cat.webp |
+| #M178 | foto | 900×676 | `media/m178.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1730/Careers_Innovation-Image-2.webp |
+| #M179 | foto | 900×676 | `media/m179.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1733/Careers_Innovation-Image-3.webp |
+| #M180 | foto | 900×676 | `media/m180.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1734/Careers_Innovation-Image-4.webp |
+| #M181 | foto | 900×676 | `media/m181.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/1736/Careers_Innovation-Image-5.webp |
+| #M182 | foto | 1200×800 | `media/m182.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x800_crop_center-center_none/1670/4Y8A3377.webp |
+| #M183 | foto | 1200×800 | `media/m183.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x800_crop_center-center_none/1667/24_10_22_SweatyBetty_Train_S02_140-Rnd3.webp |
+| #M184 | foto | 1200×800 | `media/m184.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x800_crop_center-center_none/1669/2023_June_Wolverine_Edited-79.webp |
+| #M185 | foto | 1920×1080 | `media/m185.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/footer/_1920x1080_crop_center-center_none/2456/Cat-Footwear_2H25_PURSUE_034-1.webp |
+| #M186 | video-poster | 1920×1080 | `media/m186.svg` | careers | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/tmp/_1920xAUTO_crop_center-center_none/64/visual-person-3.webp |
+| #M187 | foto | 1200×630 | `media/m187.svg` | customer-returns | https://d3ql15awrosklt.cloudfront.net/medias/Canada-Returns-Guide.pdf |
+| #M188 | foto | 1200×630 | `media/m188.svg` | customer-returns | https://d3ql15awrosklt.cloudfront.net/medias/WWW-Returns-Policy.pdf |
+| #M189 | foto | 1200×630 | `media/m189.svg` | customer-returns | https://d3ql15awrosklt.cloudfront.net/medias/ReturnsGuide6.26.2024.pdf |
+| #M190 | foto | 1200×630 | `media/m190.svg` | customer-returns | https://d3ql15awrosklt.cloudfront.net/medias/WWW-Routing-Request-Form.xlsx |
+| #M191 | foto | 1200×630 | `media/m191.svg` | customer-returns | https://d3ql15awrosklt.cloudfront.net/medias/ReturnsBOLApr2012.pdf |
+| #M192 | foto | 1920×1281 | `media/m192.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1920xAUTO_crop_center-center_none/721/impact.webp |
+| #M193 | foto | 1200×800 | `media/m193.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/2576/WWW-Foundation-Pillars1_NEW.webp |
+| #M194 | foto | 1200×800 | `media/m194.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/2000/WWW-Responsibility_Foundation-Pillars2.webp |
+| #M195 | foto | 1200×800 | `media/m195.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/1998/WWW-Responsibility_Foundation-Pillars5.webp |
+| #M196 | foto | 1200×800 | `media/m196.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/2002/WWW-Responsibility_Foundation-Pillars6.webp |
+| #M197 | foto | 1200×800 | `media/m197.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/2004/WWW-Responsibility_Foundation-Pillars7.webp |
+| #M198 | foto | 1200×800 | `media/m198.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/1999/WWW-Responsibility_Foundation-Pillars8.webp |
+| #M199 | foto | 1200×800 | `media/m199.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/2005/WWW-Responsibility_Foundation-Pillars9.webp |
+| #M200 | foto | 1600×1067 | `media/m200.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1600xAUTO_crop_center-center_none/1991/WWW-Responsibility_Global-Day-of-Purpose.webp |
+| #M201 | foto | 900×676 | `media/m201.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_900x676_crop_center-center_none/2542/WWW-Responsibility-Comm-Initiative_Plogging.webp |
+| #M202 | foto | 900×676 | `media/m202.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_900x676_crop_center-center_none/2547/WWW-Responsibility-Comm-Initiative_Canals.webp |
+| #M203 | foto | 900×676 | `media/m203.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_900x676_crop_center-center_none/2549/WWW-Responsibility-Comm-Initiative_Chaco-x-Brave-Trails.webp |
+| #M204 | foto | 900×676 | `media/m204.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/about/_900x676_crop_center-center_none/239/timeline-2.webp |
+| #M205 | foto | 1920×1281 | `media/m205.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1920xAUTO_crop_center-center_none/1977/Chaco-2026-ZSandal-04.webp |
+| #M206 | foto | 1920×1281 | `media/m206.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1920xAUTO_crop_center-center_none/2012/MRL_1H26_NothingButTheRun_J00005073_1.webp |
+| #M207 | foto | 1920×1265 | `media/m207.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_none/816/ressources.webp |
+| #M208 | foto | 1200×800 | `media/m208.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/responsibility/_1200x800_crop_center-center_none/1981/Saucony_Pro52007.webp |
+| #M209 | foto | 1200×800 | `media/m209.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x800_crop_center-center_none/1982/SB_OG_Campaign_Yoga_Outfit1_02_FINAL_RGB.webp |
+| #M210 | foto | 1200×800 | `media/m210.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x800_crop_center-center_none/1983/Wolverine_2025_1000-Mile-Icon-Rugged_W990103_Rusty_Sidnaw_Web-Res_31.webp |
+| #M211 | foto | 1200×800 | `media/m211.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1200x800_crop_center-center_none/1984/MRL_1H26_NothingButTheRun_J00005073_J00005008_2-1.webp |
+| #M212 | foto | 1920×1349 | `media/m212.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_100_none/1555/Frame-2147230061.webp |
+| #M213 | foto | 1920×1080 | `media/m213.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/footer/_1920x1080_crop_center-center_none/1988/SAU_SS26_Lifestyle_030.webp |
+| #M214 | video-poster | 1920×1080 | `media/m214.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/_transforms/_1920xAUTO_crop_center-center_none/1803/Responsibility-fallback-image_2026-03-30-123502_jtzj.webp |
+| #M215 | video | 1280×720 | `media/m215.mp4` | responsibility | https://player.vimeo.com/progressive_redirect/playback/1179887107/rendition/2160p/file.mp4%20%282160p%29.mp4?loc=external&log_user=0&signature=e34f4c8d7aeef8dff31a8fce8d58363def2abaf605e4e0ff93af1897d521e71f |
+| #M216 | foto | 1200×630 | `media/m216.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/pdf/2024WWW-Global-Impact-Report_2.pdf |
+| #M217 | foto | 1200×630 | `media/m217.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/pdf/2023WWW-Global-Impact-Report-FINAL.pdf |
+| #M218 | foto | 1200×630 | `media/m218.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/pdf/2022.IR_.Digital.Final_.9.27.pdf |
+| #M219 | foto | 1200×630 | `media/m219.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/responsibility/WWW-Production-Code-of-Conduct-Summary-April-2025.pdf |
+| #M220 | foto | 1200×630 | `media/m220.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/code-of-business-conduct-english-2.pdf |
+| #M221 | foto | 1200×630 | `media/m221.svg` | responsibility | https://d3ql15awrosklt.cloudfront.net/medias/California-AB-1305-Disclosure-2024.pdf |
+| #M222 | foto | 1200×630 | `media/m222.svg` | retail-vendor-partners | https://d3ql15awrosklt.cloudfront.net/medias/pdf/Retail-Routing-Guide.pdf |
+| #M223 | foto | 1200×630 | `media/m223.svg` | retail-vendor-partners | https://d3ql15awrosklt.cloudfront.net/medias/pdf/Copy-of-WWW-Routing-Request-Form-2.pdf |
+| #M224 | foto | 1200×630 | `media/m224.svg` | retail-vendor-partners | https://d3ql15awrosklt.cloudfront.net/medias/pdf/Internet-Corporate-Drop-Ship-Addendum-FINAL-10.1.2020-00034924-6xA04B3.pdf |
+| #M225 | foto | 1200×630 | `media/m225.svg` | retail-vendor-partners | https://d3ql15awrosklt.cloudfront.net/medias/pdf/2020-Corporate-Internet-Agreement-1.pdf |
+| #M226 | foto | 1200×630 | `media/m226.svg` | retail-vendor-partners | https://d3ql15awrosklt.cloudfront.net/medias/pdf/Wolverine-World-Wide-SEM-Policy-2.0.pdf |

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#g)"/>
+<line x1="0" y1="0" x2="400" y2="300" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.2"/>
+<line x1="400" y1="0" x2="0" y2="300" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.2"/>
+
+<text x="200" y="143.4" font-family="Helvetica,Arial,sans-serif" font-size="16.5" font-weight="700" letter-spacing="2.475" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="200" y="168.15" font-family="Helvetica,Arial,sans-serif" font-size="11.879999999999999" fill="#78716c" text-anchor="middle">HP-R-2H26-LS-EnjoyTheJourney-Excel_01.webp</text>
+<rect x="7.3500000000000005" y="271.65" width="42.96600000000001" height="21.000000000000004" rx="3.7800000000000007" fill="#000000" fill-opacity=".7"/>
+<text x="28.833000000000006" y="286.34999999999997" font-family="Helvetica,Arial,sans-serif" font-size="13.020000000000001" font-weight="700" fill="#ffffff" text-anchor="middle">#M033</text>
+</svg>

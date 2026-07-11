@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 676" width="900" height="676">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="900" height="676" fill="url(#g)"/>
+<line x1="0" y1="0" x2="900" y2="676" stroke="#ffffff" stroke-opacity=".45" stroke-width="2.704"/>
+<line x1="900" y1="0" x2="0" y2="676" stroke="#ffffff" stroke-opacity=".45" stroke-width="2.704"/>
+
+<text x="450" y="323.128" font-family="Helvetica,Arial,sans-serif" font-size="37.18" font-weight="700" letter-spacing="5.577" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="450" y="378.898" font-family="Helvetica,Arial,sans-serif" font-size="26.7696" fill="#78716c" text-anchor="middle">WWW-Responsibility-Comm-Initiative_Cana…</text>
+<rect x="9.1" y="640.9" width="53.196000000000005" height="26" rx="4.68" fill="#000000" fill-opacity=".7"/>
+<text x="35.698" y="659.1" font-family="Helvetica,Arial,sans-serif" font-size="16.12" font-weight="700" fill="#ffffff" text-anchor="middle">#M202</text>
+</svg>

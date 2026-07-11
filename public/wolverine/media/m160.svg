@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1278" width="1920" height="1278">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="1920" height="1278" fill="url(#g)"/>
+<line x1="0" y1="0" x2="1920" y2="1278" stroke="#ffffff" stroke-opacity=".45" stroke-width="5.112"/>
+<line x1="1920" y1="0" x2="0" y2="1278" stroke="#ffffff" stroke-opacity=".45" stroke-width="5.112"/>
+
+<text x="960" y="610.884" font-family="Helvetica,Arial,sans-serif" font-size="70.29" font-weight="700" letter-spacing="10.5435" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="960" y="716.319" font-family="Helvetica,Arial,sans-serif" font-size="50.6088" fill="#78716c" text-anchor="middle">HD_BenC_L1142159.webp</text>
+<rect x="9.1" y="1242.9" width="53.196000000000005" height="26" rx="4.68" fill="#000000" fill-opacity=".7"/>
+<text x="35.698" y="1261.1000000000001" font-family="Helvetica,Arial,sans-serif" font-size="16.12" font-weight="700" fill="#ffffff" text-anchor="middle">#M160</text>
+</svg>

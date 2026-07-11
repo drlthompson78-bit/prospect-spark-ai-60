@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6000 4002" width="6000" height="4002">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="6000" height="4002" fill="url(#g)"/>
+<line x1="0" y1="0" x2="6000" y2="4002" stroke="#ffffff" stroke-opacity=".45" stroke-width="16.008"/>
+<line x1="6000" y1="0" x2="0" y2="4002" stroke="#ffffff" stroke-opacity=".45" stroke-width="16.008"/>
+
+<text x="3000" y="1912.956" font-family="Helvetica,Arial,sans-serif" font-size="220.11" font-weight="700" letter-spacing="33.0165" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="3000" y="2243.121" font-family="Helvetica,Arial,sans-serif" font-size="158.4792" fill="#78716c" text-anchor="middle">16-IX7A0919_v3_grain.jpg</text>
+<rect x="9.1" y="3966.9" width="53.196000000000005" height="26" rx="4.68" fill="#000000" fill-opacity=".7"/>
+<text x="35.698" y="3985.1" font-family="Helvetica,Arial,sans-serif" font-size="16.12" font-weight="700" fill="#ffffff" text-anchor="middle">#M130</text>
+</svg>

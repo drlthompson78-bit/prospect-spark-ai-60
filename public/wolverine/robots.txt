@@ -1,0 +1,1 @@
+Sitemap: https://wolverineworldwide.com/sitemap.xml    User-agent: * Disallow: /cpresources/
