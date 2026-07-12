@@ -30,6 +30,12 @@ export const cakeLayers = [
 export const cakeWholeDark = `${CDN}/hf_20260711_220945_9e8fdd0b-f049-494a-8f7a-0ac0ec0d77bf_min.png`;
 
 /**
+ * 360°-orbitvideo van de Loua-reconstructie (Kling 3.0 Turbo): de camera
+ * draait om de taart heen, voor de 3D-wauwfactor in fase 1 van de hero.
+ */
+export const cakeOrbitVideo: string | null = `${CDN}/hf_20260712_153600_291112f2-c2e3-4c29-97ff-ea77dc7fa593.mp4`;
+
+/**
  * Echte foto's van hettaartenhuis.nl (uit de wget-mirror), lokaal gehost in
  * public/fotos/. De klant herkent hierdoor zijn eigen werk in de webshop.
  * BASE_URL houdt rekening met de GitHub Pages preview-basis.

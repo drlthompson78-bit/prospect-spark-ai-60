@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import { Button } from "@/components/ui/button";
-import { cakeWhole, cakeLayers, heroPoster } from "@/data/assets";
+import { cakeWhole, cakeLayers, cakeOrbitVideo, heroPoster } from "@/data/assets";
 
 // De welkomsttekst van de originele homepage, als cinematografische kop
 const headline = ["Welkom bij", "Het Taartenhuis"];
@@ -129,15 +129,34 @@ const Hero = () => {
           aria-hidden="true"
         />
 
-        {/* De complete signatuurtaart (fase 1) */}
+        {/* De complete signatuurtaart (fase 1): 360°-orbitvideo in een rond
+            medaillon zodat de taart in 3D ronddraait; zonder video het statische beeld */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <motion.img
-            src={cakeWhole}
-            alt="De ijsjestaart van Het Taartenhuis: roze driptaart met ijshoorntje, ijsjes en raketjes"
-            style={{ opacity: wholeOpacity, scale: wholeScale, width: "min(58vh, 88vw)" }}
-            className="select-none drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
-            draggable={false}
-          />
+          {cakeOrbitVideo ? (
+            <motion.div
+              style={{ opacity: wholeOpacity, scale: wholeScale, width: "min(62vh, 88vw)" }}
+              className="overflow-hidden rounded-full shadow-[0_40px_90px_rgba(0,0,0,0.28)] ring-1 ring-border"
+            >
+              <video
+                src={cakeOrbitVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster={cakeWhole}
+                aria-label="De ijsjestaart van Het Taartenhuis draait rond: roze driptaart met ijshoorntje, ijsjes en raketjes"
+                className="aspect-square h-full w-full scale-[1.02] object-cover"
+              />
+            </motion.div>
+          ) : (
+            <motion.img
+              src={cakeWhole}
+              alt="De ijsjestaart van Het Taartenhuis: roze driptaart met ijshoorntje, ijsjes en raketjes"
+              style={{ opacity: wholeOpacity, scale: wholeScale, width: "min(58vh, 88vw)" }}
+              className="select-none drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
+              draggable={false}
+            />
+          )}
         </div>
 
         {/* De vier lagen (fase 2): zweven uit elkaar */}
