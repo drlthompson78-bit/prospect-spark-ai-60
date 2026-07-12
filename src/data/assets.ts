@@ -53,12 +53,12 @@ export const productImages = {
   kindertaart: `${CDN}/hf_20260711_234152_c2655fef-7be5-46c5-8983-408718337573_min.webp`,
   genderReveal: `${CDN}/hf_20260711_233748_38ae5db4-4704-46b9-bc6e-bd3b0d88ee49_min.webp`,
   babyshower: `${CDN}/hf_20260711_233751_97ab7bc3-6efa-4fc3-98cf-e54f6b6d5dd9_min.webp`,
-  geboorte: `${FOTOS}/product-geboortetaart.jpg`,
+  geboorte: `${CDN}/hf_20260711_235938_e0985b74-e4c0-455a-8ab6-7e0f0f5d534c_min.webp`,
   geslaagd: `${CDN}/hf_20260711_233756_1d3f6129-76e0-4ea7-9ed1-9174b616cf46_min.webp`,
   bedrijfstaart: `${CDN}/hf_20260711_233825_e5512400-27a3-4e09-8a5f-9d5df3e02613_min.webp`,
   cupcakes: `${CDN}/hf_20260711_233827_577b27db-4128-4d74-8fdd-f67b744ffdaa_min.webp`,
   chocoladeDrip: `${CDN}/hf_20260711_233730_ddb9be71-ad7c-486d-bbbf-569c9318a240_min.webp`,
-  communie: `${FOTOS}/product-geboortetaart.jpg`,
+  communie: `${CDN}/hf_20260711_235938_e0985b74-e4c0-455a-8ab6-7e0f0f5d534c_min.webp`,
 } as const;
 
 /** De taart van de originele hero (IJsjes taart Loua), referentie voor de reconstructie. */
