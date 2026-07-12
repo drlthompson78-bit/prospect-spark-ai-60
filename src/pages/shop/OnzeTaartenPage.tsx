@@ -12,6 +12,8 @@ interface Taart {
   categorie: string;
   foto: string;
   foto2x: string;
+  /** De originele beschrijving van de detailpagina op hettaartenhuis.nl. */
+  beschrijving: string;
 }
 
 const PAGINA_GROOTTE = 24;
@@ -148,10 +150,9 @@ const OnzeTaartenPage = () => {
                 <DialogDescription className="mt-1 text-sm uppercase tracking-wide">
                   {detail.categorie}
                 </DialogDescription>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Elke taart is maatwerk. Vraag vrijblijvend een prijsopgave aan en vermeld bij
-                  de opmerkingen de naam van deze taart.
-                </p>
+                {detail.beschrijving && (
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{detail.beschrijving}</p>
+                )}
                 <Button asChild size="lg" className="mt-5 h-12 w-full text-base">
                   <Link to="/op-maat">Vraag deze taart aan</Link>
                 </Button>
