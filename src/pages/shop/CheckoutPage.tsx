@@ -21,12 +21,7 @@ const schema = z.object({
   email: z.string().email("Vul een geldig e-mailadres in"),
   phone: z.string().min(10, "Vul een geldig telefoonnummer in"),
   date: z.string().refine((v) => v >= minDate(), "Kies een datum minimaal 3 dagen vooruit"),
-  fulfilment: z.enum(["ophalen", "bezorgen"]),
-  address: z.string().optional(),
   notes: z.string().max(600).optional(),
-}).refine((data) => data.fulfilment === "ophalen" || (data.address && data.address.length > 5), {
-  message: "Vul het bezorgadres in",
-  path: ["address"],
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -38,14 +33,10 @@ const CheckoutPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { fulfilment: "ophalen" },
   });
-
-  const fulfilment = watch("fulfilment");
 
   const onSubmit = (values: FormValues) => {
     const orderNumber = `TH-${Date.now().toString(36).toUpperCase()}`;
@@ -132,44 +123,16 @@ const CheckoutPage = () => {
               <Input id="date" type="date" min={minDate()} className={field(errors.date)} {...register("date")} />
               {errors.date && <p className="mt-1.5 text-sm text-destructive">{errors.date.message}</p>}
             </div>
-            <fieldset>
-              <legend className="text-sm font-semibold text-foreground">Ophalen of bezorgen</legend>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {(["ophalen", "bezorgen"] as const).map((option) => (
-                  <label
-                    key={option}
-                    className={cn(
-                      "flex cursor-pointer items-center justify-center rounded-xl border px-4 py-3 text-sm capitalize transition-colors",
-                      fulfilment === option
-                        ? "border-primary bg-primary/10 text-foreground"
-                        : "border-border text-muted-foreground hover:border-foreground/40"
-                    )}
-                  >
-                    <input type="radio" value={option} className="sr-only" {...register("fulfilment")} />
-                    {option}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          </div>
-
-          {fulfilment === "bezorgen" && (
             <div>
-              <label htmlFor="address" className="text-sm font-semibold text-foreground">
-                Bezorgadres
-              </label>
-              <Input
-                id="address"
-                autoComplete="street-address"
-                className={field(errors.address)}
-                {...register("address")}
-              />
-              {errors.address && <p className="mt-1.5 text-sm text-destructive">{errors.address.message}</p>}
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                Bezorging gaat in overleg; de kosten hangen af van de afstand.
+              <p className="text-sm font-semibold text-foreground">Ophalen</p>
+              {/* De site bezorgt niet: ophalen di t/m za op afspraak in Rotterdam */}
+              <p className="mt-2 rounded-xl border border-border bg-secondary/60 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+                De taart haal je op bij een collega in Rotterdam, van dinsdag t/m zaterdag en
+                alleen op afspraak. Makkelijk bereikbaar, met parkeergelegenheid voor de deur.
+                Wij bezorgen niet.
               </p>
             </div>
-          )}
+          </div>
 
           <div>
             <label htmlFor="notes" className="text-sm font-semibold text-foreground">

@@ -32,13 +32,18 @@ const SiteFooter = () => (
         <p className="text-sm font-semibold text-foreground">Bestellen</p>
         <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
           <li>
-            <Link to="/collectie" className="transition-colors hover:text-foreground">
-              Alle taarten
+            <Link to="/onze-taarten" className="transition-colors hover:text-foreground">
+              Bekijk alle taarten
+            </Link>
+          </li>
+          <li>
+            <Link to="/smaken-en-prijzen" className="transition-colors hover:text-foreground">
+              Smaken en prijzen
             </Link>
           </li>
           <li>
             <Link to="/op-maat" className="transition-colors hover:text-foreground">
-              Taart op maat
+              Vrijblijvende prijsaanvraag
             </Link>
           </li>
           <li>
@@ -57,20 +62,16 @@ const SiteFooter = () => (
               info@hettaartenhuis.nl
             </a>
           </li>
-          <li>
-            <a href="tel:+31634309927" className="transition-colors hover:text-foreground">
-              06 343 099 27
-            </a>
-          </li>
-          <li className="pt-2">Di t/m vr vanaf 11:00</li>
-          <li>Weekend en maandag gesloten</li>
+          <li>KvK Rotterdam: 50433962</li>
+          <li className="pt-2">Ophalen di t/m za, op afspraak, in Rotterdam</li>
+          <li>In het weekend en op maandag gesloten</li>
         </ul>
       </div>
     </div>
     <div className="border-t border-border">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-5 py-6 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between md:px-8">
         <p>&copy; {new Date().getFullYear()} Het Taartenhuis. Alle taarten worden vers en met de hand gemaakt.</p>
-        <p>Afhalen op afspraak. Bezorging in overleg.</p>
+        <p>Afhalen op afspraak in Rotterdam. Wij bezorgen niet.</p>
       </div>
     </div>
   </footer>

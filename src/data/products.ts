@@ -133,8 +133,8 @@ export const products: Product[] = [
       basisBeschrijving +
       " Geef bij uw bestelling het gewenste cijfer door.",
     image: productImages.cijfertaart,
-    priceFrom: 34.5,
-    sizes: [{ id: "c30", label: "Per cijfer, ± 30 cm", serves: 12, price: 34.5 }],
+    priceFrom: 59.5,
+    sizes: [{ id: "c30", label: "Per cijfer, ± 30 cm", serves: 12, price: 59.5 }],
     flavors: vullingen,
     featured: true,
   },

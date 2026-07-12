@@ -7,22 +7,24 @@ import { useCart } from "@/context/CartContext";
 import { useTheme } from "@/hooks/useTheme";
 import { cakeWhole, siteLogo } from "@/data/assets";
 
+/** De navigatie volgt de originele site: Onze taarten t/m Contact, plus de webshop-collectie. */
 const navItems = [
   { label: "Onze taarten", to: "/onze-taarten" },
-  { label: "Collectie", to: "/collectie" },
-  { label: "Op maat", to: "/op-maat" },
-  { label: "Ons verhaal", to: "/#atelier" },
-  { label: "Contact", to: "/#contact" },
+  { label: "Smaken en prijzen", to: "/smaken-en-prijzen" },
+  { label: "Bedrijven", to: "/bedrijven" },
+  { label: "Over ons", to: "/over-ons" },
+  { label: "Contact", to: "/contact" },
 ];
 
-/** Items voor de fullscreen overlay, met het bestellen erbij als afsluiter. */
+/** Items voor de fullscreen overlay, met de webshop en het bestellen erbij. */
 const overlayItems = [
   { nr: "01", label: "Onze taarten", to: "/onze-taarten" },
-  { nr: "02", label: "Collectie", to: "/collectie" },
-  { nr: "03", label: "Taart op maat", to: "/op-maat" },
-  { nr: "04", label: "Ons verhaal", to: "/#atelier" },
-  { nr: "05", label: "Contact", to: "/#contact" },
-  { nr: "06", label: "Bestellen", to: "/bestellen" },
+  { nr: "02", label: "Smaken en prijzen", to: "/smaken-en-prijzen" },
+  { nr: "03", label: "Collectie", to: "/collectie" },
+  { nr: "04", label: "Bedrijven", to: "/bedrijven" },
+  { nr: "05", label: "Over ons", to: "/over-ons" },
+  { nr: "06", label: "Contact", to: "/contact" },
+  { nr: "07", label: "Bestellen", to: "/bestellen" },
 ];
 
 const SiteHeader = () => {
@@ -86,6 +88,14 @@ const SiteHeader = () => {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Bestellen als uitgelichte knop, zoals op de originele site */}
+          <Link
+            to="/bestellen"
+            onClick={() => setMenuOpen(false)}
+            className="mr-1 hidden h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:-translate-y-px hover:shadow-md md:inline-flex"
+          >
+            Bestellen
+          </Link>
           <button
             type="button"
             onClick={toggle}

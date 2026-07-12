@@ -5,6 +5,10 @@ import ShopLayout from "@/pages/shop/ShopLayout";
 import HomePage from "@/pages/shop/HomePage";
 import CollectionPage from "@/pages/shop/CollectionPage";
 import OnzeTaartenPage from "@/pages/shop/OnzeTaartenPage";
+import SmakenPrijzenPage from "@/pages/shop/SmakenPrijzenPage";
+import BedrijvenPage from "@/pages/shop/BedrijvenPage";
+import OverOnsPage from "@/pages/shop/OverOnsPage";
+import ContactPage from "@/pages/shop/ContactPage";
 import ProductPage from "@/pages/shop/ProductPage";
 import CustomPage from "@/pages/shop/CustomPage";
 import CheckoutPage from "@/pages/shop/CheckoutPage";
@@ -20,6 +24,10 @@ const App = () => (
           <Route path="/" element={<HomePage />} />
           <Route path="/collectie" element={<CollectionPage />} />
           <Route path="/onze-taarten" element={<OnzeTaartenPage />} />
+          <Route path="/smaken-en-prijzen" element={<SmakenPrijzenPage />} />
+          <Route path="/bedrijven" element={<BedrijvenPage />} />
+          <Route path="/over-ons" element={<OverOnsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/collectie/:slug" element={<ProductPage />} />
           <Route path="/op-maat" element={<CustomPage />} />
           <Route path="/bestellen" element={<CheckoutPage />} />
