@@ -25,17 +25,16 @@ const Galerij = () => {
         <Reveal>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Eerder gemaakt</p>
           <h2 className="mt-4 max-w-[24ch] font-display text-3xl leading-tight tracking-tight text-foreground md:text-5xl">
-            Op zoek naar inspiratie? Bekijk ons eerdere werk
+            Op zoek naar inspiratie?
           </h2>
           <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-muted-foreground">
-            Dit is een greep uit de reeds door ons gemaakte taarten — er worden wekelijks
-            nieuwe foto&apos;s toegevoegd.
+            Bekijk onze fotogalerij voor een selectie van eerder gemaakte taarten. Er worden wekelijks nieuwe foto&apos;s van taarten toegevoegd.
           </p>
           <Link
             to="/onze-taarten"
             className="mt-5 inline-block text-sm font-semibold text-primary underline-offset-4 transition-colors hover:underline"
           >
-            Bekijk al onze taarten →
+            Bekijk alle taarten →
           </Link>
         </Reveal>
       </div>

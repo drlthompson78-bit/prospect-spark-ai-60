@@ -64,9 +64,10 @@ const CustomPage = () => {
               Taart op maat
             </h1>
             <p className="mt-5 max-w-[56ch] text-base leading-relaxed text-muted-foreground">
-              Van 3D-sculptuur tot bruidstaart met vier etages: als jij het kunt dromen,
-              kunnen wij het bakken. Beschrijf je idee, dan sturen we binnen 24 uur een
-              vrijblijvend voorstel met prijs.
+              Via onderstaand aanvraagformulier kunt u eenvoudig een prijsopgave aanvragen.
+              Vermeld bij de opmerkingen eventuele specifieke wensen of de naam van de taart
+              (als het om een voorbeeld van onze website gaat), en vergeet niet aan te geven
+              voor hoeveel personen de taart bedoeld is.
             </p>
           </Reveal>
 

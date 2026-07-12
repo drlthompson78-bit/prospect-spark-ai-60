@@ -141,10 +141,11 @@ const OnzeTaartenPage = () => {
 
       {/* Detailvenster met grote foto en aanvraagknop, volgens de echte werkwijze */}
       <Dialog open={detail !== null} onOpenChange={(open) => !open && setDetail(null)}>
-        <DialogContent className="max-w-lg overflow-hidden p-0">
+        {/* max-h + scroll voorkomen dat de knop onder de vouw valt op kleinere schermen */}
+        <DialogContent className="max-h-[92dvh] max-w-lg overflow-y-auto p-0">
           {detail && (
             <>
-              <img src={detail.foto2x} alt={detail.titel} className="aspect-square w-full object-cover" />
+              <img src={detail.foto2x} alt={detail.titel} className="max-h-[52dvh] w-full object-cover" />
               <div className="p-6 pt-4">
                 <DialogTitle className="font-display text-2xl tracking-tight">{detail.titel}</DialogTitle>
                 <DialogDescription className="mt-1 text-sm uppercase tracking-wide">

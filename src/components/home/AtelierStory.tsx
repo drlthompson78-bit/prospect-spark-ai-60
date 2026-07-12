@@ -17,14 +17,16 @@ const AtelierStory = () => {
         <div>
           <Reveal>
             <h2 className="font-display text-3xl tracking-tight text-foreground md:text-5xl">
-              Het atelier na sluitingstijd
+              Al decennia een begrip in bijzondere taarten
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mt-6 max-w-[56ch] text-base leading-relaxed text-muted-foreground">
-              Sinds 2005 maken wij taarten zoals ze bedoeld zijn: met de hand, dagvers en
-              zonder haast. Jij bepaalt hoe jouw taart eruitziet, van smaak tot ontwerp.
-              Wij denken mee, schetsen voor en bakken tot het klopt.
+              Sinds 2005 is Het Taartenhuis een vertrouwd adres voor unieke, ambachtelijke
+              taarten. Bij ons bepaalt u zelf hoe uw taart eruitziet, van smaak tot ontwerp.
+              Wij denken graag met u mee om samen een persoonlijke en onvergetelijke taart
+              samen te stellen. Al onze taarten worden met de hand gemaakt en zijn altijd
+              dagvers.
             </p>
           </Reveal>
           <Reveal delay={0.16}>
@@ -37,10 +39,10 @@ const AtelierStory = () => {
           </Reveal>
           <Reveal delay={0.24}>
             <Link
-              to="/op-maat"
+              to="/over-ons"
               className="mt-10 inline-block text-sm font-semibold text-primary underline-offset-4 transition-colors hover:underline"
             >
-              Vertel ons jouw idee
+              Lees meer over ons
             </Link>
           </Reveal>
         </div>

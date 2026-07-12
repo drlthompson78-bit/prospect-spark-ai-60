@@ -182,10 +182,10 @@ const SiteHeader = () => {
               >
                 <img src={cakeWhole} alt="" className="w-full select-none drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]" draggable={false} />
                 <span className="absolute -left-6 top-8 rounded-full bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-lg -rotate-6">
-                  Populair deze week
+                  Altijd dagvers
                 </span>
                 <span className="absolute -right-4 bottom-12 rounded-full border border-border bg-card px-4 py-2 text-xs text-card-foreground shadow-lg rotate-3">
-                  Taarten vanaf € 24,50
+                  Taarten vanaf € 34,50
                 </span>
               </motion.div>
 

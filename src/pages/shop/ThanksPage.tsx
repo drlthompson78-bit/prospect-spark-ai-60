@@ -30,9 +30,10 @@ const ThanksPage = () => {
         Dankjewel{order ? `, ${order.values.name.split(" ")[0]}` : ""}. Wij gaan voor je aan de slag.
       </h1>
       <p className="mt-6 max-w-[56ch] text-base leading-relaxed text-muted-foreground">
-        Je bestelaanvraag is binnen. Binnen 24 uur ontvang je per e-mail onze bevestiging met
-        de definitieve prijs, betaalinformatie en het {order?.values.fulfilment === "bezorgen" ? "bezorgmoment" : "ophaalmoment"}.
-        Pas na jouw akkoord is de bestelling definitief.
+        Je bestelaanvraag is binnen; die geldt nog niet als definitieve bestelling. U
+        ontvangt van ons eerst een e-mail met de mogelijkheden en bijbehorende prijzen. Pas
+        na uw akkoord wordt de bestelling definitief en ontvangt u een bevestiging met
+        betaalgegevens, het volledige ophaaladres en het afhaaltijdstip.
       </p>
 
       {order && (

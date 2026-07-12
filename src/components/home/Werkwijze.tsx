@@ -3,15 +3,15 @@ import Reveal from "@/components/shop/Reveal";
 const steps = [
   {
     title: "Vertel je idee",
-    text: "Kies een taart uit de collectie of beschrijf je eigen ontwerp. Elke aanvraag is vrijblijvend en geldt nog niet als definitieve bestelling.",
+    text: "In het bestelformulier kunt u eenvoudig uw wensen en ideeën doorgeven. Let op: het invullen van dit formulier geldt nog niet als een definitieve bestelling.",
   },
   {
     title: "Wij bevestigen",
-    text: "Je ontvangt eerst een e-mail met de mogelijkheden en bijbehorende prijzen. Pas na jouw akkoord wordt de bestelling definitief, met betaalgegevens, ophaaladres en afhaaltijdstip.",
+    text: "U ontvangt van ons eerst een e-mail met de mogelijkheden en bijbehorende prijzen. Pas na uw akkoord wordt de bestelling definitief en ontvangt u een bevestiging met betaalgegevens, het volledige ophaaladres en het afhaaltijdstip.",
   },
   {
     title: "Dagvers ophalen",
-    text: "Je haalt de taart op in Rotterdam; de locatie is goed bereikbaar, met parkeergelegenheid voor de deur. Mits koel bewaard blijft de taart nog ruim drie dagen goed.",
+    text: "De taart kan worden opgehaald bij een collega in Rotterdam. De locatie is goed bereikbaar, met parkeergelegenheid voor de deur. Onze taarten worden ambachtelijk bereid en vers geleverd; mits koel bewaard blijven ze nog ruim 3 dagen goed.",
   },
 ];
 
@@ -22,7 +22,7 @@ const Werkwijze = () => (
       <Reveal>
         <h2 className="font-display text-3xl tracking-tight text-foreground md:text-5xl">Zo werkt het</h2>
         <p className="mt-4 max-w-[40ch] text-base leading-relaxed text-muted-foreground">
-          Bestellen bij een atelier voelt anders dan bij een fabriek. Zo hoort het.
+          Een aanvraag doet u makkelijk en vrijblijvend online via ons aanvraagformulier. We hanteren geen vaste besteltermijn, maar om teleurstelling te voorkomen raden we aan uw bestelling op tijd door te geven.
         </p>
       </Reveal>
 

@@ -3,11 +3,11 @@ import Reveal from "@/components/shop/Reveal";
 import { products } from "@/data/products";
 
 const tiles = [
-  { slug: "bruidstaart-rosalie", size: "md:col-span-2 md:row-span-2" },
-  { slug: "cijfertaart-royale", size: "" },
-  { slug: "3d-dinotaart", size: "" },
-  { slug: "babyshower-wolkje", size: "" },
-  { slug: "bedrijfstaart-met-logo", size: "" },
+  { slug: "bruidstaart", size: "md:col-span-2 md:row-span-2" },
+  { slug: "cijfertaart", size: "" },
+  { slug: "3d-taart", size: "" },
+  { slug: "babyshower-taart", size: "" },
+  { slug: "bedrijfstaart", size: "" },
 ];
 
 /** Asymmetrisch collectie-mozaiek dat doorlinkt naar de shop. */
@@ -17,10 +17,10 @@ const CollectionGrid = () => (
       <Reveal className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <h2 className="font-display text-3xl tracking-tight text-foreground md:text-5xl">
-            Voor elk moment een taart
+            Voor een unieke en heerlijke taart op maat
           </h2>
           <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-muted-foreground">
-            Van bruiloft tot babyshower en van mijlpaal tot maandagmiddag.
+            Of het nu gaat om een bruiloft, verjaardag, geboorte, bedrijfsfeest of een verrassende traktatie voor iemand speciaal, bij Het Taartenhuis bent u aan het juiste adres.
           </p>
         </div>
         <Link

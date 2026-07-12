@@ -22,9 +22,9 @@ const SignatureRail = () => {
 
   const header = (
     <Reveal className="mx-auto max-w-[1400px] px-5 md:px-8">
-      <h2 className="font-display text-3xl tracking-tight text-foreground md:text-5xl">Onze signatuur</h2>
+      <h2 className="font-display text-3xl tracking-tight text-foreground md:text-5xl">Uw online taartenspecialist</h2>
       <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-muted-foreground">
-        De taarten waar ons atelier om bekendstaat, elk seizoen opnieuw geperfectioneerd.
+        Voor de lekkerste taarten voor elke gelegenheid.
       </p>
     </Reveal>
   );

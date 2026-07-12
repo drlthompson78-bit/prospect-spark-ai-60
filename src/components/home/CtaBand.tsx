@@ -16,12 +16,12 @@ const CtaBand = () => (
     <div className="relative mx-auto flex max-w-[1400px] flex-col items-start gap-6 px-5 py-24 md:px-8 md:py-32">
       <Reveal>
         <h2 className="max-w-[22ch] font-display text-3xl leading-tight tracking-tight text-foreground md:text-5xl">
-          Jouw moment verdient een taart uit ons atelier
+          Geen feest is compleet zonder een taart van Het Taartenhuis
         </h2>
       </Reveal>
       <Reveal delay={0.1}>
         <Button asChild size="lg" className="h-12 px-7 text-base active:scale-[0.98]">
-          <Link to="/collectie">Bestel nu</Link>
+          <Link to="/collectie">Bestellen</Link>
         </Button>
       </Reveal>
     </div>

@@ -4,17 +4,18 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform, type Moti
 import { Button } from "@/components/ui/button";
 import { cakeWhole, cakeLayers, heroPoster } from "@/data/assets";
 
-const headline = ["Taarten", "die je", "nooit vergeet"];
+// De welkomsttekst van de originele homepage, als cinematografische kop
+const headline = ["Welkom bij", "Het Taartenhuis"];
 
 /**
- * Ingrediëntkaartjes naast de zwevende lagen; de teksten komen letterlijk
- * van de smaken-en-prijzenpagina van Het Taartenhuis.
+ * Ingrediëntkaartjes naast de zwevende lagen; de teksten zijn letterlijke
+ * zinnen van de smaken-en-prijzenpagina en homepage van Het Taartenhuis.
  */
 const layerNotes = [
-  { nr: "01", title: "Marsepein of fondant", text: "Een dun laagje, in een kleur naar keuze. Liever pure chocolade? Kan ook.", side: "right" as const },
-  { nr: "02", title: "Romige slagroomvulling", text: "Niet te zoet, met keuze uit ruim veertien smaken.", side: "left" as const },
-  { nr: "03", title: "Luchtige cake", text: "Vanille of chocolade, altijd dagvers gebakken.", side: "right" as const },
-  { nr: "04", title: "Met de hand gemaakt", text: "Ambachtelijk, sinds 2005. Elke taart is maatwerk.", side: "left" as const },
+  { nr: "01", title: "Marsepein of fondant", text: "Elke taart wordt bekleed met een dun laagje marsepein/fondant in een kleur naar keuze.", side: "right" as const },
+  { nr: "02", title: "Slagroomvulling", text: "Gevuld met een romige, niet te zoete slagroomvulling.", side: "left" as const },
+  { nr: "03", title: "Luchtige cake", text: "Gemaakt van luchtige vanille- of chocoladecake.", side: "right" as const },
+  { nr: "04", title: "Met de hand gemaakt", text: "Al onze taarten worden met de hand gemaakt en zijn altijd dagvers.", side: "left" as const },
 ];
 
 /** Zwevende lagen: eindpositie (y), lichte rotatie en x-drift per laag. */
@@ -89,16 +90,16 @@ const Hero = () => {
           />
           <div className="hero-scrim absolute inset-0" aria-hidden="true" />
           <div className="relative mx-auto w-full max-w-[1400px] px-5 pb-24 md:px-8 md:pb-0">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Ambachtelijk sinds 2005</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
               {headline.join(" ")}
             </h1>
             <p className="mt-6 max-w-[38ch] text-base leading-relaxed text-foreground/80 md:text-lg">
-              Handgemaakte taarten uit ons atelier, dagvers en volledig naar jouw idee.
+              Uw online taartenspecialist voor de lekkerste taarten voor elke gelegenheid.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
-              <Button asChild size="lg" className="h-12 px-7 text-base"><Link to="/collectie">Bestel nu</Link></Button>
-              <Button asChild size="lg" variant="outline" className="h-12 px-7 text-base"><Link to="/op-maat">Taart op maat</Link></Button>
+              <Button asChild size="lg" className="h-12 px-7 text-base"><Link to="/onze-taarten">Bekijk al onze taarten</Link></Button>
+              <Button asChild size="lg" variant="outline" className="h-12 px-7 text-base"><Link to="/bedrijven">Voor bedrijven</Link></Button>
             </div>
           </div>
         </div>
@@ -160,9 +161,9 @@ const Hero = () => {
           className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-end px-5 pb-24 md:justify-center md:px-8 md:pb-0"
         >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
-            Ambachtelijk sinds 2005
+            Sinds 2005
           </p>
-          <h1 className="mt-5 max-w-[10ch] font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
+          <h1 className="mt-5 max-w-[13ch] font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
             {headline.map((line, i) => (
               // pb + negatieve mb geven staartletters (g, j) ruimte binnen het animatiemasker
               <span key={line} className="block overflow-hidden pb-[0.14em] -mb-[0.14em]">
@@ -183,7 +184,7 @@ const Hero = () => {
             transition={{ duration: 0.7, delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 max-w-[34ch] text-base leading-relaxed text-foreground/80 md:text-lg"
           >
-            Handgemaakte taarten uit ons atelier, dagvers en volledig naar jouw idee.
+            Uw online taartenspecialist voor de lekkerste taarten voor elke gelegenheid.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -192,7 +193,7 @@ const Hero = () => {
             className="mt-9 flex flex-wrap items-center gap-4"
           >
             <Button asChild size="lg" className="h-12 px-7 text-base active:scale-[0.98]">
-              <Link to="/collectie">Bestel nu</Link>
+              <Link to="/onze-taarten">Bekijk al onze taarten</Link>
             </Button>
             <Button
               asChild
@@ -200,7 +201,7 @@ const Hero = () => {
               variant="outline"
               className="h-12 border-foreground/25 bg-background/20 px-7 text-base backdrop-blur-sm hover:bg-background/40 active:scale-[0.98]"
             >
-              <Link to="/op-maat">Taart op maat</Link>
+              <Link to="/bedrijven">Voor bedrijven</Link>
             </Button>
           </motion.div>
           <motion.p

@@ -87,21 +87,15 @@ const vierkanteSizes: ProductSize[] = [
   { id: "v40", label: "Vierkant 40 × 40 cm", serves: 30, price: 89.5 },
 ];
 
-const basisBeschrijving =
-  "Gemaakt van luchtige vanille- of chocoladecake, gevuld met een romige, niet te zoete slagroomvulling. " +
-  "Elke taart wordt bekleed met een dun laagje marsepein of fondant in een kleur naar keuze en de zijkant " +
-  "werken we af met pure chocoladehagel. Met de hand gemaakt en altijd dagvers.";
 
 export const products: Product[] = [
   {
     slug: "verjaardagstaart",
     name: "Verjaardagstaart",
     category: "verjaardag",
-    shortDescription: "Volledig naar eigen wens: u bepaalt zelf hoe uw taart eruitziet, van smaak tot ontwerp.",
+    shortDescription: "Op een verjaardag mag een verjaardagstaart niet ontbreken.",
     description:
-      "Bij ons bepaalt u zelf hoe uw verjaardagstaart eruitziet, van smaak tot ontwerp. " +
-      basisBeschrijving +
-      " Een persoonlijke tekst of afbeelding geeft u door bij de bestelling.",
+      "Op een verjaardag mag een verjaardagstaart niet ontbreken. Zet een taart op tafel waar al uw gasten van zullen watertanden. Bij Het Taartenhuis kunt u een speciale taart laten maken die geheel past bij deze dag. U kunt gemakkelijk uw thema, smaak en vorm kiezen. Wij helpen mee met het bedenken van het ontwerp van uw taart, zodat u altijd een passende taart voor uw verjaardag heeft.",
     image: productImages.verjaardag,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -112,11 +106,9 @@ export const products: Product[] = [
     slug: "lagentaart",
     name: "Lagentaart",
     category: "verjaardag",
-    shortDescription: "Meerdere lagen cake en slagroom, feestelijk afgewerkt voor grotere gezelschappen.",
+    shortDescription: "Meerdere taarten op elkaar gestapeld en mooi gedecoreerd; past bij alle gelegenheden.",
     description:
-      "Een taart met meerdere lagen, voor wie groots uitpakt. " +
-      basisBeschrijving +
-      " Voor taarten die extra hoog zijn geldt een toeslag; die bevestigen we vooraf in de prijsopgave.",
+      "Bij een lagentaart worden meerdere taarten op elkaar gestapeld en mooi gedecoreerd. Er was een tijd dat dit alleen bij bruidstaarten werd gedaan, maar een lagentaart past bij alle gelegenheden. Het ziet er niet alleen super leuk uit, maar is ook erg handig bij een grote groep personen. Wij plaatsen iedere taart op een eigen plateau zodat de taart in delen kan worden aangesneden, en ondersteunen de taart aan de binnenkant zodat deze niet kan inzakken.",
     image: productImages.chocoladeDrip,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -127,11 +119,9 @@ export const products: Product[] = [
     slug: "cijfertaart",
     name: "Cijfertaart",
     category: "mijlpaal",
-    shortDescription: "Een taart in de vorm van uw mijlpaal, per cijfer van ongeveer 30 cm.",
+    shortDescription: "Taart in de vorm van een cijfer is alleen al door de vorm persoonlijk.",
     description:
-      "Een taart in de vorm van het getal dat u viert, per cijfer ongeveer 30 cm groot. " +
-      basisBeschrijving +
-      " Geef bij uw bestelling het gewenste cijfer door.",
+      "Taart in de vorm van een cijfer is alleen al door de vorm persoonlijk. Gedecoreerd in thema naar keuze maakt toch elke cijfertaart uniek. Voor zowel kinderen als volwassenen: het kan niet gek genoeg! Of het thema nu Disney, sprookjes, sport, spel of hobby betreft, Het Taartenhuis maakt een passende taart voor iedereen. Geef bij uw bestelling het gewenste cijfer door.",
     image: productImages.cijfertaart,
     priceFrom: 59.5,
     sizes: [{ id: "c30", label: "Per cijfer, ± 30 cm", serves: 12, price: 59.5 }],
@@ -142,11 +132,9 @@ export const products: Product[] = [
     slug: "bruidstaart",
     name: "Bruidstaart",
     category: "bruiloft",
-    shortDescription: "Voor de mooiste dag: samen samengesteld, volledig naar jullie idee.",
+    shortDescription: "Het Taartenhuis maakt de taart van uw dromen.",
     description:
-      "Elke bruidstaart is maatwerk. Jullie bepalen het ontwerp, wij denken graag mee om er " +
-      "een persoonlijke en onvergetelijke taart van te maken. " +
-      basisBeschrijving,
+      "U heeft vast al wat ideeën en wensen betreft de taart. Het Taartenhuis bespreekt graag met u hoe deze bijzondere taart eruit moet komen te zien. Naar aanleiding hiervan ontvangt u per e-mail vrijblijvend onze offerte voor uw bruidstaart. Het Taartenhuis maakt de taart van uw dromen.",
     image: productImages.bruidstaart,
     priceFrom: 74.5,
     sizes: [
@@ -162,12 +150,9 @@ export const products: Product[] = [
     slug: "3d-taart",
     name: "3D Taart",
     category: "kinderfeest",
-    shortDescription: "Een taart als sculptuur, in elke gewenste vorm met de hand opgebouwd.",
+    shortDescription: "3D taarten zijn leuk en uniek! Wat het thema dan ook is.",
     description:
-      "Van dino tot raceauto: een 3D-taart wordt in de gewenste vorm met de hand opgebouwd " +
-      "en bekleed. Voor figuren en uitgebreide decoratie geldt een meerprijs; die bevestigen " +
-      "we vooraf in de prijsopgave. " +
-      basisBeschrijving,
+      "3D taarten zijn leuk en uniek! Wat het thema dan ook is: Het Taartenhuis maakt vrijwel alle soorten 3D taarten voor elke gelegenheid. U kunt gemakkelijk uw thema, smaak en vorm kiezen; wij helpen mee met het bedenken van het ontwerp van uw 3D-taart. Voor figuren en uitgebreide decoratie geldt een meerprijs; die bevestigen we vooraf in de prijsopgave.",
     image: productImages.dinotaart,
     priceFrom: 44.5,
     sizes: rondeSizes.slice(1),
@@ -180,12 +165,9 @@ export const products: Product[] = [
     slug: "kindertaart",
     name: "Kindertaart",
     category: "kinderfeest",
-    shortDescription: "Met het favoriete thema van uw kind, van tekenfilm tot voetbalclub.",
+    shortDescription: "Voor kinderen kan het niet gek genoeg!",
     description:
-      "Het feest van uw kind verdient een taart met het favoriete thema, van tekenfilmfiguur " +
-      "tot voetbalclub. Voor afbeeldingen en figuren geldt een meerprijs; die bevestigen we " +
-      "vooraf. " +
-      basisBeschrijving,
+      "Voor kinderen kan het niet gek genoeg! Of het thema nu Disney, sprookjes, sport, spel of hobby betreft: Het Taartenhuis maakt hierbij een passende taart voor uw kind. Laat u inspireren en bekijk de foto's voor een kleine greep uit de reeds door ons gemaakte kindertaarten.",
     image: productImages.kindertaart,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -195,11 +177,9 @@ export const products: Product[] = [
     slug: "gender-reveal-taart",
     name: "Gender Reveal Taart",
     category: "baby",
-    shortDescription: "Het antwoord zit vanbinnen: een roze of blauwe vulling die verschijnt bij het aansnijden.",
+    shortDescription: "Is it a boy or a girl?? Naar wens met een blauwe of roze vulling.",
     description:
-      "Het grote nieuws zit vanbinnen: een roze of blauwe vulling die pas verschijnt bij het " +
-      "aansnijden. Geef bij de bestelling door wie het geheim mag weten. " +
-      basisBeschrijving,
+      "Hoera! In verwachting! En nu wilt u natuurlijk op een bijzondere manier met familie en vrienden delen wat het geslacht van de baby is. Is it a boy or a girl?? Het Taartenhuis maakt voor deze speciale gelegenheid de taart naar wens met een blauwe of roze vulling.",
     image: productImages.genderReveal,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -209,11 +189,9 @@ export const products: Product[] = [
     slug: "babyshower-taart",
     name: "Babyshower Taart",
     category: "baby",
-    shortDescription: "Zachte tinten voor het mooiste vooruitzicht, naar wens met naam of thema.",
+    shortDescription: "Bij deze bijzondere dag hoort natuurlijk een unieke babyshower taart.",
     description:
-      "Een feestelijke taart voor de babyshower, in zachte tinten en naar wens met naam of " +
-      "thema. " +
-      basisBeschrijving,
+      "Organiseert u een babyshower? Bij deze bijzondere dag hoort natuurlijk een unieke babyshower taart van Het Taartenhuis. Staat uw taart niet tussen de door ons reeds gemaakte taarten, maar heeft u zelf een leuk idee of voorbeeld van een taart? Stuur deze dan naar ons door. U kunt gemakkelijk uw thema, smaak en vorm kiezen.",
     image: productImages.babyshower,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -223,10 +201,9 @@ export const products: Product[] = [
     slug: "geboortetaart",
     name: "Geboortetaart",
     category: "baby",
-    shortDescription: "Om de allereerste dagen te vieren, met de naam van de kleine in het ontwerp.",
+    shortDescription: "Het blijft een wonder! De geboorte van een baby.",
     description:
-      "Om de geboorte te vieren, met de naam van de kleine in het ontwerp verwerkt. " +
-      basisBeschrijving,
+      "Het blijft een wonder! De geboorte van een baby. Dit moet natuurlijk gevierd worden met een mooie, heerlijke geboortetaart. Bijvoorbeeld bij een kraamfeest voor familie en vrienden, of stuur de ouders van de newborn een speciale geboortetaart als felicitatie.",
     image: productImages.geboorte,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -236,11 +213,9 @@ export const products: Product[] = [
     slug: "geslaagd-taart",
     name: "Geslaagd Taart",
     category: "mijlpaal",
-    shortDescription: "Voor wie het gehaald heeft: feestelijk, met naam en studierichting naar wens.",
+    shortDescription: "Vier jouw overwinning in stijl met de geslaagd taart.",
     description:
-      "Geslaagd! Dat vieren we met een feestelijke taart, naar wens met naam en " +
-      "studierichting in het ontwerp. " +
-      basisBeschrijving,
+      "Diploma behaald, geslaagd of klaar met afstuderen? Vier jouw overwinning in stijl met de geslaagd taart van Het Taartenhuis. Ken je iemand die is geslaagd voor de examens? Verras de geslaagde dan met een leuke geslaagd taart!",
     image: productImages.geslaagd,
     priceFrom: 34.5,
     sizes: rondeSizes,
@@ -250,12 +225,9 @@ export const products: Product[] = [
     slug: "bedrijfstaart",
     name: "Bedrijfstaart met logo",
     category: "zakelijk",
-    shortDescription: "Uw logo en huisstijl op een taart, voor jubilea, openingen en recepties.",
+    shortDescription: "Alle taarten worden in eigen beheer gemaakt, waardoor onze hoge kwaliteit gewaarborgd blijft.",
     description:
-      "Voor bedrijven verzorgen wij taarten met logo of huisstijl, voor jubilea, openingen, " +
-      "productlanceringen en recepties. Voor afbeeldingen en logo's geldt een meerprijs; die " +
-      "bevestigen we vooraf in de prijsopgave. " +
-      basisBeschrijving,
+      "Heeft uw bedrijf iets te vieren? Werknemers trakteren voor hun harde inzet, een relatie trakteren op iets lekkers, of misschien als goedmakertje: Het Taartenhuis is het juiste adres voor uw taarten. Alle taarten worden in eigen beheer gemaakt, waardoor onze hoge kwaliteit gewaarborgd blijft. Toch iets anders in gedachten? Geen probleem, wij kijken graag samen met u naar de mogelijkheden.",
     image: productImages.bedrijfstaart,
     priceFrom: 39.5,
     sizes: vierkanteSizes,
@@ -266,11 +238,9 @@ export const products: Product[] = [
     slug: "cupcakes",
     name: "Cupcakes",
     category: "klein-gebak",
-    shortDescription: "Per twaalf stuks, gedecoreerd in het thema van uw feest.",
+    shortDescription: "De cupcakes kunnen in elk desgewenst thema worden gedecoreerd.",
     description:
-      "Onze cupcakes bestellen we per twaalf stuks, gedecoreerd in het thema van uw feest. " +
-      "Gemaakt van dezelfde luchtige vanille- of chocoladecake als onze taarten, met de hand " +
-      "gedecoreerd en altijd dagvers.",
+      "Ook voor uw cupcakes bent u bij Het Taartenhuis aan het juiste adres. De cupcakes kunnen in elk desgewenst thema worden gedecoreerd. De cupcakes worden per 12 of meervoud geleverd.",
     image: productImages.cupcakes,
     priceFrom: 44.5,
     sizes: [
