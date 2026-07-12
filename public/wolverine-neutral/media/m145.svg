@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 905 713" width="905" height="713">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6d3d1"/><stop offset=".55" stop-color="#b8b3af"/><stop offset="1" stop-color="#cfcbc8"/></linearGradient></defs>
+<rect width="905" height="713" fill="url(#g)"/>
+<line x1="0" y1="0" x2="905" y2="713" stroke="#ffffff" stroke-opacity=".45" stroke-width="2.852"/>
+<line x1="905" y1="0" x2="0" y2="713" stroke="#ffffff" stroke-opacity=".45" stroke-width="2.852"/>
+
+<text x="452.5" y="340.814" font-family="Helvetica,Arial,sans-serif" font-size="39.215" font-weight="700" letter-spacing="5.88225" fill="#6b6560" text-anchor="middle">FOTO</text>
+
+<rect x="9.1" y="677.9" width="53.196000000000005" height="26" rx="4.68" fill="#000000" fill-opacity=".7"/>
+<text x="35.698" y="696.1" font-family="Helvetica,Arial,sans-serif" font-size="16.12" font-weight="700" fill="#ffffff" text-anchor="middle">#M145</text>
+</svg>
