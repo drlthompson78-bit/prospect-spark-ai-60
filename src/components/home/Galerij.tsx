@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import Reveal from "@/components/shop/Reveal";
 import { galerij } from "@/data/assets";
@@ -27,9 +28,15 @@ const Galerij = () => {
             Op zoek naar inspiratie? Bekijk ons eerdere werk
           </h2>
           <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-muted-foreground">
-            Een selectie uit onze fotogalerij met eerder gemaakte taarten — elke taart volledig
-            naar de wens van de klant.
+            Dit is een greep uit de reeds door ons gemaakte taarten — er worden wekelijks
+            nieuwe foto&apos;s toegevoegd.
           </p>
+          <Link
+            to="/onze-taarten"
+            className="mt-5 inline-block text-sm font-semibold text-primary underline-offset-4 transition-colors hover:underline"
+          >
+            Bekijk al onze taarten →
+          </Link>
         </Reveal>
       </div>
 

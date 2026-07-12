@@ -8,6 +8,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { cakeWhole, siteLogo } from "@/data/assets";
 
 const navItems = [
+  { label: "Onze taarten", to: "/onze-taarten" },
   { label: "Collectie", to: "/collectie" },
   { label: "Op maat", to: "/op-maat" },
   { label: "Ons verhaal", to: "/#atelier" },
@@ -16,11 +17,12 @@ const navItems = [
 
 /** Items voor de fullscreen overlay, met het bestellen erbij als afsluiter. */
 const overlayItems = [
-  { nr: "01", label: "Collectie", to: "/collectie" },
-  { nr: "02", label: "Taart op maat", to: "/op-maat" },
-  { nr: "03", label: "Ons verhaal", to: "/#atelier" },
-  { nr: "04", label: "Contact", to: "/#contact" },
-  { nr: "05", label: "Bestellen", to: "/bestellen" },
+  { nr: "01", label: "Onze taarten", to: "/onze-taarten" },
+  { nr: "02", label: "Collectie", to: "/collectie" },
+  { nr: "03", label: "Taart op maat", to: "/op-maat" },
+  { nr: "04", label: "Ons verhaal", to: "/#atelier" },
+  { nr: "05", label: "Contact", to: "/#contact" },
+  { nr: "06", label: "Bestellen", to: "/bestellen" },
 ];
 
 const SiteHeader = () => {

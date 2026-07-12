@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ShopLayout from "@/pages/shop/ShopLayout";
 import HomePage from "@/pages/shop/HomePage";
 import CollectionPage from "@/pages/shop/CollectionPage";
+import OnzeTaartenPage from "@/pages/shop/OnzeTaartenPage";
 import ProductPage from "@/pages/shop/ProductPage";
 import CustomPage from "@/pages/shop/CustomPage";
 import CheckoutPage from "@/pages/shop/CheckoutPage";
@@ -18,6 +19,7 @@ const App = () => (
         <Route element={<ShopLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/collectie" element={<CollectionPage />} />
+          <Route path="/onze-taarten" element={<OnzeTaartenPage />} />
           <Route path="/collectie/:slug" element={<ProductPage />} />
           <Route path="/op-maat" element={<CustomPage />} />
           <Route path="/bestellen" element={<CheckoutPage />} />
