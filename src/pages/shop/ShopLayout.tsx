@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import Lenis from "lenis";
 import SiteHeader from "@/components/shop/SiteHeader";
+import SocialRail from "@/components/shop/SocialRail";
 import SiteFooter from "@/components/shop/SiteFooter";
 import CartDrawer from "@/components/shop/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
@@ -42,6 +43,7 @@ const ShopLayout = () => {
     <CartProvider>
       <div className="grain-overlay" aria-hidden="true" />
       <SiteHeader />
+      <SocialRail />
       {/* Zachte overgang bij elke paginawissel; key op pathname hertriggert de animatie */}
       <motion.main
         key={location.pathname}

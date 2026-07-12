@@ -63,6 +63,13 @@ const SiteFooter = () => (
             </a>
           </li>
           <li>KvK Rotterdam: 50433962</li>
+          <li className="pt-2">
+            Bekijk ook onze{" "}
+            <a href="https://nl.pinterest.com/hettaartenhuis/" target="_blank" rel="noopener noreferrer" className="underline-offset-4 transition-colors hover:text-foreground hover:underline">Pinterest</a>,{" "}
+            <a href="https://www.instagram.com/hettaartenhuis/" target="_blank" rel="noopener noreferrer" className="underline-offset-4 transition-colors hover:text-foreground hover:underline">Instagram</a>{" "}
+            en{" "}
+            <a href="https://www.facebook.com/Het-Taartenhuis-834943116631128/" target="_blank" rel="noopener noreferrer" className="underline-offset-4 transition-colors hover:text-foreground hover:underline">Facebook</a>
+          </li>
           <li className="pt-2">Ophalen di t/m za, op afspraak, in Rotterdam</li>
           <li>In het weekend en op maandag gesloten</li>
         </ul>
