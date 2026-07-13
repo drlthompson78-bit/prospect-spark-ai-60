@@ -152,7 +152,9 @@ const Hero = () => {
 
   return (
     <section ref={sectionRef} className="relative h-[340vh]" aria-label="Introductie">
-      <div className="sticky top-0 h-[100dvh] overflow-hidden">
+      {/* Expliciete paginakleur als achtergrond: multiply mengt de witte film-achtergrond
+          hiertegen, ook als een ouder-wrapper (paginaovergang) een isolatielaag maakt */}
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-background">
         {/* De gescrubte film: eerst de lokale all-keyframe versie, anders de ruwe CDN-versie */}
         <video
           ref={videoRef}
