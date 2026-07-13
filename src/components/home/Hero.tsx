@@ -35,11 +35,27 @@ const Hero = () => {
   const hintRef = useRef<HTMLParagraphElement>(null);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [staticMode, setStaticMode] = useState(false);
+  // In het lichte thema laat multiply de witte film-achtergrond met de pagina
+  // versmelten; in het donkere thema zou dat de taart wegdrukken, dus daar normaal.
+  const [isLight, setIsLight] = useState(true);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const read = () => setIsLight(root.classList.contains("theme-light"));
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const touch = window.matchMedia("(hover: none), (max-width: 768px)").matches;
-    if (reduced || touch) {
+    // Statisch alleen bij echte reduced-motion of een klein/touch-scherm; niet
+    // enkel op ontbrekende hover (dat treft ook desktop-touchscreens onterecht).
+    const smallOrTouch =
+      window.matchMedia("(max-width: 768px)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+    if (reduced || smallOrTouch) {
       setStaticMode(true);
       return;
     }
@@ -161,7 +177,7 @@ const Hero = () => {
           // multiply laat de witte studio-achtergrond van de film versmelten met de
           // paginakleur (alleen de taart blijft), de radiale mask feathert de randen
           style={{
-            mixBlendMode: "multiply",
+            mixBlendMode: isLight ? "multiply" : "normal",
             WebkitMaskImage:
               "radial-gradient(115% 88% at 50% 46%, #000 58%, transparent 100%)",
             maskImage:
