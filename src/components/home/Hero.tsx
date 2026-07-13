@@ -108,7 +108,7 @@ const Hero = () => {
   if (staticMode) {
     return (
       <section aria-label="Introductie" className="relative">
-        <div className="mx-auto grid min-h-[88dvh] max-w-[1400px] items-center gap-10 px-5 pb-16 pt-28 md:grid-cols-2 md:px-8">
+        <div className="mx-auto grid min-h-[88dvh] max-w-[1400px] items-center gap-10 px-5 pb-16 pt-28 md:grid-cols-2 md:px-8 lg:pl-20">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-6xl">
@@ -158,7 +158,16 @@ const Hero = () => {
           poster={cakeWhole}
           onError={() => setStaticMode(true)}
           aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
-          className="absolute left-1/2 top-1/2 h-full -translate-x-1/2 -translate-y-1/2 object-contain"
+          // multiply laat de witte studio-achtergrond van de film versmelten met de
+          // paginakleur (alleen de taart blijft), de radiale mask feathert de randen
+          style={{
+            mixBlendMode: "multiply",
+            WebkitMaskImage:
+              "radial-gradient(115% 88% at 50% 46%, #000 58%, transparent 100%)",
+            maskImage:
+              "radial-gradient(115% 88% at 50% 46%, #000 58%, transparent 100%)",
+          }}
+          className="absolute left-1/2 top-1/2 h-[92%] -translate-x-1/2 -translate-y-1/2 object-contain"
         >
           <source src={heroScrollFilm} type="video/mp4" />
           <source src={heroScrollFilmRaw} type="video/mp4" />
@@ -170,7 +179,7 @@ const Hero = () => {
         {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay */}
         <div
           ref={copyRef}
-          className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-center px-5 md:px-8"
+          className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-center px-5 md:px-8 lg:pl-20"
         >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
           <h1 className="mt-5 max-w-[13ch] font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
