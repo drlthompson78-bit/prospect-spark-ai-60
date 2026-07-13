@@ -30,10 +30,14 @@ export const cakeLayers = [
 export const cakeWholeDark = `${CDN}/hf_20260711_220945_9e8fdd0b-f049-494a-8f7a-0ac0ec0d77bf_min.png`;
 
 /**
- * 360°-orbitvideo van de Loua-reconstructie (Kling 3.0 Turbo): de camera
- * draait om de taart heen, voor de 3D-wauwfactor in fase 1 van de hero.
+ * De scroll-gescrubte hero-film (motion-skill): één naadloze shot waarin de
+ * Loua-taart compleet begint, de camera eromheen draait en de lagen zich
+ * verticaal scheiden. Primair de lokaal gehoste all-keyframe versie
+ * (public/hero/, via scripts/encode-hero-video.sh); de ruwe CDN-versie is
+ * de fallback zolang die er nog niet is.
  */
-export const cakeOrbitVideo: string | null = `${CDN}/hf_20260712_153600_291112f2-c2e3-4c29-97ff-ea77dc7fa593.mp4`;
+export const heroScrollFilm = `${import.meta.env.BASE_URL}hero/loua-scroll.mp4`;
+export const heroScrollFilmRaw = `${CDN}/hf_20260713_053727_7213b3be-033f-4e36-8cb8-c11663ffe987.mp4`;
 
 /**
  * Echte foto's van hettaartenhuis.nl (uit de wget-mirror), lokaal gehost in

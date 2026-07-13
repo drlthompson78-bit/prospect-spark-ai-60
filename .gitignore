@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 *.tsbuildinfo
+
+# Ruwe AI-films (groot, alleen lokaal; de all-keyframe versie in public/hero gaat wel mee)
+motion/assets/*.mp4
