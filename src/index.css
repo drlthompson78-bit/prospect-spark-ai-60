@@ -155,6 +155,16 @@
     -webkit-text-stroke-color: transparent;
   }
 
+  /* Hero-film: multiply laat de witte studio-achtergrond in het lichte thema
+     versmelten met de paginakleur (race-vrij via de theme-klasse); in het donkere
+     thema zou multiply de taart wegdrukken, dus daar normaal. */
+  .hero-film {
+    mix-blend-mode: multiply;
+  }
+  :root:not(.theme-light) .hero-film {
+    mix-blend-mode: normal;
+  }
+
   /* Volgt het actieve thema, zodat het beeld in beide varianten in de pagina overloopt */
   .hero-scrim {
     background: linear-gradient(

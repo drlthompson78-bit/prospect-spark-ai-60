@@ -35,18 +35,6 @@ const Hero = () => {
   const hintRef = useRef<HTMLParagraphElement>(null);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [staticMode, setStaticMode] = useState(false);
-  // In het lichte thema laat multiply de witte film-achtergrond met de pagina
-  // versmelten; in het donkere thema zou dat de taart wegdrukken, dus daar normaal.
-  const [isLight, setIsLight] = useState(true);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const read = () => setIsLight(root.classList.contains("theme-light"));
-    read();
-    const obs = new MutationObserver(read);
-    obs.observe(root, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
-  }, []);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -174,16 +162,15 @@ const Hero = () => {
           poster={cakeWhole}
           onError={() => setStaticMode(true)}
           aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
-          // multiply laat de witte studio-achtergrond van de film versmelten met de
-          // paginakleur (alleen de taart blijft), de radiale mask feathert de randen
+          // .hero-film zet mix-blend-mode via CSS op de theme-klasse (multiply in
+          // licht, normaal in donker) — race-vrij; de radiale mask feathert de randen
           style={{
-            mixBlendMode: isLight ? "multiply" : "normal",
             WebkitMaskImage:
-              "radial-gradient(115% 88% at 50% 46%, #000 58%, transparent 100%)",
+              "radial-gradient(112% 82% at 50% 46%, #000 52%, transparent 100%)",
             maskImage:
-              "radial-gradient(115% 88% at 50% 46%, #000 58%, transparent 100%)",
+              "radial-gradient(112% 82% at 50% 46%, #000 52%, transparent 100%)",
           }}
-          className="absolute left-1/2 top-1/2 h-[92%] -translate-x-1/2 -translate-y-1/2 object-contain"
+          className="hero-film absolute left-1/2 top-1/2 h-[92%] -translate-x-1/2 -translate-y-1/2 object-contain"
         >
           <source src={heroScrollFilm} type="video/mp4" />
           <source src={heroScrollFilmRaw} type="video/mp4" />
