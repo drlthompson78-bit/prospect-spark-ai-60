@@ -155,14 +155,14 @@
     -webkit-text-stroke-color: transparent;
   }
 
-  /* Hero-film: multiply laat de witte studio-achtergrond in het lichte thema
-     versmelten met de paginakleur (race-vrij via de theme-klasse); in het donkere
-     thema zou multiply de taart wegdrukken, dus daar normaal. */
-  .hero-film {
-    mix-blend-mode: multiply;
-  }
+  /* Hero-film: de paginakleur van het lichte thema zit in de video zelf
+     ingebakken (geen blend nodig, werkt dus ook in Safari). In het donkere
+     thema past de lichte film niet: daar tonen we de statische taart. */
   :root:not(.theme-light) .hero-film {
-    mix-blend-mode: normal;
+    display: none;
+  }
+  :root.theme-light .hero-film-dark {
+    display: none;
   }
 
   /* Volgt het actieve thema, zodat het beeld in beide varianten in de pagina overloopt */

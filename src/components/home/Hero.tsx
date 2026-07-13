@@ -164,8 +164,9 @@ const Hero = () => {
           poster={cakeWhole}
           onError={() => setStaticMode(true)}
           aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
-          // .hero-film zet mix-blend-mode via CSS op de theme-klasse (multiply in
-          // licht, normaal in donker) — race-vrij; de radiale mask feathert de randen
+          // De film heeft de paginakleur als ingebakken achtergrond (zie
+          // encode-hero-video.sh): geen blend nodig, dus ook geen Safari-probleem.
+          // De radiale mask feathert de randen als extra vangnet.
           style={{
             WebkitMaskImage:
               "radial-gradient(112% 82% at 50% 46%, #000 52%, transparent 100%)",
@@ -178,8 +179,14 @@ const Hero = () => {
           <source src={heroScrollFilmRaw} type="video/mp4" />
         </video>
 
-        {/* Zachte leesbaarheidslaag aan de tekstzijde */}
-        <div className="hero-scrim absolute inset-0" aria-hidden="true" />
+        {/* Statische taart voor het donkere thema (de lichte film past daar niet) */}
+        <img
+          src={cakeWhole}
+          alt=""
+          aria-hidden="true"
+          className="hero-film-dark absolute left-1/2 top-1/2 h-[80%] -translate-x-1/2 -translate-y-1/2 select-none object-contain"
+          draggable={false}
+        />
 
         {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay */}
         <div
