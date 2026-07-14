@@ -34,7 +34,10 @@ const knoppen = [
 
 const SocialRail = () => (
   <aside
-    className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 flex-col lg:flex"
+    // Alleen tonen als het venster breed genoeg is dat de balk in de linkermarge
+    // naast de content (max-w-1400) past — anders overlapt hij de content. Onder
+    // deze breedte blijven de socials bereikbaar via de bovenbalk en de footer.
+    className="fixed left-0 top-1/2 z-40 hidden -translate-y-1/2 flex-col min-[1560px]:flex"
     aria-label="Deel deze pagina"
   >
     {knoppen.map((k) => (
