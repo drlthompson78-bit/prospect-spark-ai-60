@@ -52,11 +52,15 @@ const ShopLayout = () => {
       <div className="grain-overlay" aria-hidden="true" />
       <SiteHeader />
       <SocialRail />
-      {/* Zachte overgang bij elke paginawissel; key op pathname hertriggert de animatie */}
+      {/* Zachte overgang bij elke paginawissel; key op pathname hertriggert de animatie.
+          Alleen opacity, bewust geen y-verschuiving: Framer Motion zet die om in een
+          blijvende CSS transform op dit element (ook ná afloop van de animatie), en een
+          transform op een voorouder breekt position: sticky in Safari op mobiel — precies
+          de hero-scrub die hier binnenin zit. */}
       <motion.main
         key={location.pathname}
-        initial={reduced ? false : { opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={reduced ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
         <Outlet />
