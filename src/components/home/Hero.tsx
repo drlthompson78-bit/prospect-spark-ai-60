@@ -212,8 +212,12 @@ const Hero = () => {
       {debugBadge}
       {/* Op mobiel: tekst boven, film ertussen (vult alle overgebleven ruimte), knoppen
           onder — zo blijft er geen witruimte over. Op desktop (md:): de bestaande
-          opstelling met film gecentreerd en tekst/knoppen er als overlay overheen. */}
-      <div className="sticky top-0 flex h-[100dvh] flex-col overflow-hidden bg-background md:block">
+          opstelling met film gecentreerd en tekst/knoppen er als overlay overheen.
+          Hoogte in svh (small viewport height), niet dvh: dvh verandert van waarde
+          telkens als de mobiele adresbalk in/uit klapt, waardoor de verticaal
+          gecentreerde inhoud steeds herpositioneert — dát was het 'de hele pagina
+          springt'-effect. svh blijft constant, dus niets reflowt bij het scrollen. */}
+      <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden bg-background md:block">
         {/* Kop en subregel (fase 1) — echte siteteksten. De film staat hier nog op het
             rustige, egale openingsbeeld (complete taart op lichte achtergrond). */}
         <div
