@@ -172,15 +172,6 @@ const Hero = () => {
           <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
         </div>
 
-        {/* Statische taart voor het donkere thema (de lichte film past daar niet) */}
-        <img
-          src={cakeWhole}
-          alt=""
-          aria-hidden="true"
-          className="hero-film-dark absolute left-1/2 top-1/2 h-[80%] -translate-x-1/2 -translate-y-1/2 select-none object-contain"
-          draggable={false}
-        />
-
         {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay */}
         <div
           ref={copyRef}

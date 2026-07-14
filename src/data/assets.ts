@@ -26,9 +26,6 @@ export const cakeLayers = [
   `${CDN}/hf_20260711_233905_5267eb35-f986-495c-95ba-6bc8a56fbe0a_min.png`,
 ] as const;
 
-/** Donkere (versie 1) taart-assets, bewaard voor de cinematografische variant. */
-export const cakeWholeDark = `${CDN}/hf_20260711_220945_9e8fdd0b-f049-494a-8f7a-0ac0ec0d77bf_min.png`;
-
 /**
  * De scroll-gescrubte hero-film (motion-skill): één naadloze shot waarin de
  * Loua-taart compleet begint, de camera eromheen draait en de lagen zich

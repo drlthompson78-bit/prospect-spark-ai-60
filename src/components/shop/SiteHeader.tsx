@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
-import { Menu, Moon, ShoppingBag, Sun, X } from "lucide-react";
+import { Menu, ShoppingBag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
-import { useTheme } from "@/hooks/useTheme";
 import { cakeWhole, siteLogo } from "@/data/assets";
 
 /** De navigatie volgt de originele site: Onze taarten t/m Contact, plus de webshop-collectie. */
@@ -34,7 +33,6 @@ const SiteHeader = () => {
   const { scrollY } = useScroll();
   const location = useLocation();
   const reduced = useReducedMotion();
-  const { theme, toggle } = useTheme();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
@@ -89,11 +87,7 @@ const SiteHeader = () => {
       )}
       <div className="relative z-10 mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-[72px] md:px-8">
         <Link to="/" className="font-display text-lg tracking-tight text-foreground md:text-xl" onClick={() => setMenuOpen(false)}>
-          {theme === "light" ? (
-            <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-6 w-auto md:h-10" />
-          ) : (
-            "Het Taartenhuis"
-          )}
+          <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-6 w-auto md:h-10" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Hoofdnavigatie">
@@ -118,15 +112,6 @@ const SiteHeader = () => {
           >
             Bestellen
           </Link>
-          <button
-            type="button"
-            onClick={toggle}
-            className="hidden h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary md:flex"
-            aria-label={theme === "dark" ? "Schakel naar lichte weergave" : "Schakel naar donkere weergave"}
-            title={theme === "dark" ? "Lichte versie" : "Donkere versie"}
-          >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </button>
           <button
             type="button"
             onClick={() => {

@@ -4,44 +4,9 @@
 
 @layer base {
   :root {
-    /* Het Taartenhuis: warm off-black + bone + karamel accent (black & tan familie) */
-    --background: 20 16% 7%;
-    --foreground: 36 28% 90%;
-
-    --card: 22 15% 10%;
-    --card-foreground: 36 28% 90%;
-
-    --popover: 22 15% 9%;
-    --popover-foreground: 36 28% 90%;
-
-    --primary: 30 56% 56%;
-    --primary-foreground: 20 20% 8%;
-
-    --secondary: 22 12% 14%;
-    --secondary-foreground: 36 28% 90%;
-
-    --muted: 22 12% 14%;
-    --muted-foreground: 32 12% 62%;
-
-    --accent: 30 56% 56%;
-    --accent-foreground: 20 20% 8%;
-
-    --destructive: 0 62% 46%;
-    --destructive-foreground: 36 28% 92%;
-
-    --border: 26 12% 18%;
-    --input: 26 12% 20%;
-    --ring: 30 56% 56%;
-
-    --radius: 0.75rem;
-  }
-
-  /*
-   * Lichte variant: wit met het roze uit het originele logo van
-   * Het Taartenhuis, als directe doorontwikkeling van de huidige site.
-   * Wordt geschakeld via de themaknop in de header.
-   */
-  :root.theme-light {
+    /* Het Taartenhuis: wit met het roze/groen uit het originele logo. Eén vaste
+       lichte huisstijl — geen schakelbaar donker thema, zodat elke bezoeker
+       altijd dezelfde volledige cinematografische hero ziet. */
     --background: 340 30% 98%;
     --foreground: 240 10% 12%;
 
@@ -69,6 +34,8 @@
     --border: 330 22% 88%;
     --input: 330 22% 84%;
     --ring: 168 52% 40%;
+
+    --radius: 0.75rem;
   }
 }
 
@@ -157,20 +124,13 @@
 
   /* Hero-film: de paginakleur zit in de video ingebakken; de vignet dekt de vier
      videoranden af met exact de paginakleur (gewone CSS-laag, dus Safari-proof —
-     geen blend/mask op de video). In het donkere thema tonen we de statische taart. */
+     geen blend/mask op de video). */
   .hero-vignette {
     background:
       linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%, transparent 86%, hsl(var(--background)) 100%),
       linear-gradient(to right, hsl(var(--background)) 0%, transparent 9%, transparent 91%, hsl(var(--background)) 100%);
   }
-  :root:not(.theme-light) .hero-film {
-    display: none;
-  }
-  :root.theme-light .hero-film-dark {
-    display: none;
-  }
 
-  /* Volgt het actieve thema, zodat het beeld in beide varianten in de pagina overloopt */
   .hero-scrim {
     background: linear-gradient(
       100deg,
