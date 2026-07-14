@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { Button } from "@/components/ui/button";
 import Reveal from "@/components/shop/Reveal";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const redenen = [
   "Altijd dagvers, ambachtelijk bereid",
@@ -10,6 +12,49 @@ const redenen = [
   "Geen massaproductie, wél maatwerk",
   "Ook geschikt voor grote groepen",
 ];
+
+/** Op mobiel verschijnt elk vinkje op zijn beurt tijdens het scrollen door de
+ * lijst; op desktop blijft de bestaande fade-in van de hele kaart ineens. */
+const RedenItem = ({
+  text,
+  index,
+  total,
+  progress,
+  active,
+}: {
+  text: string;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  active: boolean;
+}) => {
+  const step = 1 / total;
+  const start = index * step;
+  const end = Math.min(1, start + step * 1.5);
+  const opacity = useTransform(progress, [start, end], [0.15, 1]);
+  const checkOpacity = useTransform(progress, [start, end], [0.25, 1]);
+
+  if (!active) {
+    return (
+      <li className="flex items-baseline gap-3 text-base leading-relaxed text-muted-foreground">
+        <span className="font-semibold text-primary">✔</span>
+        {text}
+      </li>
+    );
+  }
+
+  return (
+    <motion.li
+      style={{ opacity }}
+      className="flex items-baseline gap-3 text-base leading-relaxed text-muted-foreground"
+    >
+      <motion.span style={{ opacity: checkOpacity }} className="font-semibold text-primary">
+        ✔
+      </motion.span>
+      {text}
+    </motion.li>
+  );
+};
 
 interface Taart {
   slug: string;
@@ -22,6 +67,14 @@ interface Taart {
 /** Bedrijven, met de originele tekst van hettaartenhuis.nl/voor-bedrijven. */
 const BedrijvenPage = () => {
   const [voorbeelden, setVoorbeelden] = useState<Taart[]>([]);
+  const listRef = useRef<HTMLUListElement>(null);
+  const isMobile = useIsMobile();
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: listRef,
+    offset: ["start 0.85", "end 0.55"],
+  });
+  const scrollTied = isMobile && !reducedMotion;
 
   // Toon echte bedrijfstaarten (KLM, Rabobank, KPMG, ...) uit de catalogus
   useEffect(() => {
@@ -92,12 +145,16 @@ const BedrijvenPage = () => {
             <h2 className="font-display text-xl text-foreground">
               Waarom bedrijven kiezen voor Het Taartenhuis
             </h2>
-            <ul className="mt-5 space-y-3">
-              {redenen.map((r) => (
-                <li key={r} className="flex items-baseline gap-3 text-base leading-relaxed text-muted-foreground">
-                  <span className="font-semibold text-primary">✔</span>
-                  {r}
-                </li>
+            <ul ref={listRef} className="mt-5 space-y-3">
+              {redenen.map((r, i) => (
+                <RedenItem
+                  key={r}
+                  text={r}
+                  index={i}
+                  total={redenen.length}
+                  progress={scrollYProgress}
+                  active={scrollTied}
+                />
               ))}
             </ul>
           </div>
