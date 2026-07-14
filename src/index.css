@@ -44,11 +44,17 @@
 
   html {
     scroll-behavior: smooth;
+    /* Geen horizontale beweging op mobiel: geen elastische zij-overscroll. */
+    overscroll-behavior-x: none;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     text-rendering: optimizeLegibility;
+    /* clip (niet hidden!) sluit alle horizontale overloop af zonder een
+       scroll-container te maken — hidden zou position: sticky van de hero breken,
+       clip niet. Voorkomt het links/rechts schuiven van de pagina. */
+    overflow-x: clip;
   }
 
   ::selection {
