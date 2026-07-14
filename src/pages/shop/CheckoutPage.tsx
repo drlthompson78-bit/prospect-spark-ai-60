@@ -72,8 +72,11 @@ const CheckoutPage = () => {
     <div className="mx-auto max-w-[1400px] px-5 pb-24 pt-28 md:px-8 md:pt-36">
       <h1 className="font-display text-4xl tracking-tight text-foreground md:text-5xl">Bestellen</h1>
       <p className="mt-4 max-w-[56ch] text-base leading-relaxed text-muted-foreground">
-        Je plaatst een vrijblijvende bestelaanvraag. Binnen 24 uur ontvang je per e-mail onze
-        bevestiging met betaalinformatie en het ophaal- of bezorgmoment.
+        Je plaatst een vrijblijvende bestelaanvraag; die geldt nog niet als definitieve
+        bestelling. We hanteren geen vaste besteltermijn. Je ontvangt van ons eerst een
+        e-mail met de mogelijkheden en bijbehorende prijzen; pas na je akkoord wordt de
+        bestelling definitief en ontvang je een bevestiging met betaalgegevens en het
+        afhaaltijdstip. Wij bezorgen niet.
       </p>
 
       <div className="mt-12 grid gap-12 lg:grid-cols-[7fr_5fr] lg:gap-16">

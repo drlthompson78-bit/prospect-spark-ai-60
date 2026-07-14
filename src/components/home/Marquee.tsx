@@ -1,14 +1,15 @@
+/** Letterlijk de "Soorten"-lijst van hettaartenhuis.nl/onze-taarten. */
 const items = [
-  "Bruidstaarten",
-  "Kindertaarten",
-  "Cijfertaarten",
-  "Babyshower",
-  "Gender reveal",
+  "Bruidstaart",
+  "Kindertaart",
+  "Cijfertaart",
+  "Babyshower taart",
+  "Gender Reveal taarten",
   "Cupcakes",
-  "Bedrijfstaarten",
-  "Geboortetaarten",
-  "Lagentaarten",
-  "Verjaardagstaarten",
+  "Bedrijfstaart",
+  "Geboortetaart",
+  "Lagentaart",
+  "Verjaardagstaart",
 ];
 
 type Props = {

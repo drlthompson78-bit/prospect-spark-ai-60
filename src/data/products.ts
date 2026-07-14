@@ -33,14 +33,23 @@ export interface Category {
   label: string;
 }
 
+/**
+ * De echte "soorten" van hettaartenhuis.nl (dezelfde 12 die ook in de webshop
+ * een taart hebben) — geen zelfbedachte groepen, letterlijk de sitecategorieën.
+ */
 export const categories: Category[] = [
-  { slug: "verjaardag", label: "Verjaardag" },
-  { slug: "bruiloft", label: "Bruiloft" },
-  { slug: "baby", label: "Baby & geboorte" },
-  { slug: "kinderfeest", label: "Kinderfeest" },
-  { slug: "mijlpaal", label: "Mijlpalen" },
-  { slug: "zakelijk", label: "Zakelijk" },
-  { slug: "klein-gebak", label: "Klein gebak" },
+  { slug: "verjaardagstaart", label: "Verjaardagstaart" },
+  { slug: "lagentaart", label: "Lagentaart" },
+  { slug: "cijfertaart", label: "Cijfertaart" },
+  { slug: "bruidstaart", label: "Bruidstaart" },
+  { slug: "3d-taart", label: "3D Taart" },
+  { slug: "kindertaart", label: "Kindertaart" },
+  { slug: "gender-reveal", label: "Gender Reveal taarten" },
+  { slug: "babyshower-taart", label: "Babyshower taart" },
+  { slug: "geboortetaart", label: "Geboortetaart" },
+  { slug: "geslaagd-taarten", label: "Geslaagd taarten" },
+  { slug: "bedrijfstaart", label: "Bedrijfstaart" },
+  { slug: "cupcakes", label: "Cupcakes" },
 ];
 
 /** De cakekeuze van Het Taartenhuis: luchtige vanille- of chocoladecake. */
@@ -92,7 +101,7 @@ export const products: Product[] = [
   {
     slug: "verjaardagstaart",
     name: "Verjaardagstaart",
-    category: "verjaardag",
+    category: "verjaardagstaart",
     shortDescription: "Op een verjaardag mag een verjaardagstaart niet ontbreken.",
     description:
       "Op een verjaardag mag een verjaardagstaart niet ontbreken. Zet een taart op tafel waar al uw gasten van zullen watertanden. Bij Het Taartenhuis kunt u een speciale taart laten maken die geheel past bij deze dag. U kunt gemakkelijk uw thema, smaak en vorm kiezen. Wij helpen mee met het bedenken van het ontwerp van uw taart, zodat u altijd een passende taart voor uw verjaardag heeft.",
@@ -105,7 +114,7 @@ export const products: Product[] = [
   {
     slug: "lagentaart",
     name: "Lagentaart",
-    category: "verjaardag",
+    category: "lagentaart",
     shortDescription: "Meerdere taarten op elkaar gestapeld en mooi gedecoreerd; past bij alle gelegenheden.",
     description:
       "Bij een lagentaart worden meerdere taarten op elkaar gestapeld en mooi gedecoreerd. Er was een tijd dat dit alleen bij bruidstaarten werd gedaan, maar een lagentaart past bij alle gelegenheden. Het ziet er niet alleen super leuk uit, maar is ook erg handig bij een grote groep personen. Wij plaatsen iedere taart op een eigen plateau zodat de taart in delen kan worden aangesneden, en ondersteunen de taart aan de binnenkant zodat deze niet kan inzakken.",
@@ -118,7 +127,7 @@ export const products: Product[] = [
   {
     slug: "cijfertaart",
     name: "Cijfertaart",
-    category: "mijlpaal",
+    category: "cijfertaart",
     shortDescription: "Taart in de vorm van een cijfer is alleen al door de vorm persoonlijk.",
     description:
       "Taart in de vorm van een cijfer is alleen al door de vorm persoonlijk. Gedecoreerd in thema naar keuze maakt toch elke cijfertaart uniek. Voor zowel kinderen als volwassenen: het kan niet gek genoeg! Of het thema nu Disney, sprookjes, sport, spel of hobby betreft, Het Taartenhuis maakt een passende taart voor iedereen. Geef bij uw bestelling het gewenste cijfer door.",
@@ -131,7 +140,7 @@ export const products: Product[] = [
   {
     slug: "bruidstaart",
     name: "Bruidstaart",
-    category: "bruiloft",
+    category: "bruidstaart",
     shortDescription: "Het Taartenhuis maakt de taart van uw dromen.",
     description:
       "U heeft vast al wat ideeën en wensen betreft de taart. Het Taartenhuis bespreekt graag met u hoe deze bijzondere taart eruit moet komen te zien. Naar aanleiding hiervan ontvangt u per e-mail vrijblijvend onze offerte voor uw bruidstaart. Het Taartenhuis maakt de taart van uw dromen.",
@@ -149,7 +158,7 @@ export const products: Product[] = [
   {
     slug: "3d-taart",
     name: "3D Taart",
-    category: "kinderfeest",
+    category: "3d-taart",
     shortDescription: "3D taarten zijn leuk en uniek! Wat het thema dan ook is.",
     description:
       "3D taarten zijn leuk en uniek! Wat het thema dan ook is: Het Taartenhuis maakt vrijwel alle soorten 3D taarten voor elke gelegenheid. U kunt gemakkelijk uw thema, smaak en vorm kiezen; wij helpen mee met het bedenken van het ontwerp van uw 3D-taart. Voor figuren en uitgebreide decoratie geldt een meerprijs; die bevestigen we vooraf in de prijsopgave.",
@@ -164,7 +173,7 @@ export const products: Product[] = [
   {
     slug: "kindertaart",
     name: "Kindertaart",
-    category: "kinderfeest",
+    category: "kindertaart",
     shortDescription: "Voor kinderen kan het niet gek genoeg!",
     description:
       "Voor kinderen kan het niet gek genoeg! Of het thema nu Disney, sprookjes, sport, spel of hobby betreft: Het Taartenhuis maakt hierbij een passende taart voor uw kind. Laat u inspireren en bekijk de foto's voor een kleine greep uit de reeds door ons gemaakte kindertaarten.",
@@ -175,8 +184,8 @@ export const products: Product[] = [
   },
   {
     slug: "gender-reveal-taart",
-    name: "Gender Reveal Taart",
-    category: "baby",
+    name: "Gender Reveal taart",
+    category: "gender-reveal",
     shortDescription: "Is it a boy or a girl?? Naar wens met een blauwe of roze vulling.",
     description:
       "Hoera! In verwachting! En nu wilt u natuurlijk op een bijzondere manier met familie en vrienden delen wat het geslacht van de baby is. Is it a boy or a girl?? Het Taartenhuis maakt voor deze speciale gelegenheid de taart naar wens met een blauwe of roze vulling.",
@@ -187,8 +196,8 @@ export const products: Product[] = [
   },
   {
     slug: "babyshower-taart",
-    name: "Babyshower Taart",
-    category: "baby",
+    name: "Babyshower taart",
+    category: "babyshower-taart",
     shortDescription: "Bij deze bijzondere dag hoort natuurlijk een unieke babyshower taart.",
     description:
       "Organiseert u een babyshower? Bij deze bijzondere dag hoort natuurlijk een unieke babyshower taart van Het Taartenhuis. Staat uw taart niet tussen de door ons reeds gemaakte taarten, maar heeft u zelf een leuk idee of voorbeeld van een taart? Stuur deze dan naar ons door. U kunt gemakkelijk uw thema, smaak en vorm kiezen.",
@@ -200,7 +209,7 @@ export const products: Product[] = [
   {
     slug: "geboortetaart",
     name: "Geboortetaart",
-    category: "baby",
+    category: "geboortetaart",
     shortDescription: "Het blijft een wonder! De geboorte van een baby.",
     description:
       "Het blijft een wonder! De geboorte van een baby. Dit moet natuurlijk gevierd worden met een mooie, heerlijke geboortetaart. Bijvoorbeeld bij een kraamfeest voor familie en vrienden, of stuur de ouders van de newborn een speciale geboortetaart als felicitatie.",
@@ -211,8 +220,8 @@ export const products: Product[] = [
   },
   {
     slug: "geslaagd-taart",
-    name: "Geslaagd Taart",
-    category: "mijlpaal",
+    name: "Geslaagd taart",
+    category: "geslaagd-taarten",
     shortDescription: "Vier jouw overwinning in stijl met de geslaagd taart.",
     description:
       "Diploma behaald, geslaagd of klaar met afstuderen? Vier jouw overwinning in stijl met de geslaagd taart van Het Taartenhuis. Ken je iemand die is geslaagd voor de examens? Verras de geslaagde dan met een leuke geslaagd taart!",
@@ -223,8 +232,8 @@ export const products: Product[] = [
   },
   {
     slug: "bedrijfstaart",
-    name: "Bedrijfstaart met logo",
-    category: "zakelijk",
+    name: "Bedrijfstaart",
+    category: "bedrijfstaart",
     shortDescription: "Alle taarten worden in eigen beheer gemaakt, waardoor onze hoge kwaliteit gewaarborgd blijft.",
     description:
       "Heeft uw bedrijf iets te vieren? Werknemers trakteren voor hun harde inzet, een relatie trakteren op iets lekkers, of misschien als goedmakertje: Het Taartenhuis is het juiste adres voor uw taarten. Alle taarten worden in eigen beheer gemaakt, waardoor onze hoge kwaliteit gewaarborgd blijft. Toch iets anders in gedachten? Geen probleem, wij kijken graag samen met u naar de mogelijkheden.",
@@ -237,7 +246,7 @@ export const products: Product[] = [
   {
     slug: "cupcakes",
     name: "Cupcakes",
-    category: "klein-gebak",
+    category: "cupcakes",
     shortDescription: "De cupcakes kunnen in elk desgewenst thema worden gedecoreerd.",
     description:
       "Ook voor uw cupcakes bent u bij Het Taartenhuis aan het juiste adres. De cupcakes kunnen in elk desgewenst thema worden gedecoreerd. De cupcakes worden per 12 of meervoud geleverd.",

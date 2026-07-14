@@ -25,7 +25,8 @@ const Smaakbelofte = () => (
             <p className="mt-3 text-base leading-relaxed text-muted-foreground">
               Taarten van Het Taartenhuis worden gemaakt van luchtige vanille- of
               chocoladecake, gevuld met een romige, niet te zoete slagroomvulling. Naar wens
-              voegen we hier een van onze smaken aan toe, van aardbei tot karamel.
+              voegen we hier een van de smaken aan toe om de taart volledig naar uw smaak
+              samen te stellen.
             </p>
           </div>
         </Reveal>

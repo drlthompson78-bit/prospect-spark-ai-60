@@ -29,7 +29,7 @@ const CollectionPage = () => {
       <Reveal>
         <h1 className="font-display text-4xl tracking-tight text-foreground md:text-6xl">De collectie</h1>
         <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-muted-foreground">
-          Elke taart wordt dagvers en met de hand gemaakt. Eigen wensen zijn altijd welkom.
+          Elke taart is maatwerk! Al onze taarten worden met de hand gemaakt en zijn altijd dagvers.
         </p>
       </Reveal>
 

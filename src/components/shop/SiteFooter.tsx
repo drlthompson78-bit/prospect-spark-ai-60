@@ -7,8 +7,8 @@ const SiteFooter = () => (
       <div>
         <p className="font-display text-2xl text-foreground">Het Taartenhuis</p>
         <p className="mt-4 max-w-[42ch] text-sm leading-relaxed text-muted-foreground">
-          Sinds 2005 een vertrouwd adres voor unieke, ambachtelijke taarten.
-          Elke taart wordt met de hand gemaakt en is altijd dagvers.
+          Sinds 2005 is Het Taartenhuis een vertrouwd adres voor unieke, ambachtelijke
+          taarten. Al onze taarten worden met de hand gemaakt en zijn altijd dagvers.
         </p>
       </div>
 

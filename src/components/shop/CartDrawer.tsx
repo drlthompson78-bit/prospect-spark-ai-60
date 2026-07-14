@@ -103,8 +103,9 @@ const CartDrawer = () => {
                 <span className="font-semibold tabular-nums text-foreground">{formatPrice(subtotal)}</span>
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Je plaatst een bestelaanvraag. Binnen 24 uur ontvang je per e-mail
-                onze bevestiging met betaalinformatie en het ophaalmoment.
+                Je plaatst een vrijblijvende bestelaanvraag; wij hanteren geen vaste
+                besteltermijn. Je ontvangt van ons eerst een e-mail met de
+                bevestiging en het afhaaltijdstip. Wij bezorgen niet.
               </p>
               <Button asChild size="lg" className="w-full" onClick={closeCart}>
                 <Link to="/bestellen">Bestelling afronden</Link>

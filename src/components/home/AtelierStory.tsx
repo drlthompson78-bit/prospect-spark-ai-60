@@ -29,14 +29,6 @@ const AtelierStory = () => {
               dagvers.
             </p>
           </Reveal>
-          <Reveal delay={0.16}>
-            <blockquote className="mt-10 border-l-2 border-primary pl-6">
-              <p className="font-display text-xl leading-relaxed text-foreground">
-                &ldquo;Elke taart is maatwerk! Wij denken graag met u mee om samen een
-                persoonlijke en onvergetelijke taart samen te stellen.&rdquo;
-              </p>
-            </blockquote>
-          </Reveal>
           <Reveal delay={0.24}>
             <Link
               to="/over-ons"
