@@ -252,7 +252,7 @@ const Hero = () => {
               setStaticMode(true);
             }}
             aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
-            className="h-full w-full object-contain"
+            className="h-full w-full object-cover md:object-contain"
           >
             <source src={heroScrollFilm} type="video/mp4" />
             <source src={heroScrollFilmRaw} type="video/mp4" />
