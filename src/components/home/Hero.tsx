@@ -25,8 +25,9 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
  * één doorlopende AI-film — taart compleet → camera draait → lagen scheiden
  * verticaal — waarvan de afspeeltijd frame-voor-frame aan de scrollpositie
  * hangt via GSAP ScrollTrigger. De copy en labels zijn HTML-overlays met
- * echte siteteksten. Op touch, bij reduced motion of als de film niet laadt:
- * statische hero met de taart-still.
+ * echte siteteksten. Werkt ook op mobiel/touch (Lenis zorgt voor de vloeiende
+ * scroll waarop gescrubd wordt); alleen bij reduced motion of als de film
+ * niet laadt volgt de statische hero met de taart-still.
  */
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -38,12 +39,7 @@ const Hero = () => {
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Statisch alleen bij echte reduced-motion of een klein/touch-scherm; niet
-    // enkel op ontbrekende hover (dat treft ook desktop-touchscreens onterecht).
-    const smallOrTouch =
-      window.matchMedia("(max-width: 768px)").matches ||
-      window.matchMedia("(pointer: coarse)").matches;
-    if (reduced || smallOrTouch) {
+    if (reduced) {
       setStaticMode(true);
       return;
     }
@@ -151,7 +147,7 @@ const Hero = () => {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-[340vh]" aria-label="Introductie">
+    <section ref={sectionRef} className="relative h-[230vh] md:h-[340vh]" aria-label="Introductie">
       {/* Expliciete paginakleur als achtergrond: multiply mengt de witte film-achtergrond
           hiertegen, ook als een ouder-wrapper (paginaovergang) een isolatielaag maakt */}
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-background">
@@ -212,8 +208,8 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Ingrediënt-labels tijdens de laagscheiding (fase 2) */}
-        <div className="pointer-events-none absolute inset-0 z-30 hidden md:block" aria-hidden="true">
+        {/* Ingrediënt-labels tijdens de laagscheiding (fase 2); smaller op mobiel */}
+        <div className="pointer-events-none absolute inset-0 z-30" aria-hidden="true">
           {labels.map((n, i) => (
             <div
               key={n.nr}
@@ -221,11 +217,11 @@ const Hero = () => {
                 labelRefs.current[i] = el;
               }}
               style={{ top: n.top, opacity: 0 }}
-              className={`absolute w-[240px] ${n.side === "left" ? "left-[6%] text-right lg:left-[13%]" : "right-[6%] lg:right-[13%]"}`}
+              className={`absolute w-[168px] sm:w-[240px] ${n.side === "left" ? "left-[4%] text-right md:left-[6%] lg:left-[13%]" : "right-[4%] md:right-[6%] lg:right-[13%]"}`}
             >
-              <p className="text-xs font-semibold tracking-[0.25em] text-primary">{n.nr}</p>
-              <h3 className="mt-1 font-display text-xl text-foreground">{n.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{n.text}</p>
+              <p className="text-[10px] font-semibold tracking-[0.2em] text-primary sm:text-xs sm:tracking-[0.25em]">{n.nr}</p>
+              <h3 className="mt-1 font-display text-base text-foreground sm:text-xl">{n.title}</h3>
+              <p className="mt-1.5 hidden text-sm leading-relaxed text-muted-foreground sm:block">{n.text}</p>
             </div>
           ))}
         </div>
