@@ -156,7 +156,7 @@ const Hero = () => {
         <div className="mx-auto grid min-h-[88dvh] max-w-[1400px] items-center gap-10 px-5 pb-16 pt-28 md:grid-cols-2 md:px-8 lg:pl-20">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
-            <h1 className="mt-5 font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-6xl">
+            <h1 className="mt-5 font-display text-5xl leading-[1.12] tracking-tight text-foreground md:text-6xl md:leading-[1.05]">
               Welkom bij Het Taartenhuis
             </h1>
             <p className="mt-6 max-w-[38ch] text-base leading-relaxed text-foreground/80 md:text-lg">
@@ -208,7 +208,7 @@ const Hero = () => {
           className="relative z-20 order-1 shrink-0 px-5 pt-20 pb-2 md:mx-auto md:flex md:h-full md:max-w-[1400px] md:flex-col md:justify-center md:px-8 md:pt-0 md:pb-0 lg:pl-20"
         >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
-          <h1 className="mt-3 max-w-[13ch] font-display text-4xl leading-[1.05] tracking-tight text-foreground sm:text-5xl md:mt-5 md:text-7xl">
+          <h1 className="mt-3 max-w-[13ch] font-display text-4xl leading-[1.12] tracking-tight text-foreground sm:text-5xl md:mt-5 md:text-7xl md:leading-[1.05]">
             Welkom bij Het Taartenhuis
           </h1>
           <p className="mt-3 max-w-[34ch] text-base leading-relaxed text-foreground/80 md:mt-6 md:text-lg">
