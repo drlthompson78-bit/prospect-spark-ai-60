@@ -36,17 +36,24 @@ const Hero = () => {
   const hintRef = useRef<HTMLParagraphElement>(null);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [staticMode, setStaticMode] = useState(false);
+  // TIJDELIJK (debug mobiele scrub-hero): reden waarom staticMode aanspringt,
+  // alleen zichtbaar in dev-modus. Verwijderen zodra de oorzaak gevonden is.
+  const [debugInfo, setDebugInfo] = useState("init");
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
       setStaticMode(true);
+      setDebugInfo("static: prefers-reduced-motion");
       return;
     }
 
     const section = sectionRef.current;
     const video = videoRef.current;
-    if (!section || !video) return;
+    if (!section || !video) {
+      setDebugInfo("geen section/video ref");
+      return;
+    }
 
     // De film wordt gescrubd, nooit afgespeeld
     video.pause();
@@ -78,6 +85,10 @@ const Hero = () => {
       });
       // scroll-hint dooft zodra er gescrold wordt
       if (hintRef.current) hintRef.current.style.opacity = String(1 - clamp01(p / 0.08));
+      setDebugInfo(
+        `p=${p.toFixed(2)} t=${video.currentTime.toFixed(1)}/${(video.duration || 0).toFixed(1)} ` +
+          `readyState=${video.readyState} networkState=${video.networkState} src=${video.currentSrc.split("/").pop()}`
+      );
     };
 
     const st = ScrollTrigger.create({
@@ -94,6 +105,12 @@ const Hero = () => {
       render(st.progress);
     };
     video.addEventListener("loadedmetadata", onMeta);
+    video.addEventListener("error", () => {
+      const err = video.error;
+      setDebugInfo(`video error code=${err?.code} message=${err?.message} src=${video.currentSrc}`);
+    });
+
+    render(0);
 
     if (import.meta.env.DEV) {
       (window as unknown as Record<string, unknown>).__heroVideo = video;
@@ -105,9 +122,17 @@ const Hero = () => {
     };
   }, []);
 
+  // TIJDELIJK: debug-badge, alleen zichtbaar in dev-modus (npm run dev), nooit in productie.
+  const debugBadge = import.meta.env.DEV && (
+    <div className="fixed bottom-0 left-0 z-[999] max-w-full break-all bg-black/80 px-2 py-1 font-mono text-[10px] text-lime-300">
+      {debugInfo}
+    </div>
+  );
+
   if (staticMode) {
     return (
       <section aria-label="Introductie" className="relative">
+        {debugBadge}
         <div className="mx-auto grid min-h-[88dvh] max-w-[1400px] items-center gap-10 px-5 pb-16 pt-28 md:grid-cols-2 md:px-8 lg:pl-20">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
@@ -148,6 +173,7 @@ const Hero = () => {
 
   return (
     <section ref={sectionRef} className="relative h-[230vh] md:h-[340vh]" aria-label="Introductie">
+      {debugBadge}
       {/* Expliciete paginakleur als achtergrond: multiply mengt de witte film-achtergrond
           hiertegen, ook als een ouder-wrapper (paginaovergang) een isolatielaag maakt */}
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-background">
@@ -162,7 +188,11 @@ const Hero = () => {
             playsInline
             preload="auto"
             poster={cakeWhole}
-            onError={() => setStaticMode(true)}
+            onError={(e) => {
+              const err = e.currentTarget.error;
+              setDebugInfo(`static: video onError code=${err?.code} message=${err?.message}`);
+              setStaticMode(true);
+            }}
             aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
             className="h-full w-full object-contain"
           >
