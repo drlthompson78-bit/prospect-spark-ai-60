@@ -90,7 +90,7 @@ const SiteHeader = () => {
       <div className="relative z-10 mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-[72px] md:px-8">
         <Link to="/" className="font-display text-lg tracking-tight text-foreground md:text-xl" onClick={() => setMenuOpen(false)}>
           {theme === "light" ? (
-            <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-9 w-auto md:h-10" />
+            <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-6 w-auto md:h-10" />
           ) : (
             "Het Taartenhuis"
           )}
@@ -109,18 +109,19 @@ const SiteHeader = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          {/* Bestellen als uitgelichte knop, zoals op de originele site */}
+          {/* Bestellen als uitgelichte knop, zoals op de originele site — ook op
+              mobiel zichtbaar (daar maakt de themaknop plaats, de primaire actie wint) */}
           <Link
             to="/bestellen"
             onClick={() => setMenuOpen(false)}
-            className="mr-1 hidden h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:-translate-y-px hover:shadow-md md:inline-flex"
+            className="mr-1 inline-flex h-9 items-center rounded-full bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:-translate-y-px hover:shadow-md md:h-10 md:px-5"
           >
             Bestellen
           </Link>
           <button
             type="button"
             onClick={toggle}
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary"
+            className="hidden h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary md:flex"
             aria-label={theme === "dark" ? "Schakel naar lichte weergave" : "Schakel naar donkere weergave"}
             title={theme === "dark" ? "Lichte versie" : "Donkere versie"}
           >

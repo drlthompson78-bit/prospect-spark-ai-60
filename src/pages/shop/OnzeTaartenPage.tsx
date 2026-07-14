@@ -72,15 +72,20 @@ const OnzeTaartenPage = () => {
         </p>
       </Reveal>
 
-      {/* Soorten: de originele categorieën van de site als filter */}
-      <div className="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter op soort">
+      {/* Soorten: de originele categorieën als filter. Op mobiel één horizontaal
+          swipebare rij (23 chips zouden anders de taarten een scherm omlaag duwen). */}
+      <div
+        className="-mx-5 mt-10 flex gap-2 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
+        role="group"
+        aria-label="Filter op soort"
+      >
         {soorten.map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => kiesSoort(s)}
             className={cn(
-              "rounded-full border px-4 py-2 text-sm transition-all duration-300",
+              "shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm transition-all duration-300",
               soort === s
                 ? "border-primary bg-primary text-primary-foreground shadow-md"
                 : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground"
