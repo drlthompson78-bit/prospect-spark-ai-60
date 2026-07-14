@@ -39,7 +39,11 @@ const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLParagraphElement>(null);
-  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Twee losse labelsets: op mobiel liggen de labels ín de videobox (percentages
+  // dus relatief aan die box), op desktop ernaast in de pagina-marge (percentages
+  // relatief aan de volle sectie) — vandaar aparte refs per opstelling.
+  const mobileLabelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const desktopLabelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [staticMode, setStaticMode] = useState(false);
   // TIJDELIJK (debug mobiele scrub-hero): reden waarom staticMode aanspringt,
   // alleen zichtbaar in dev-modus. Verwijderen zodra de oorzaak gevonden is.
@@ -93,14 +97,18 @@ const Hero = () => {
         copyRef.current.style.transform = `translateY(${out * -46}px)`;
         copyRef.current.style.pointerEvents = out > 0.6 ? "none" : "auto";
       }
-      // ingrediënt-labels verschijnen gespreid tijdens de laagscheiding
-      labelRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const start = 0.42 + i * 0.1;
-        const o = clamp01((p - start) / 0.12);
-        el.style.opacity = String(o);
-        el.style.transform = `translateX(${(1 - o) * (labels[i].side === "left" ? -24 : 24)}px)`;
-      });
+      // ingrediënt-labels verschijnen gespreid tijdens de laagscheiding (beide sets)
+      const updateLabels = (refs: (HTMLDivElement | null)[]) => {
+        refs.forEach((el, i) => {
+          if (!el) return;
+          const start = 0.42 + i * 0.1;
+          const o = clamp01((p - start) / 0.12);
+          el.style.opacity = String(o);
+          el.style.transform = `translateX(${(1 - o) * (labels[i].side === "left" ? -24 : 24)}px)`;
+        });
+      };
+      updateLabels(mobileLabelRefs.current);
+      updateLabels(desktopLabelRefs.current);
       // scroll-hint dooft zodra er gescrold wordt
       if (hintRef.current) hintRef.current.style.opacity = String(1 - clamp01(p / 0.08));
       setDebugInfo(
@@ -192,16 +200,46 @@ const Hero = () => {
   return (
     <section ref={sectionRef} className="relative h-[230vh] md:h-[340vh]" aria-label="Introductie">
       {debugBadge}
-      {/* Expliciete paginakleur als achtergrond: multiply mengt de witte film-achtergrond
-          hiertegen, ook als een ouder-wrapper (paginaovergang) een isolatielaag maakt */}
-      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-background">
-        {/* De gescrubte film in een box op de taart-verhoudingen. De film heeft de
-            paginakleur ingebakken; de vignet-laag erover dekt de vier videoranden af
-            met exact de paginakleur (gewone CSS, werkt dus ook in Safari waar
-            blend/mask op video onbetrouwbaar zijn). max-w-[92vw] voorkomt dat de box
-            buiten smalle/hoge schermen (telefoon, ongeacht merk) uitsteekt: op zulke
-            schermen bepaalt dan de breedte de grootte, niet de hoogte. */}
-        <div className="hero-film absolute left-1/2 top-1/2 h-[92%] w-auto max-w-[92vw] aspect-[828/1108] -translate-x-1/2 -translate-y-1/2">
+      {/* Op mobiel: tekst boven, film ertussen (vult alle overgebleven ruimte), knoppen
+          onder — zo blijft er geen witruimte over. Op desktop (md:): de bestaande
+          opstelling met film gecentreerd en tekst/knoppen er als overlay overheen. */}
+      <div className="sticky top-0 flex h-[100dvh] flex-col overflow-hidden bg-background md:block">
+        {/* Kop en subregel (fase 1) — echte siteteksten. De film staat hier nog op het
+            rustige, egale openingsbeeld (complete taart op lichte achtergrond). */}
+        <div
+          ref={copyRef}
+          className="relative z-20 order-1 shrink-0 px-5 pt-20 pb-2 md:mx-auto md:flex md:h-full md:max-w-[1400px] md:flex-col md:justify-center md:px-8 md:pt-0 md:pb-0 lg:pl-20"
+        >
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
+          <h1 className="mt-3 max-w-[13ch] font-display text-4xl leading-[1.05] tracking-tight text-foreground sm:text-5xl md:mt-5 md:text-7xl">
+            Welkom bij Het Taartenhuis
+          </h1>
+          <p className="mt-3 max-w-[34ch] text-base leading-relaxed text-foreground/80 md:mt-6 md:text-lg">
+            Uw online taartenspecialist voor de lekkerste taarten voor elke gelegenheid.
+          </p>
+          {/* Op desktop staan de knoppen hier, als onderdeel van de wegfadende kop.
+              Op mobiel staan ze los onder de film (zie verderop), zodat ze altijd
+              zichtbaar blijven. */}
+          <div className="mt-9 hidden flex-wrap items-center gap-4 md:flex">
+            <Button asChild size="lg" className="h-12 px-7 text-base active:scale-[0.98]">
+              <Link to="/onze-taarten">Bekijk al onze taarten</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-12 border-foreground/25 bg-background/20 px-7 text-base backdrop-blur-sm hover:bg-background/40 active:scale-[0.98]"
+            >
+              <Link to="/bedrijven">Voor bedrijven</Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* De gescrubte film. Op mobiel: flexibele middenzone die alle overgebleven
+            ruimte vult (object-contain voorkomt overflow/vervorming vanzelf). Op
+            desktop: de vaste, gecentreerde box op de taart-verhoudingen, met
+            max-w-[92vw] zodat hij nooit buiten het scherm steekt. */}
+        <div className="hero-film relative order-2 min-h-[140px] w-full flex-1 md:absolute md:left-1/2 md:top-1/2 md:h-[92%] md:min-h-0 md:w-auto md:max-w-[92vw] md:flex-none md:aspect-[828/1108] md:-translate-x-1/2 md:-translate-y-1/2">
           <video
             ref={videoRef}
             muted
@@ -220,61 +258,61 @@ const Hero = () => {
             <source src={heroScrollFilmRaw} type="video/mp4" />
           </video>
           <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
-        </div>
 
-        {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay. De film staat
-            hier nog op het rustige, egale openingsbeeld (complete taart op lichte
-            achtergrond), dus geen scrim nodig — die zou 'm juist vertroebelen. */}
-        <div
-          ref={copyRef}
-          className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-center px-5 md:px-8 lg:pl-20"
-        >
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
-          <h1 className="mt-5 max-w-[13ch] font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
-            Welkom bij Het Taartenhuis
-          </h1>
-          <p className="mt-6 max-w-[34ch] text-base leading-relaxed text-foreground/80 md:text-lg">
-            Uw online taartenspecialist voor de lekkerste taarten voor elke gelegenheid.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            <Button asChild size="lg" className="h-12 px-7 text-base active:scale-[0.98]">
-              <Link to="/onze-taarten">Bekijk al onze taarten</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="h-12 border-foreground/25 bg-background/20 px-7 text-base backdrop-blur-sm hover:bg-background/40 active:scale-[0.98]"
-            >
-              <Link to="/bedrijven">Voor bedrijven</Link>
-            </Button>
+          {/* Ingrediëntlabels op mobiel: in de videobox zelf, met leeskaartje (het beeld
+              erachter is hier juist wél druk — de losgekoppelde taartlagen). */}
+          <div className="pointer-events-none absolute inset-0 z-30 md:hidden" aria-hidden="true">
+            {labels.map((n, i) => (
+              <div
+                key={`m-${n.nr}`}
+                ref={(el) => {
+                  mobileLabelRefs.current[i] = el;
+                }}
+                style={{ top: n.top, opacity: 0 }}
+                className={`absolute w-[152px] ${n.side === "left" ? "left-[3%] text-right" : "right-[3%]"}`}
+              >
+                <div className="rounded-2xl bg-background/85 px-3 py-2 backdrop-blur-md">
+                  <p className="text-[10px] font-semibold tracking-[0.2em] text-primary">{n.nr}</p>
+                  <h3 className="mt-1 font-display text-base text-foreground">{n.title}</h3>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Ingrediënt-labels tijdens de laagscheiding (fase 2); smaller op mobiel */}
-        <div className="pointer-events-none absolute inset-0 z-30" aria-hidden="true">
+        {/* Knoppen op mobiel: eigen, altijd zichtbare rij onder de film */}
+        <div className="order-3 flex shrink-0 flex-wrap items-center gap-3 px-5 pb-6 pt-3 md:hidden">
+          {/* min-h i.p.v. h: op de allersmalste schermen mag de knoptekst naar een
+              tweede regel groeien in plaats van afgeknipt te worden */}
+          <Button asChild size="lg" className="min-h-12 flex-1 px-4 text-base active:scale-[0.98]">
+            <Link to="/onze-taarten">Bekijk al onze taarten</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="min-h-12 flex-1 px-4 text-base active:scale-[0.98]">
+            <Link to="/bedrijven">Voor bedrijven</Link>
+          </Button>
+        </div>
+
+        {/* Ingrediëntlabels op desktop: in de pagina-marge naast de (smallere) film */}
+        <div className="pointer-events-none absolute inset-0 z-30 hidden md:block" aria-hidden="true">
           {labels.map((n, i) => (
             <div
               key={n.nr}
               ref={(el) => {
-                labelRefs.current[i] = el;
+                desktopLabelRefs.current[i] = el;
               }}
               style={{ top: n.top, opacity: 0 }}
-              className={`absolute w-[168px] sm:w-[240px] ${n.side === "left" ? "left-[4%] text-right md:left-[6%] lg:left-[13%]" : "right-[4%] md:right-[6%] lg:right-[13%]"}`}
+              className={`absolute w-[240px] ${n.side === "left" ? "left-[6%] text-right lg:left-[13%]" : "right-[6%] lg:right-[13%]"}`}
             >
-              {/* Kaartje met achtergrond zodat de tekst leesbaar blijft over een druk stuk taart */}
-              <div className="rounded-2xl bg-background/85 px-3 py-2 backdrop-blur-md md:rounded-none md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
-                <p className="text-[10px] font-semibold tracking-[0.2em] text-primary sm:text-xs sm:tracking-[0.25em]">{n.nr}</p>
-                <h3 className="mt-1 font-display text-base text-foreground sm:text-xl">{n.title}</h3>
-                <p className="mt-1.5 hidden text-sm leading-relaxed text-muted-foreground sm:block">{n.text}</p>
-              </div>
+              <p className="text-xs font-semibold tracking-[0.25em] text-primary">{n.nr}</p>
+              <h3 className="mt-1 font-display text-xl text-foreground">{n.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{n.text}</p>
             </div>
           ))}
         </div>
 
         <p
           ref={hintRef}
-          className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 text-xs uppercase tracking-[0.3em] text-muted-foreground"
+          className="absolute bottom-8 left-1/2 z-20 hidden -translate-x-1/2 text-xs uppercase tracking-[0.3em] text-muted-foreground md:block"
         >
           Scroll — laag voor laag
         </p>
