@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { cakeWhole, heroScrollFilm, heroScrollFilmRaw } from "@/data/assets";
 
 gsap.registerPlugin(ScrollTrigger);
+// Voorkomt dat de scrub "skipt": op mobiel klapt de adresbalk in/uit tijdens het
+// scrollen, wat een resize-event triggert; zonder deze regel herberekent
+// ScrollTrigger dan de start/eindposities halverwege een scrollbeweging, met een
+// sprong in de film als gevolg.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 /**
  * Ingrediënt-labels als HTML-overlay (nooit in de video gebakken).
@@ -193,8 +198,10 @@ const Hero = () => {
         {/* De gescrubte film in een box op de taart-verhoudingen. De film heeft de
             paginakleur ingebakken; de vignet-laag erover dekt de vier videoranden af
             met exact de paginakleur (gewone CSS, werkt dus ook in Safari waar
-            blend/mask op video onbetrouwbaar zijn). */}
-        <div className="hero-film absolute left-1/2 top-1/2 h-[92%] aspect-[828/1108] -translate-x-1/2 -translate-y-1/2">
+            blend/mask op video onbetrouwbaar zijn). max-w-[92vw] voorkomt dat de box
+            buiten smalle/hoge schermen (telefoon, ongeacht merk) uitsteekt: op zulke
+            schermen bepaalt dan de breedte de grootte, niet de hoogte. */}
+        <div className="hero-film absolute left-1/2 top-1/2 h-[92%] w-auto max-w-[92vw] aspect-[828/1108] -translate-x-1/2 -translate-y-1/2">
           <video
             ref={videoRef}
             muted
