@@ -122,7 +122,11 @@ const Hero = () => {
       start: "top top",
       end: "bottom bottom",
       scrub: true,
-      invalidateOnRefresh: true,
+      // GEEN invalidateOnRefresh: dat herberekent de start/eindpositie bij elke
+      // refresh (bv. na het laden van de video) tegen de dán actuele scrollpositie
+      // — middenin het scrollen voelde dat als een sprong terug naar het begin.
+      // Onze start/eind ("top top"/"bottom bottom") zijn toch stabiel: ze hangen
+      // alleen af van de sectiehoogte, niet van de video-laadstatus.
       onUpdate: (self) => render(self.progress),
     });
 
