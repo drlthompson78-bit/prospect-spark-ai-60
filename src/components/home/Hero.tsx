@@ -222,14 +222,13 @@ const Hero = () => {
           <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
         </div>
 
-        {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay. Op mobiel vult
-            de film bijna de hele breedte, dus valt tekst zo nu en dan over een druk stuk
-            taart; de kaart met hero-scrim geeft altijd genoeg contrast om te kunnen lezen. */}
+        {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay. De film staat
+            hier nog op het rustige, egale openingsbeeld (complete taart op lichte
+            achtergrond), dus geen scrim nodig — die zou 'm juist vertroebelen. */}
         <div
           ref={copyRef}
           className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-center px-5 md:px-8 lg:pl-20"
         >
-          <div className="-mx-5 rounded-3xl bg-background/85 px-5 py-6 backdrop-blur-md md:mx-0 md:rounded-none md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
           <h1 className="mt-5 max-w-[13ch] font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
             Welkom bij Het Taartenhuis
@@ -249,7 +248,6 @@ const Hero = () => {
             >
               <Link to="/bedrijven">Voor bedrijven</Link>
             </Button>
-          </div>
           </div>
         </div>
 
