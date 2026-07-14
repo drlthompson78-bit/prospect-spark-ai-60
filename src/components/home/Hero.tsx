@@ -23,6 +23,18 @@ const labels = [
   { nr: "04", title: "Met de hand gemaakt", text: "Al onze taarten worden met de hand gemaakt en zijn altijd dagvers.", side: "left" as const, top: "72%" },
 ];
 
+/**
+ * Mobiel: dezelfde vier ingrediënten als losse pillen, kris-kras verspreid in de
+ * ruimte bóven de taart (waar de titel wegvaagt tijdens het scrollen). Ze
+ * verschijnen gespreid tijdens de laagscheiding en blijven staan bij de taart.
+ */
+const mobilePills = [
+  { nr: "01", title: "Marsepein of fondant", place: "left-[2%] top-[0%]", rot: "-6deg" },
+  { nr: "03", title: "Luchtige cake", place: "right-[2%] top-[7%]", rot: "5deg" },
+  { nr: "02", title: "Slagroomvulling", place: "left-[6%] top-[14%]", rot: "4deg" },
+  { nr: "04", title: "Met de hand gemaakt", place: "right-[4%] top-[21%]", rot: "-4deg" },
+];
+
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 /**
@@ -41,9 +53,8 @@ const Hero = () => {
   const hintRef = useRef<HTMLParagraphElement>(null);
   // Desktop: vier labels in de pagina-marge naast de (smallere) taart.
   const desktopLabelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // Mobiel: één onderschrift dat door de ingrediënten wisselt (labels over de
-  // taart zouden 'm afdekken op een smal scherm).
-  const mobileCaptionRef = useRef<HTMLDivElement>(null);
+  // Mobiel: vier pillen kris-kras in de ruimte boven de taart.
+  const mobilePillRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [staticMode, setStaticMode] = useState(false);
 
   useEffect(() => {
@@ -98,20 +109,15 @@ const Hero = () => {
         el.style.opacity = String(o);
         el.style.transform = `translateX(${(1 - o) * (labels[i].side === "left" ? -24 : 24)}px)`;
       });
-      // Mobiel: één onderschrift dat door de vier ingrediënten heen wisselt terwijl
-      // de lagen scheiden — de taart blijft zo volledig zichtbaar.
-      const cap = mobileCaptionRef.current;
-      if (cap) {
-        const inSep = p > 0.4 && p < 0.99;
-        cap.style.opacity = inSep ? "1" : "0";
-        if (inSep) {
-          const idx = Math.min(labels.length - 1, Math.max(0, Math.floor((p - 0.42) / 0.1)));
-          const nrEl = cap.querySelector("[data-nr]");
-          const titleEl = cap.querySelector("[data-title]");
-          if (nrEl && nrEl.textContent !== labels[idx].nr) nrEl.textContent = labels[idx].nr;
-          if (titleEl && titleEl.textContent !== labels[idx].title) titleEl.textContent = labels[idx].title;
-        }
-      }
+      // Mobiel: de vier pillen verschijnen gespreid tijdens de laagscheiding en
+      // blijven daarna staan (o loopt naar 1 en blijft). Kris-kras boven de taart.
+      mobilePillRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const start = 0.42 + i * 0.1;
+        const o = clamp01((p - start) / 0.12);
+        el.style.opacity = String(o);
+        el.style.transform = `translateY(${(1 - o) * 10}px)`;
+      });
       // scroll-hint dooft zodra er gescrold wordt
       if (hintRef.current) hintRef.current.style.opacity = String(1 - clamp01(p / 0.08));
     };
@@ -249,18 +255,28 @@ const Hero = () => {
             </video>
             <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
 
-            {/* Ingrediënten op mobiel: één compact onderschrift onderaan de film dat
-                door de vier lagen wisselt terwijl ze scheiden. Zo dekt de tekst de
-                taart niet af (vier losse kaarten deden dat wel op een smal scherm). */}
-            <div
-              ref={mobileCaptionRef}
-              className="pointer-events-none absolute inset-x-0 bottom-3 z-30 flex justify-center px-4 opacity-0 transition-opacity duration-300 md:hidden"
-              aria-hidden="true"
-            >
-              <div className="flex items-center gap-2 rounded-full bg-background/85 px-4 py-2 shadow-sm backdrop-blur-md">
-                <span data-nr className="text-[10px] font-semibold tracking-[0.2em] text-primary">01</span>
-                <span data-title className="font-display text-sm text-foreground">Marsepein of fondant</span>
-              </div>
+            {/* Ingrediënten op mobiel: vier pillen kris-kras in de ruimte boven de taart
+                (waar de titel wegvaagt). Ze verschijnen gespreid tijdens de laagscheiding
+                en blijven staan bij de gelaagde taart. Dekken de taart zelf niet af. */}
+            <div className="pointer-events-none absolute inset-0 z-30 md:hidden" aria-hidden="true">
+              {mobilePills.map((n, i) => (
+                <div
+                  key={`p-${n.nr}`}
+                  ref={(el) => {
+                    mobilePillRefs.current[i] = el;
+                  }}
+                  style={{ opacity: 0 }}
+                  className={`absolute ${n.place}`}
+                >
+                  <div
+                    style={{ transform: `rotate(${n.rot})` }}
+                    className="flex items-center gap-2 rounded-full bg-background/85 px-3 py-1.5 shadow-sm backdrop-blur-md"
+                  >
+                    <span className="text-[10px] font-semibold tracking-[0.15em] text-primary">{n.nr}</span>
+                    <span className="whitespace-nowrap font-display text-[13px] leading-none text-foreground">{n.title}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
