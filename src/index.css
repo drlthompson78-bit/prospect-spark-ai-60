@@ -155,9 +155,14 @@
     -webkit-text-stroke-color: transparent;
   }
 
-  /* Hero-film: de paginakleur van het lichte thema zit in de video zelf
-     ingebakken (geen blend nodig, werkt dus ook in Safari). In het donkere
-     thema past de lichte film niet: daar tonen we de statische taart. */
+  /* Hero-film: de paginakleur zit in de video ingebakken; de vignet dekt de vier
+     videoranden af met exact de paginakleur (gewone CSS-laag, dus Safari-proof —
+     geen blend/mask op de video). In het donkere thema tonen we de statische taart. */
+  .hero-vignette {
+    background:
+      linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%, transparent 86%, hsl(var(--background)) 100%),
+      linear-gradient(to right, hsl(var(--background)) 0%, transparent 9%, transparent 91%, hsl(var(--background)) 100%);
+  }
   :root:not(.theme-light) .hero-film {
     display: none;
   }

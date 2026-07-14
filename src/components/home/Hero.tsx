@@ -155,29 +155,26 @@ const Hero = () => {
       {/* Expliciete paginakleur als achtergrond: multiply mengt de witte film-achtergrond
           hiertegen, ook als een ouder-wrapper (paginaovergang) een isolatielaag maakt */}
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-background">
-        {/* De gescrubte film: eerst de lokale all-keyframe versie, anders de ruwe CDN-versie */}
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          preload="auto"
-          poster={cakeWhole}
-          onError={() => setStaticMode(true)}
-          aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
-          // De film heeft de paginakleur als ingebakken achtergrond (zie
-          // encode-hero-video.sh): geen blend nodig, dus ook geen Safari-probleem.
-          // De radiale mask feathert de randen als extra vangnet.
-          style={{
-            WebkitMaskImage:
-              "radial-gradient(112% 82% at 50% 46%, #000 52%, transparent 100%)",
-            maskImage:
-              "radial-gradient(112% 82% at 50% 46%, #000 52%, transparent 100%)",
-          }}
-          className="hero-film absolute left-1/2 top-1/2 h-[92%] -translate-x-1/2 -translate-y-1/2 object-contain"
-        >
-          <source src={heroScrollFilm} type="video/mp4" />
-          <source src={heroScrollFilmRaw} type="video/mp4" />
-        </video>
+        {/* De gescrubte film in een box op de taart-verhoudingen. De film heeft de
+            paginakleur ingebakken; de vignet-laag erover dekt de vier videoranden af
+            met exact de paginakleur (gewone CSS, werkt dus ook in Safari waar
+            blend/mask op video onbetrouwbaar zijn). */}
+        <div className="hero-film absolute left-1/2 top-1/2 h-[92%] aspect-[828/1108] -translate-x-1/2 -translate-y-1/2">
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            preload="auto"
+            poster={cakeWhole}
+            onError={() => setStaticMode(true)}
+            aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
+            className="h-full w-full object-contain"
+          >
+            <source src={heroScrollFilm} type="video/mp4" />
+            <source src={heroScrollFilmRaw} type="video/mp4" />
+          </video>
+          <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
+        </div>
 
         {/* Statische taart voor het donkere thema (de lichte film past daar niet) */}
         <img
