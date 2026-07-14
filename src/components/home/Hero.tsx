@@ -111,9 +111,15 @@ const Hero = () => {
       updateLabels(desktopLabelRefs.current);
       // scroll-hint dooft zodra er gescrold wordt
       if (hintRef.current) hintRef.current.style.opacity = String(1 - clamp01(p / 0.08));
+      // stickyTop hoort ~0 te blijven zolang de sectie pint; loopt hij weg, dan houdt
+      // position: sticky niet vast. lenis meldt of Lenis nog draait (moet "uit" zijn
+      // op touch-apparaten sinds de laatste fix).
+      const stickyTop = section.querySelector(".sticky")?.getBoundingClientRect().top ?? NaN;
+      const lenisActive = !!(window as unknown as Record<string, unknown>).__lenis;
       setDebugInfo(
         `p=${p.toFixed(2)} t=${video.currentTime.toFixed(1)}/${(video.duration || 0).toFixed(1)} ` +
-          `readyState=${video.readyState} networkState=${video.networkState} src=${video.currentSrc.split("/").pop()}`
+          `stickyTop=${Math.round(stickyTop)} lenis=${lenisActive} scrollY=${Math.round(window.scrollY)} ` +
+          `readyState=${video.readyState} networkState=${video.networkState}`
       );
     };
 

@@ -19,8 +19,14 @@ const ShopLayout = () => {
 
   // Lenis via de GSAP-ticker, gekoppeld aan ScrollTrigger (conform de motion-skill):
   // één instantie, zodat de gescrubte hero en het soepele scrollen samen optrekken.
+  // Alleen op muis/trackpad-apparaten: Lenis smooth alleen wheel-scroll (syncTouch
+  // staat uit), maar de raf-loop herbevestigt élk frame zijn eigen bijgehouden
+  // scrollpositie via window.scrollTo — op touch kwam dat in de weg te liggen van
+  // de native scroll (position: sticky werkte daardoor niet, de pagina "vocht"
+  // met zichzelf). Op mobiel draait native scroll dus zonder Lenis ertussen.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
     const lenis = new Lenis({ lerp: 0.12 });
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
