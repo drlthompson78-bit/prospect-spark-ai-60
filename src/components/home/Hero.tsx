@@ -55,8 +55,21 @@ const Hero = () => {
       return;
     }
 
-    // De film wordt gescrubd, nooit afgespeeld
+    // De film wordt gescrubd, nooit écht afgespeeld — maar mobiele Safari negeert
+    // preload="auto" en laadt pas beelddata na een echte play()-aanroep. Een gemute,
+    // playsinline-video mag altijd autoplayen; we starten 'm dus direct heel even en
+    // pauzeren meteen weer, puur om de framedata te laten laden.
     video.pause();
+    video
+      .play()
+      .then(() => video.pause())
+      .catch(() => {
+        const unlock = () => {
+          video.play().then(() => video.pause()).catch(() => {});
+        };
+        window.addEventListener("touchstart", unlock, { once: true, passive: true });
+        window.addEventListener("pointerdown", unlock, { once: true, passive: true });
+      });
     let lastT = -1;
 
     const render = (p: number) => {
