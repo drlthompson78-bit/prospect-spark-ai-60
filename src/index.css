@@ -130,11 +130,22 @@
 
   /* Hero-film: de paginakleur zit in de video ingebakken; de vignet dekt de vier
      videoranden af met exact de paginakleur (gewone CSS-laag, dus Safari-proof —
-     geen blend/mask op de video). */
+     geen blend/mask op de video).
+
+     Mobiel gebruikt object-cover: de boven/onderkant van de video worden dan
+     midden in de taart bijgesneden (geen echte videorand daar), dus alleen een
+     dunne links/rechts-vervaging — géén boven/onder-fade, die zou anders als
+     mist over de taart liggen. Vanaf md: object-contain, dan alle vier de randen. */
   .hero-vignette {
     background:
-      linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%, transparent 86%, hsl(var(--background)) 100%),
-      linear-gradient(to right, hsl(var(--background)) 0%, transparent 9%, transparent 91%, hsl(var(--background)) 100%);
+      linear-gradient(to right, hsl(var(--background)) 0%, transparent 6%, transparent 94%, hsl(var(--background)) 100%);
+  }
+  @media (min-width: 768px) {
+    .hero-vignette {
+      background:
+        linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 14%, transparent 86%, hsl(var(--background)) 100%),
+        linear-gradient(to right, hsl(var(--background)) 0%, transparent 9%, transparent 91%, hsl(var(--background)) 100%);
+    }
   }
 }
 
