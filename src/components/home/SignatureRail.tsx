@@ -33,7 +33,7 @@ const SignatureRail = () => {
     return (
       <section className="py-24 md:py-32">
         {header}
-        <div className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 pb-4 md:px-8">
+        <div className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 pb-4 [scroll-padding-left:1.25rem] md:px-8">
           {featured.map((p) => (
             <div key={p.slug} className="w-[280px] shrink-0 snap-start md:w-[320px]">
               <ProductCard product={p} />
@@ -49,7 +49,7 @@ const SignatureRail = () => {
       {header}
 
       {/* Mobiel: swipebare rail */}
-      <div className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 pb-4 md:hidden">
+      <div className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 pb-4 [scroll-padding-left:1.25rem] md:hidden">
         {featured.map((p) => (
           <div key={p.slug} className="w-[280px] shrink-0 snap-start">
             <ProductCard product={p} />

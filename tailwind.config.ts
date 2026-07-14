@@ -14,8 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Manrope Variable", "system-ui", "sans-serif"],
-        display: ["Prata", "Georgia", "serif"],
+        // Poppins: het lettertype van de originele hettaartenhuis.nl, voor de
+        // hele site (geen apart serif-kopfont meer).
+        sans: ["Poppins", "system-ui", "sans-serif"],
+        display: ["Poppins", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

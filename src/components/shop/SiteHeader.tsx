@@ -87,7 +87,7 @@ const SiteHeader = () => {
       )}
       <div className="relative z-10 mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-[72px] md:px-8">
         <Link to="/" className="font-display text-lg tracking-tight text-foreground md:text-xl" onClick={() => setMenuOpen(false)}>
-          <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-6 w-auto md:h-10" />
+          <img src={siteLogo} alt="Het Taartenhuis — sinds 2005" className="h-7 w-auto md:h-10" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Hoofdnavigatie">
@@ -102,13 +102,14 @@ const SiteHeader = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0.5 md:gap-2">
           {/* Bestellen als uitgelichte knop, zoals op de originele site — ook op
-              mobiel zichtbaar (daar maakt de themaknop plaats, de primaire actie wint) */}
+              mobiel zichtbaar (daar maakt de themaknop plaats, de primaire actie wint).
+              Compacter op mobiel: naast een groter logo is daar weinig ruimte over. */}
           <Link
             to="/bestellen"
             onClick={() => setMenuOpen(false)}
-            className="mr-1 inline-flex h-9 items-center rounded-full bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:-translate-y-px hover:shadow-md md:h-10 md:px-5"
+            className="inline-flex h-9 items-center rounded-full bg-primary px-2 text-[13px] font-semibold text-primary-foreground shadow-sm transition-all duration-300 hover:-translate-y-px hover:shadow-md md:mr-1 md:h-10 md:px-5 md:text-sm"
           >
             Bestellen
           </Link>
@@ -118,7 +119,7 @@ const SiteHeader = () => {
               setMenuOpen(false);
               openCart();
             }}
-            className="relative flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary md:h-11 md:w-11"
             aria-label={`Winkelwagen openen, ${count} ${count === 1 ? "artikel" : "artikelen"}`}
           >
             <ShoppingBag className="h-5 w-5" />
@@ -136,7 +137,7 @@ const SiteHeader = () => {
           </button>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-foreground transition-colors hover:bg-secondary md:h-11 md:w-11"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? "Menu sluiten" : "Menu openen"}
             aria-expanded={menuOpen}

@@ -13,8 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@fontsource-variable/manrope": "^5.2.8",
-    "@fontsource/prata": "^5.2.7",
+    "@fontsource/poppins": "^5.2.7",
     "@hookform/resolvers": "^3.10.0",
     "@lovable.dev/mcp-js": "^0.20.0",
     "@radix-ui/react-accordion": "^1.2.11",

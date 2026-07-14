@@ -65,7 +65,10 @@
 
 @layer components {
   .font-display {
-    font-family: "Prata", "Georgia", serif;
+    font-family: "Poppins", system-ui, sans-serif;
+    /* Tailwind's preflight reset zet kop-font-weight terug naar "inherit" (400);
+       de originele site laat h1-h6 gewoon op de vette browserstandaard staan. */
+    font-weight: 600;
   }
 
   .text-balance {
