@@ -215,11 +215,14 @@ const Hero = () => {
           <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
         </div>
 
-        {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay */}
+        {/* Kop, subregel en CTA's (fase 1) — echte siteteksten, HTML-overlay. Op mobiel vult
+            de film bijna de hele breedte, dus valt tekst zo nu en dan over een druk stuk
+            taart; de kaart met hero-scrim geeft altijd genoeg contrast om te kunnen lezen. */}
         <div
           ref={copyRef}
           className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-center px-5 md:px-8 lg:pl-20"
         >
+          <div className="-mx-5 rounded-3xl bg-background/85 px-5 py-6 backdrop-blur-md md:mx-0 md:rounded-none md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Sinds 2005</p>
           <h1 className="mt-5 max-w-[13ch] font-display text-5xl leading-[1.05] tracking-tight text-foreground md:text-7xl">
             Welkom bij Het Taartenhuis
@@ -240,6 +243,7 @@ const Hero = () => {
               <Link to="/bedrijven">Voor bedrijven</Link>
             </Button>
           </div>
+          </div>
         </div>
 
         {/* Ingrediënt-labels tijdens de laagscheiding (fase 2); smaller op mobiel */}
@@ -253,9 +257,12 @@ const Hero = () => {
               style={{ top: n.top, opacity: 0 }}
               className={`absolute w-[168px] sm:w-[240px] ${n.side === "left" ? "left-[4%] text-right md:left-[6%] lg:left-[13%]" : "right-[4%] md:right-[6%] lg:right-[13%]"}`}
             >
-              <p className="text-[10px] font-semibold tracking-[0.2em] text-primary sm:text-xs sm:tracking-[0.25em]">{n.nr}</p>
-              <h3 className="mt-1 font-display text-base text-foreground sm:text-xl">{n.title}</h3>
-              <p className="mt-1.5 hidden text-sm leading-relaxed text-muted-foreground sm:block">{n.text}</p>
+              {/* Kaartje met achtergrond zodat de tekst leesbaar blijft over een druk stuk taart */}
+              <div className="rounded-2xl bg-background/85 px-3 py-2 backdrop-blur-md md:rounded-none md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none">
+                <p className="text-[10px] font-semibold tracking-[0.2em] text-primary sm:text-xs sm:tracking-[0.25em]">{n.nr}</p>
+                <h3 className="mt-1 font-display text-base text-foreground sm:text-xl">{n.title}</h3>
+                <p className="mt-1.5 hidden text-sm leading-relaxed text-muted-foreground sm:block">{n.text}</p>
+              </div>
             </div>
           ))}
         </div>
