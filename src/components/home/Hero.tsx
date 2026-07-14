@@ -216,44 +216,48 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* De gescrubte film. Op mobiel: flexibele middenzone die alle overgebleven
-            ruimte vult (object-contain voorkomt overflow/vervorming vanzelf). Op
-            desktop: de vaste, gecentreerde box op de taart-verhoudingen, met
-            max-w-[92vw] zodat hij nooit buiten het scherm steekt. */}
-        <div className="hero-film relative order-2 min-h-[140px] w-full flex-1 md:absolute md:left-1/2 md:top-1/2 md:h-[92%] md:min-h-0 md:w-auto md:max-w-[92vw] md:flex-none md:aspect-[828/1108] md:-translate-x-1/2 md:-translate-y-1/2">
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto"
-            poster={cakeWhole}
-            onError={() => setStaticMode(true)}
-            aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
-            className="h-full w-full object-cover md:object-contain"
-          >
-            <source src={heroScrollFilm} type="video/mp4" />
-            <source src={heroScrollFilmRaw} type="video/mp4" />
-          </video>
-          <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
+        {/* De gescrubte film. Op mobiel: een op de taart-verhouding (828:1108) vaste box,
+            zo groot als in de resterende ruimte past, gecentreerd — de wrapper vult de
+            overgebleven hoogte en centreert de box. Doordat de box exact de
+            taartverhouding heeft, vult de video 'm volledig zónder bij te snijden én
+            zonder witruimte/mist. Op desktop (md:) valt de wrapper weg (contents) en
+            positioneert de film zichzelf absoluut gecentreerd, zoals voorheen. */}
+        <div className="order-2 flex min-h-0 w-full flex-1 items-center justify-center md:contents">
+          <div className="hero-film relative h-full max-h-full max-w-full aspect-[828/1108] md:absolute md:left-1/2 md:top-1/2 md:h-[92%] md:max-h-none md:w-auto md:max-w-[92vw] md:-translate-x-1/2 md:-translate-y-1/2">
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              preload="auto"
+              poster={cakeWhole}
+              onError={() => setStaticMode(true)}
+              aria-label="De ijsjestaart van Het Taartenhuis draait rond en gaat laag voor laag uit elkaar"
+              className="h-full w-full object-contain"
+            >
+              <source src={heroScrollFilm} type="video/mp4" />
+              <source src={heroScrollFilmRaw} type="video/mp4" />
+            </video>
+            <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
 
-          {/* Ingrediëntlabels op mobiel: in de videobox zelf, met leeskaartje (het beeld
-              erachter is hier juist wél druk — de losgekoppelde taartlagen). */}
-          <div className="pointer-events-none absolute inset-0 z-30 md:hidden" aria-hidden="true">
-            {labels.map((n, i) => (
-              <div
-                key={`m-${n.nr}`}
-                ref={(el) => {
-                  mobileLabelRefs.current[i] = el;
-                }}
-                style={{ top: n.top, opacity: 0 }}
-                className={`absolute w-[152px] ${n.side === "left" ? "left-[3%] text-right" : "right-[3%]"}`}
-              >
-                <div className="rounded-2xl bg-background/85 px-3 py-2 backdrop-blur-md">
-                  <p className="text-[10px] font-semibold tracking-[0.2em] text-primary">{n.nr}</p>
-                  <h3 className="mt-1 font-display text-base text-foreground">{n.title}</h3>
+            {/* Ingrediëntlabels op mobiel: in de videobox zelf, met leeskaartje (het beeld
+                erachter is hier juist wél druk — de losgekoppelde taartlagen). */}
+            <div className="pointer-events-none absolute inset-0 z-30 md:hidden" aria-hidden="true">
+              {labels.map((n, i) => (
+                <div
+                  key={`m-${n.nr}`}
+                  ref={(el) => {
+                    mobileLabelRefs.current[i] = el;
+                  }}
+                  style={{ top: n.top, opacity: 0 }}
+                  className={`absolute w-[152px] ${n.side === "left" ? "left-[3%] text-right" : "right-[3%]"}`}
+                >
+                  <div className="rounded-2xl bg-background/85 px-3 py-2 backdrop-blur-md">
+                    <p className="text-[10px] font-semibold tracking-[0.2em] text-primary">{n.nr}</p>
+                    <h3 className="mt-1 font-display text-base text-foreground">{n.title}</h3>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
