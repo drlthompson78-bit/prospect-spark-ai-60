@@ -39,11 +39,11 @@ const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLParagraphElement>(null);
-  // Twee losse labelsets: op mobiel liggen de labels ín de videobox (percentages
-  // dus relatief aan die box), op desktop ernaast in de pagina-marge (percentages
-  // relatief aan de volle sectie) — vandaar aparte refs per opstelling.
-  const mobileLabelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Desktop: vier labels in de pagina-marge naast de (smallere) taart.
   const desktopLabelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Mobiel: één onderschrift dat door de ingrediënten wisselt (labels over de
+  // taart zouden 'm afdekken op een smal scherm).
+  const mobileCaptionRef = useRef<HTMLDivElement>(null);
   const [staticMode, setStaticMode] = useState(false);
 
   useEffect(() => {
@@ -90,18 +90,28 @@ const Hero = () => {
         copyRef.current.style.transform = `translateY(${out * -46}px)`;
         copyRef.current.style.pointerEvents = out > 0.6 ? "none" : "auto";
       }
-      // ingrediënt-labels verschijnen gespreid tijdens de laagscheiding (beide sets)
-      const updateLabels = (refs: (HTMLDivElement | null)[]) => {
-        refs.forEach((el, i) => {
-          if (!el) return;
-          const start = 0.42 + i * 0.1;
-          const o = clamp01((p - start) / 0.12);
-          el.style.opacity = String(o);
-          el.style.transform = `translateX(${(1 - o) * (labels[i].side === "left" ? -24 : 24)}px)`;
-        });
-      };
-      updateLabels(mobileLabelRefs.current);
-      updateLabels(desktopLabelRefs.current);
+      // Desktop-labels verschijnen gespreid tijdens de laagscheiding, in de marge
+      desktopLabelRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const start = 0.42 + i * 0.1;
+        const o = clamp01((p - start) / 0.12);
+        el.style.opacity = String(o);
+        el.style.transform = `translateX(${(1 - o) * (labels[i].side === "left" ? -24 : 24)}px)`;
+      });
+      // Mobiel: één onderschrift dat door de vier ingrediënten heen wisselt terwijl
+      // de lagen scheiden — de taart blijft zo volledig zichtbaar.
+      const cap = mobileCaptionRef.current;
+      if (cap) {
+        const inSep = p > 0.4 && p < 0.99;
+        cap.style.opacity = inSep ? "1" : "0";
+        if (inSep) {
+          const idx = Math.min(labels.length - 1, Math.max(0, Math.floor((p - 0.42) / 0.1)));
+          const nrEl = cap.querySelector("[data-nr]");
+          const titleEl = cap.querySelector("[data-title]");
+          if (nrEl && nrEl.textContent !== labels[idx].nr) nrEl.textContent = labels[idx].nr;
+          if (titleEl && titleEl.textContent !== labels[idx].title) titleEl.textContent = labels[idx].title;
+        }
+      }
       // scroll-hint dooft zodra er gescrold wordt
       if (hintRef.current) hintRef.current.style.opacity = String(1 - clamp01(p / 0.08));
     };
@@ -239,24 +249,18 @@ const Hero = () => {
             </video>
             <div className="hero-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
 
-            {/* Ingrediëntlabels op mobiel: in de videobox zelf, met leeskaartje (het beeld
-                erachter is hier juist wél druk — de losgekoppelde taartlagen). */}
-            <div className="pointer-events-none absolute inset-0 z-30 md:hidden" aria-hidden="true">
-              {labels.map((n, i) => (
-                <div
-                  key={`m-${n.nr}`}
-                  ref={(el) => {
-                    mobileLabelRefs.current[i] = el;
-                  }}
-                  style={{ top: n.top, opacity: 0 }}
-                  className={`absolute w-[152px] ${n.side === "left" ? "left-[3%] text-right" : "right-[3%]"}`}
-                >
-                  <div className="rounded-2xl bg-background/85 px-3 py-2 backdrop-blur-md">
-                    <p className="text-[10px] font-semibold tracking-[0.2em] text-primary">{n.nr}</p>
-                    <h3 className="mt-1 font-display text-base text-foreground">{n.title}</h3>
-                  </div>
-                </div>
-              ))}
+            {/* Ingrediënten op mobiel: één compact onderschrift onderaan de film dat
+                door de vier lagen wisselt terwijl ze scheiden. Zo dekt de tekst de
+                taart niet af (vier losse kaarten deden dat wel op een smal scherm). */}
+            <div
+              ref={mobileCaptionRef}
+              className="pointer-events-none absolute inset-x-0 bottom-3 z-30 flex justify-center px-4 opacity-0 transition-opacity duration-300 md:hidden"
+              aria-hidden="true"
+            >
+              <div className="flex items-center gap-2 rounded-full bg-background/85 px-4 py-2 shadow-sm backdrop-blur-md">
+                <span data-nr className="text-[10px] font-semibold tracking-[0.2em] text-primary">01</span>
+                <span data-title className="font-display text-sm text-foreground">Marsepein of fondant</span>
+              </div>
             </div>
           </div>
         </div>
