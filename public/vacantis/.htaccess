@@ -1,0 +1,14 @@
+# --- Toegang alleen met wachtwoord ---
+AuthType Basic
+AuthName "Prive-archief"
+# LET OP: vervang onderstaand pad door het echte absolute pad naar deze map op je hosting
+# (zie instructies in UPLOAD-INSTRUCTIES.md; vaak /home/GEBRUIKERSNAAM/domains/rnvlijter.nl/public_html/test/.htpasswd)
+AuthUserFile /VERVANG/DIT/PAD/test/.htpasswd
+Require valid-user
+
+# --- Niet indexeren door zoekmachines ---
+<IfModule mod_headers.c>
+Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
+Options -Indexes
