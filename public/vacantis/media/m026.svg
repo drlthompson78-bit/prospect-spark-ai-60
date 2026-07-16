@@ -4,7 +4,7 @@
 <line x1="0" y1="0" x2="400" y2="351" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.4040000000000001"/>
 <line x1="400" y1="0" x2="0" y2="351" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.4040000000000001"/>
 
-<text x="200" y="167.778" font-family="Helvetica,Arial,sans-serif" font-size="19.305" font-weight="700" letter-spacing="2.89575" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="200" y="167.778" font-family="Helvetica,Arial,sans-serif" font-size="19.305" font-weight="700" letter-spacing="2.89575" fill="#6b6560" text-anchor="middle">FOTO</text><text x="200.0" y="183.778" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#78716c" text-anchor="middle">NIEUWBOUWAPPARTEMENT</text>
 
 <rect x="8.5995" y="317.83050000000003" width="50.27022" height="24.570000000000004" rx="4.4226" fill="#000000" fill-opacity=".7"/>
 <text x="33.73461" y="335.02950000000004" font-family="Helvetica,Arial,sans-serif" font-size="15.233400000000001" font-weight="700" fill="#ffffff" text-anchor="middle">#M026</text>

@@ -4,7 +4,7 @@
 <line x1="0" y1="0" x2="400" y2="267" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.068"/>
 <line x1="400" y1="0" x2="0" y2="267" stroke="#ffffff" stroke-opacity=".45" stroke-width="1.068"/>
 
-<text x="200" y="127.626" font-family="Helvetica,Arial,sans-serif" font-size="14.685" font-weight="700" letter-spacing="2.20275" fill="#6b6560" text-anchor="middle">FOTO</text>
+<text x="200" y="127.626" font-family="Helvetica,Arial,sans-serif" font-size="14.685" font-weight="700" letter-spacing="2.20275" fill="#6b6560" text-anchor="middle">FOTO</text><text x="200.0" y="143.626" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#78716c" text-anchor="middle">BOVENWONING</text>
 
 <rect x="6.5415" y="241.7685" width="38.239740000000005" height="18.69" rx="3.3642000000000003" fill="#000000" fill-opacity=".7"/>
 <text x="25.66137" y="254.85150000000002" font-family="Helvetica,Arial,sans-serif" font-size="11.587800000000001" font-weight="700" fill="#ffffff" text-anchor="middle">#M031</text>
