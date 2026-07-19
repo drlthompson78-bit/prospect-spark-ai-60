@@ -90,10 +90,13 @@ CITY_NAME_RE = re.compile(r'"cityName":"([^"]+)"')
 # nationwide-service sellers) — same visible div, but no cityName JSON
 # fragment exists for them since it genuinely doesn't apply.
 LOCATION_TEXT_RE = re.compile(r'SellerLocationSection-locationName[^"]*">([^<]+)<')
-# Brand-new accounts show "X dagen op Marktplaats" instead of "jaar" — seen
-# live (e.g. "3 dagen op Marktplaats"). Match all three units so new sellers
-# aren't systematically dropped from this field.
-ACCOUNT_AGE_RE = re.compile(r"(\d+)\s*(dagen?|maanden?|jaren?|jaar)\s*op Marktplaats")
+# Account age uses whatever time unit fits: seen live as "13 jaar",
+# "2 weken", "3 dagen", "N maanden op Marktplaats". Match the number + any
+# unit word generically (rather than an enumerated list) so no seller is
+# silently dropped from this field, and store the full phrase incl. unit —
+# storing only the number would put "2" (weken) and "13" (jaar) in one
+# column and misleadingly rank a 2-week account as "younger" than nothing.
+ACCOUNT_AGE_RE = re.compile(r"(\d+)\s*(\w+)\s*op Marktplaats")
 POSTED_DATE_RE = re.compile(r'Report-label">Sinds\s*<b>([^<]+)</b>')
 
 
