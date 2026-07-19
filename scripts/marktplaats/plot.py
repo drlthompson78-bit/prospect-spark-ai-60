@@ -32,6 +32,12 @@ TYPE_COLORS = {
 # Price-segment boundaries (see enrich.py) drawn as reference lines.
 SEGMENT_BOUNDS = [150, 350, 750]
 
+# ~95% of the market sits under €1000; a handful of ads priced €5k–20k (often
+# mis-priced or domain bundles, with ~0 favorites) otherwise squash that
+# cluster into an unreadable sliver. Focus the x-axis here and annotate how
+# many points fall beyond it, rather than silently dropping them.
+PRICE_FOCUS_MAX = 1000
+
 
 def main():
     if not SCATTER_JSON.exists():
@@ -42,6 +48,8 @@ def main():
         raise SystemExit("scatter_data.json is leeg")
 
     fig, ax = plt.subplots(figsize=(11, 7))
+
+    beyond = [p for p in points if p["price"] > PRICE_FOCUS_MAX]
 
     # group by type so the legend is clean
     by_type: dict[str, list] = {}
@@ -67,7 +75,18 @@ def main():
     # the outliers. Comment this out for a plain linear view.
     ax.set_yscale("symlog", linthresh=10)
 
-    ax.set_xlabel("Prijs (€)")
+    ax.set_xlim(-30, PRICE_FOCUS_MAX)
+    if beyond:
+        prices = sorted(p["price"] for p in beyond)
+        ax.annotate(
+            f"+{len(beyond)} advertenties > €{PRICE_FOCUS_MAX}\n"
+            f"(tot €{int(prices[-1]):,}, vrijwel 0 favorieten)".replace(",", "."),
+            xy=(0.985, 0.02), xycoords="axes fraction",
+            ha="right", va="bottom", fontsize=8, color="#6b7280",
+            bbox=dict(boxstyle="round", fc="#f9fafb", ec="#e5e7eb"),
+        )
+
+    ax.set_xlabel("Prijs (€) — ingezoomd op €0–1000")
     ax.set_ylabel("Favorieten (symlog)")
     ax.set_title("Marktplaats webdesign — prijs vs. favorieten, per type")
     ax.legend(loc="upper right", fontsize=8, framealpha=0.9)
