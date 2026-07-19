@@ -7,6 +7,8 @@ after an interruption. Use --max-pages to cap how far it goes.
 NOT verified live (sandbox has no network access to marktplaats.nl) — inspect
 one page with --debug-dump-first before trusting the output. See README.md.
 """
+from __future__ import annotations
+
 import argparse
 import json
 import re
@@ -113,6 +115,7 @@ def discover(max_pages: int, debug_dump_first: bool) -> dict:
         if page <= max_pages:
             polite_sleep()
 
+    save_all(existing)
     return existing
 
 

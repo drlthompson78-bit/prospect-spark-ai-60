@@ -2,6 +2,8 @@
 """Stage 3: normalize the raw fetched records, classify price segments, and
 write the CSV + scatter data + text summary. Pure logic, no network calls.
 """
+from __future__ import annotations
+
 import argparse
 import csv
 import json

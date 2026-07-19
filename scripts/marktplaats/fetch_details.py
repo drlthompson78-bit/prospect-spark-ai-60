@@ -13,6 +13,8 @@ NOT verified live (sandbox network access to marktplaats.nl is blocked) —
 run --debug-dump-first and inspect data/debug/ before trusting output on a
 real run. See README.md.
 """
+from __future__ import annotations
+
 import argparse
 import json
 import random

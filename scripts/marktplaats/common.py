@@ -6,6 +6,8 @@ aliases are best-effort guesses based on how Marktplaats and similar
 classifieds sites typically ship data. Run `discover.py --debug-dump-first`
 before a real run and inspect the saved HTML/JSON to confirm (see README).
 """
+from __future__ import annotations
+
 import json
 import random
 import re
