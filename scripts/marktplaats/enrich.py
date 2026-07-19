@@ -28,6 +28,14 @@ FREE_WORDS = ("gratis", "free")
 BID_WORDS = ("bieden", "n.o.t.k", "notk", "offer")
 DESC_WORDS = ("zie omschrijving", "zie beschrijving", "see description")
 MONTHLY_WORDS = ("p/m", "per maand", "/maand", "pm", "per month")
+# Tighter set for title detection: bare "pm" is too broad as a substring
+# (matches inside unrelated words), so only strong monthly markers here.
+TITLE_MONTHLY_WORDS = ("p/m", "p.m.", "per maand", "/maand", "/mnd", "per month", "mnd)")
+
+# A favorite/view ratio is only meaningful above a minimum view count —
+# 1 favorite on 7 views (0.143) is noise, not attractiveness. Ads below
+# this are excluded from the ratio top-10 (still in the CSV).
+MIN_VIEWS_FOR_RATIO = 100
 
 TYPE_KEYWORDS = {
     "Webhosting": ["hosting", "webhost"],
@@ -158,11 +166,23 @@ def dedupe_by_seller(rows: list[dict]) -> list[dict]:
     return list(best_per_seller.values()) + unknown_seller_rows
 
 
+def looks_monthly(title) -> bool:
+    """Detect a subscription (p/m) offer from the title. Needed because
+    Marktplaats stores these with a FIXED priceCents (e.g. 1900 = €19), so
+    normalize_price sees a low one-off price and would otherwise file a
+    €19/month offer (=€228/yr, a wholly different proposition) under
+    Instap/impuls. The 'per maand' signal lives only in the title."""
+    text = (title or "").lower()
+    return any(w in text for w in TITLE_MONTHLY_WORDS)
+
+
 def enrich(records: list[dict]) -> list[dict]:
     seller_counts = Counter(seller_key(r.get("seller_name")) for r in records)
     rows = []
     for r in records:
         label, value = normalize_price(r.get("price_raw"), r.get("listing_price_hint"))
+        if label == "vast" and looks_monthly(r.get("title")):
+            label = "abonnement"  # numeric value kept, but segmented separately
         favorites = to_int(r.get("favorites"))
         views = to_int(r.get("views"))
         ratio = round(favorites / views, 4) if favorites is not None and views else None
@@ -245,9 +265,19 @@ def write_summary(rows: list[dict]):
         lines.append(f"  {r['favorites']:>4}  {r['price_segment']:<15}  {r['title']}  ({r['url']}){seller_flag(r)}")
     lines.append("")
 
-    with_ratio = [r for r in rows if r["favorite_view_ratio"] is not None]
+    with_ratio = [
+        r for r in rows
+        if r["favorite_view_ratio"] is not None and (r["views"] or 0) >= MIN_VIEWS_FOR_RATIO
+    ]
+    excluded = sum(
+        1 for r in rows
+        if r["favorite_view_ratio"] is not None and (r["views"] or 0) < MIN_VIEWS_FOR_RATIO
+    )
     top_ratio = sorted(with_ratio, key=lambda r: r["favorite_view_ratio"], reverse=True)[:10]
-    lines.append("== Top 10 op favoriet/view-ratio (alle advertenties, niet ontdubbeld) ==")
+    lines.append(
+        f"== Top 10 op favoriet/view-ratio (alleen advertenties met >= {MIN_VIEWS_FOR_RATIO} views; "
+        f"{excluded} met te weinig views uitgesloten als ruis) =="
+    )
     for r in top_ratio:
         lines.append(
             f"  {r['favorite_view_ratio']:.3f}  ({r['favorites']}/{r['views']})  {r['price_segment']:<15}  {r['title']}  ({r['url']}){seller_flag(r)}"
@@ -270,9 +300,16 @@ def write_summary(rows: list[dict]):
     lines.append("")
 
     lines.append("== Waarschuwingen bij interpretatie ==")
+    lines.append("  - De verdeling is sterk scheef: een handvol advertenties gaat 'viraal' (100+")
+    lines.append("    favorieten) en trekt het GEMIDDELDE omhoog, terwijl de MEDIAAN laat zien dat")
+    lines.append("    de typische advertentie in elk segment maar weinig favorieten heeft. Stuur op de")
+    lines.append("    mediaan, niet op het gemiddelde.")
     lines.append("  - Accountleeftijd zegt weinig over webdesign-competentie (algemene accounts); licht wegen.")
     lines.append("  - Favorieten meten interesse, niet conversie.")
-    lines.append("  - Ratio is sterker signaal dan absoluut aantal favorieten.")
+    lines.append("  - Ratio is sterker signaal dan absoluut aantal favorieten, maar alleen boven een")
+    lines.append(f"    minimum aantal views (hier >= {MIN_VIEWS_FOR_RATIO}); daaronder is het ruis.")
+    lines.append("  - Sommige aanbieders spammen de categorie (zelfde advertentie x10-x50 over meerdere")
+    lines.append("    plaatsen/varianten); zie de seller_ad_count-kolom en de [Nx deze aanbieder]-markers.")
     lines.append("  - Vakgenoten bewaren ook advertenties van concurrenten; bij lage aantallen kan dit meetellen.")
 
     text = "\n".join(lines)
