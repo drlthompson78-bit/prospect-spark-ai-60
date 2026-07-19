@@ -9,6 +9,7 @@ import csv
 import json
 import re
 import statistics as stats
+from collections import Counter
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -20,6 +21,7 @@ CSV_FIELDS = [
     "price_label", "price_value", "price_segment",
     "favorites", "views", "favorite_view_ratio",
     "account_age_raw", "posted_date_raw", "data_source", "extraction_warning",
+    "seller_ad_count",
 ]
 
 FREE_WORDS = ("gratis", "free")
@@ -132,13 +134,39 @@ def load_records() -> list[dict]:
     return records
 
 
+def seller_key(seller_name) -> str:
+    """Normalize a seller name for grouping/dedup ('' for unknown sellers,
+    which are never merged with each other)."""
+    return (seller_name or "").strip().lower()
+
+
+def dedupe_by_seller(rows: list[dict]) -> list[dict]:
+    """Collapse to one row per seller — the seller's ad with the most
+    favorites — so a seller running many near-identical listings doesn't
+    dominate segment/aggregate stats. Ads with no known seller_name are kept
+    as-is (nothing to merge them by)."""
+    best_per_seller: dict[str, dict] = {}
+    unknown_seller_rows = []
+    for r in rows:
+        key = seller_key(r["seller_name"])
+        if not key:
+            unknown_seller_rows.append(r)
+            continue
+        current = best_per_seller.get(key)
+        if current is None or (r["favorites"] or -1) > (current["favorites"] or -1):
+            best_per_seller[key] = r
+    return list(best_per_seller.values()) + unknown_seller_rows
+
+
 def enrich(records: list[dict]) -> list[dict]:
+    seller_counts = Counter(seller_key(r.get("seller_name")) for r in records)
     rows = []
     for r in records:
         label, value = normalize_price(r.get("price_raw"), r.get("listing_price_hint"))
         favorites = to_int(r.get("favorites"))
         views = to_int(r.get("views"))
         ratio = round(favorites / views, 4) if favorites is not None and views else None
+        key = seller_key(r.get("seller_name"))
         rows.append({
             "url": r.get("url"),
             "title": r.get("title"),
@@ -155,6 +183,7 @@ def enrich(records: list[dict]) -> list[dict]:
             "posted_date_raw": r.get("posted_date_raw"),
             "data_source": r.get("source"),
             "extraction_warning": r.get("extraction_warning"),
+            "seller_ad_count": seller_counts[key] if key else 1,
         })
     return rows
 
@@ -182,15 +211,22 @@ def write_scatter_data(rows: list[dict]):
 
 
 def write_summary(rows: list[dict]):
+    deduped = dedupe_by_seller(rows)
+    n_multi_sellers = sum(1 for r in rows if r["seller_ad_count"] > 1)
+
     lines = []
     lines.append("Marktplaats webdesign-categorie — positioneringsanalyse")
     lines.append(f"Aantal geanalyseerde advertenties: {len(rows)}")
+    lines.append(
+        f"Aantal unieke aanbieders (na ontdubbelen): {len(deduped)} "
+        f"({n_multi_sellers} advertenties komen van een aanbieder met >1 advertentie in de dataset)"
+    )
     lines.append("")
 
-    lines.append("== Favorieten per prijssegment ==")
+    lines.append("== Favorieten per prijssegment (ontdubbeld per aanbieder — 1 advertentie/aanbieder, de beste) ==")
     segments = ["Instap/impuls", "Basis", "Middensegment", "Hoog", "Abonnement", "Onbekend"]
     for seg in segments:
-        favs = [r["favorites"] for r in rows if r["price_segment"] == seg and r["favorites"] is not None]
+        favs = [r["favorites"] for r in deduped if r["price_segment"] == seg and r["favorites"] is not None]
         if not favs:
             lines.append(f"  {seg}: geen data")
             continue
@@ -199,19 +235,22 @@ def write_summary(rows: list[dict]):
         )
     lines.append("")
 
+    def seller_flag(r):
+        return f"  [{r['seller_ad_count']}x deze aanbieder]" if r["seller_ad_count"] > 1 else ""
+
     with_favs = [r for r in rows if r["favorites"] is not None]
     top_absolute = sorted(with_favs, key=lambda r: r["favorites"], reverse=True)[:10]
-    lines.append("== Top 10 op absolute favorieten ==")
+    lines.append("== Top 10 op absolute favorieten (alle advertenties, niet ontdubbeld) ==")
     for r in top_absolute:
-        lines.append(f"  {r['favorites']:>4}  {r['price_segment']:<15}  {r['title']}  ({r['url']})")
+        lines.append(f"  {r['favorites']:>4}  {r['price_segment']:<15}  {r['title']}  ({r['url']}){seller_flag(r)}")
     lines.append("")
 
     with_ratio = [r for r in rows if r["favorite_view_ratio"] is not None]
     top_ratio = sorted(with_ratio, key=lambda r: r["favorite_view_ratio"], reverse=True)[:10]
-    lines.append("== Top 10 op favoriet/view-ratio ==")
+    lines.append("== Top 10 op favoriet/view-ratio (alle advertenties, niet ontdubbeld) ==")
     for r in top_ratio:
         lines.append(
-            f"  {r['favorite_view_ratio']:.3f}  ({r['favorites']}/{r['views']})  {r['price_segment']:<15}  {r['title']}  ({r['url']})"
+            f"  {r['favorite_view_ratio']:.3f}  ({r['favorites']}/{r['views']})  {r['price_segment']:<15}  {r['title']}  ({r['url']}){seller_flag(r)}"
         )
     lines.append("")
 

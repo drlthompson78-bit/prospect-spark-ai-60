@@ -81,12 +81,19 @@ je hebt gebruikt**, want dat is relevant voor hoe hard de conclusies zijn.
 - `output/marktplaats_webdesign.csv` — één rij per advertentie: titel,
   aanbieder, plaats, type, prijslabel + numerieke prijs + prijssegment,
   favorieten, views, favoriet/view-ratio, accountleeftijd, plaatsingsdatum,
-  URL.
+  URL, `seller_ad_count` (hoeveel advertenties deze aanbieder in totaal in de
+  dataset heeft).
 - `output/scatter_data.json` — prijs vs. favorieten met type als
   kleurcodering, klaar om in een grafiek te plotten.
-- `output/summary.txt` — gemiddelde/mediaan favorieten per prijssegment,
-  top 10 op absolute favorieten, top 10 op favoriet/view-ratio, en een
-  overzicht van ontbrekende velden (data-dekking).
+- `output/summary.txt` — top 10 op absolute favorieten, top 10 op
+  favoriet/view-ratio (beide op advertentie-niveau, niet ontdubbeld — een
+  aanbieder met een vermelding in de top 10 is gewoon zichtbaar, met een
+  `[Nx deze aanbieder]`-marker als die aanbieder meerdere advertenties in de
+  dataset heeft), gemiddelde/mediaan favorieten per prijssegment (wél
+  **ontdubbeld per aanbieder** — 1 advertentie per aanbieder, de
+  best-presterende, om te voorkomen dat een aanbieder met veel bijna-
+  identieke advertenties een segment domineert), en een overzicht van
+  ontbrekende velden (data-dekking).
 
 ## Architectuur
 
