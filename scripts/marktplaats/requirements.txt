@@ -1,0 +1,7 @@
+requests>=2.31
+beautifulsoup4>=4.12
+
+# Optional fallback — only needed if requests/BeautifulSoup gets blocked or
+# the page requires JS rendering. Install with:
+#   pip install playwright && playwright install chromium
+# playwright>=1.44
