@@ -19,7 +19,7 @@ CSV_FIELDS = [
     "url", "title", "seller_name", "location", "type",
     "price_label", "price_value", "price_segment",
     "favorites", "views", "favorite_view_ratio",
-    "account_age_raw", "posted_date_raw", "data_source",
+    "account_age_raw", "posted_date_raw", "data_source", "extraction_warning",
 ]
 
 FREE_WORDS = ("gratis", "free")
@@ -154,6 +154,7 @@ def enrich(records: list[dict]) -> list[dict]:
             "account_age_raw": r.get("account_age_raw"),
             "posted_date_raw": r.get("posted_date_raw"),
             "data_source": r.get("source"),
+            "extraction_warning": r.get("extraction_warning"),
         })
     return rows
 
@@ -217,10 +218,16 @@ def write_summary(rows: list[dict]):
     missing_favs = sum(1 for r in rows if r["favorites"] is None)
     missing_views = sum(1 for r in rows if r["views"] is None)
     missing_price = sum(1 for r in rows if r["price_value"] is None and r["price_label"] not in ("bieden", "gratis"))
+    warned = [r for r in rows if r["extraction_warning"]]
     lines.append("== Data-dekking ==")
     lines.append(f"  ontbrekende favorieten: {missing_favs}/{len(rows)}")
     lines.append(f"  ontbrekende views: {missing_views}/{len(rows)}")
     lines.append(f"  ontbrekende/onbekende prijs: {missing_price}/{len(rows)}")
+    lines.append(f"  advertenties met ontbrekende verkoper/plaats/accountleeftijd/datum: {len(warned)}/{len(rows)}")
+    for r in warned[:20]:
+        lines.append(f"    - {r['url']}: {r['extraction_warning']}")
+    if len(warned) > 20:
+        lines.append(f"    ... en nog {len(warned) - 20} meer (zie extraction_warning-kolom in de CSV)")
     lines.append("")
 
     lines.append("== Waarschuwingen bij interpretatie ==")

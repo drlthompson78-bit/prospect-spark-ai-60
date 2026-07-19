@@ -65,6 +65,58 @@ def extract_stats_from_html(html: str) -> dict | None:
     }
 
 
+class FieldExtractionError(Exception):
+    """A field expected on every detail page wasn't found. Caught per-ad by
+    fetch_all so one oddly-formatted ad can't kill a multi-hour batch run —
+    but the gap is recorded loudly (extraction_warning) rather than silently
+    left as null."""
+
+
+# Confirmed live 2026-07 against ad m2361340022 (seller="Tom",
+# location="Doetinchem", account_age=13, posted="30 jan '26"):
+#   - seller name: an <a href="#verkoper" role="link">NAME</a> link
+#   - location: a "cityName":"CITY" fragment (not inside a clean <script>
+#     JSON blob — embedded directly in an HTML attribute — so this is
+#     matched directly against the raw HTML rather than via
+#     common.extract_json_blobs)
+#   - account age: "N jaar op Marktplaats" plain text
+#   - posted date: <div class="Report-label">Sinds <b>DATE</b></div>
+#     (distinct from — and more precise than — the "sinds..." fragment in
+#     the Report-stats aria-label, which is the same moment but bundled
+#     with a timestamp)
+SELLER_NAME_RE = re.compile(r'href="#verkoper"[^>]*>([^<]+)</a>')
+CITY_NAME_RE = re.compile(r'"cityName":"([^"]+)"')
+ACCOUNT_AGE_RE = re.compile(r"(\d+)\s*jaar op Marktplaats")
+POSTED_DATE_RE = re.compile(r'Report-label">Sinds\s*<b>([^<]+)</b>')
+
+
+def extract_seller_fields(html: str) -> dict:
+    seller_match = SELLER_NAME_RE.search(html)
+    city_match = CITY_NAME_RE.search(html)
+    age_match = ACCOUNT_AGE_RE.search(html)
+    date_match = POSTED_DATE_RE.search(html)
+
+    missing = [
+        name
+        for name, m in (
+            ("seller_name", seller_match),
+            ("location", city_match),
+            ("account_age", age_match),
+            ("posted_date", date_match),
+        )
+        if not m
+    ]
+    if missing:
+        raise FieldExtractionError(f"veld(en) niet gevonden op pagina: {', '.join(missing)}")
+
+    return {
+        "seller_name": html_module.unescape(seller_match.group(1)).strip(),
+        "location": html_module.unescape(city_match.group(1)).strip(),
+        "account_age_raw": int(age_match.group(1)),
+        "posted_date_raw": html_module.unescape(date_match.group(1)).strip(),
+    }
+
+
 def load_urls() -> list[dict]:
     if not URLS_FILE.exists():
         raise SystemExit(f"{URLS_FILE} not found — run discover.py first")
@@ -174,6 +226,16 @@ def fetch_all(limit: int | None, sample: int | None, debug_dump_first: bool):
             record["views"] = record.get("views") or stats["views"]
             record["favorites"] = record.get("favorites") or stats["favorites"]
             record["posted_date_raw"] = record.get("posted_date_raw") or stats["posted_date_raw"]
+
+        try:
+            seller_fields = extract_seller_fields(html)
+            record["seller_name"] = seller_fields["seller_name"]
+            record["location"] = seller_fields["location"]
+            record["account_age_raw"] = seller_fields["account_age_raw"]
+            record["posted_date_raw"] = seller_fields["posted_date_raw"]  # more precise than the stats-block fallback
+        except FieldExtractionError as e:
+            print(f"[fetch]   WAARSCHUWING: {e} ({url})")
+            record["extraction_warning"] = str(e)
 
         record["url"] = url
         record["listing_price_hint"] = ad.get("listing_price_hint")
