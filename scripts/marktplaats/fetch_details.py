@@ -16,8 +16,10 @@ real run. See README.md.
 from __future__ import annotations
 
 import argparse
+import html as html_module
 import json
 import random
+import re
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -40,6 +42,27 @@ CATEGORY_KEYS = {"categoryname", "category", "l1categoryname", "l2categoryname"}
 ACCOUNT_AGE_KEYS = {"sinceyear", "memberssince", "registrationdate", "accountage"}
 DATE_KEYS = {"date", "createddate", "publisheddate", "adstart"}
 ITEM_DICT_MARKERS = {"title", "priceinfo", "sellerinformation", "description"}
+
+# Confirmed live 2026-07: views + favorites aren't in embedded JSON on the
+# detail page — they're plain text inside a "Report-stats" block's
+# aria-label, e.g.: aria-label="1583 keer gezien 11 keer bewaard sinds30 jan
+# '26, 21:40". This is more reliable than the JSON approach for these two
+# fields, so it's applied regardless of whether JSON parsing also succeeded.
+STATS_RE = re.compile(
+    r"aria-label=\"(?P<views>\d+)\s*keer gezien\s*(?P<favorites>\d+)\s*keer bewaard\s*sinds(?P<posted>[^\"]*)\""
+)
+
+
+def extract_stats_from_html(html: str) -> dict | None:
+    match = STATS_RE.search(html)
+    if not match:
+        return None
+    posted = html_module.unescape(match.group("posted")).strip()
+    return {
+        "views": int(match.group("views")),
+        "favorites": int(match.group("favorites")),
+        "posted_date_raw": posted or None,
+    }
 
 
 def load_urls() -> list[dict]:
@@ -145,6 +168,12 @@ def fetch_all(limit: int | None, sample: int | None, debug_dump_first: bool):
         record = parse_detail_json(blobs)
         if record is None:
             record = parse_detail_html_fallback(html)
+
+        stats = extract_stats_from_html(html)
+        if stats:
+            record["views"] = record.get("views") or stats["views"]
+            record["favorites"] = record.get("favorites") or stats["favorites"]
+            record["posted_date_raw"] = record.get("posted_date_raw") or stats["posted_date_raw"]
 
         record["url"] = url
         record["listing_price_hint"] = ad.get("listing_price_hint")

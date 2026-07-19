@@ -5,15 +5,27 @@ te zien tegen welke prijs en met welk aanbod concurrenten favorieten
 (hartjes) verzamelen. Geen doorlopende tool — één run, één CSV, één
 samenvatting.
 
-## ⚠️ Belangrijk: nog niet getest tegen de live site
+## ⚠️ Status: deels geverifieerd tegen de live site (2026-07)
 
-Dit script is geschreven in een sandbox zonder netwerktoegang tot
-`marktplaats.nl` (uitgaand verkeer naar dat domein wordt op infrastructuur-
-niveau geblokkeerd). De JSON-parsing is expres generiek gehouden (zoekt naar
-sleutel-aliassen zoals `title`, `priceInfo`, `favoriteCount`, `viewCount` in
-elk `<script>`-blok, in plaats van een hardcoded schema), zodat het robuuster
-is tegen afwijkingen — maar de exacte veldnamen die Marktplaats gebruikt zijn
-**niet geverifieerd**.
+Dit script is oorspronkelijk geschreven in een sandbox zonder netwerktoegang
+tot `marktplaats.nl`. Bij een eerste handmatige test bleek:
+
+- **Titel en prijs**: komen uit de JSON op de overzichtspagina
+  (`vipUrl`/`title`/`priceInfo` met `priceCents`) — dit klopte meteen.
+- **Favorieten en views**: zitten **niet** in JSON op de advertentiepagina
+  zelf (de enige JSON daar is schema.org-structured-data met alleen
+  `offers.price`). Ze staan als platte tekst in een `aria-label`-attribuut
+  van het "Report-stats"-blok, bijv.
+  `aria-label="1583 keer gezien 11 keer bewaard sinds30 jan '26, 21:40"`.
+  `fetch_details.py` parsed dit nu met een specifieke regex
+  (`STATS_RE`/`extract_stats_from_html`), los van de generieke JSON-poging.
+- **Let op de "sinds"-datum**: dit is de timestamp die in dat aria-label
+  staat, wat wellicht *niet* de oorspronkelijke plaatsingsdatum is maar het
+  moment waarop de tellers voor het laatst zijn gereset (bijv. na een
+  "bump"/verlenging door de verkoper). Behandel `posted_date_raw` dus als
+  indicatief, niet als harde plaatsingsdatum, tenzij je dat los verifieert.
+- **Verkoper, plaats, categorie, accountleeftijd**: nog niet gevonden/
+  bevestigd — hier is verder handmatig uitzoekwerk voor nodig (zie hieronder).
 
 **Voordat je een echte run doet:**
 ```bash
