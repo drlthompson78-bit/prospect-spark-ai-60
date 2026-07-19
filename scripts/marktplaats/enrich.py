@@ -37,12 +37,19 @@ TITLE_MONTHLY_WORDS = ("p/m", "p.m.", "per maand", "/maand", "/mnd", "per month"
 # this are excluded from the ratio top-10 (still in the CSV).
 MIN_VIEWS_FOR_RATIO = 100
 
+# Order matters: the first matching label wins. Specific service types
+# (hosting/domein/SEO) and explicit "webdesign" are checked before the broad
+# website-building catch-all, so a generic "wordpress website" ad lands in
+# Website Bouw rather than Onbekend.
 TYPE_KEYWORDS = {
     "Webhosting": ["hosting", "webhost"],
     "Domeinregistratie": ["domein", "domain"],
-    "SEO": ["seo", "zoekmachine"],
-    "Website Bouw": ["website bouwen", "website laten maken", "webbouw", "bouw"],
-    "Webdesign": ["webdesign", "website ontwerp", "vormgeving"],
+    "SEO": ["seo", "zoekmachine", "vindbaar in google"],
+    "Webdesign": ["webdesign", "web design", "grafisch ontwerp", "vormgeving"],
+    "Website Bouw": [
+        "website", "wordpress", "webshop", "webwinkel", "webapp",
+        "web app", "site laten", "laten maken", "bouw",
+    ],
 }
 
 
@@ -113,11 +120,32 @@ def price_segment(label: str, value: float | None) -> str:
     return "Hoog"
 
 
-def classify_type(title: str | None, category_raw: str | None) -> str:
-    for text in (title or "").lower(), (category_raw or "").lower():
-        for label, keywords in TYPE_KEYWORDS.items():
-            if any(kw in text for kw in keywords):
-                return label
+# Detail-page <title> tags carry a fixed suffix + ad-id, e.g.:
+#   "Website nodig? €199 (a1453256241) — Webdesigners en Hosting — Marktplaats"
+# The "— Webdesigners en Hosting" part contains the word "hosting", which
+# would make classify_type() tag EVERY ad as Webhosting. Strip the suffix
+# (everything from the first em/en-dash separator) and the trailing ad-id so
+# both the stored title and the type classification see only the real title.
+_TITLE_SUFFIX_RE = re.compile(r"\s+[—–]\s+.*$")
+_TITLE_ADID_RE = re.compile(r"\s*\([ma]\d+\)\s*$")
+
+
+def clean_title(raw_title: str | None) -> str | None:
+    if not raw_title:
+        return raw_title
+    t = _TITLE_SUFFIX_RE.sub("", raw_title)
+    t = _TITLE_ADID_RE.sub("", t)
+    return t.strip() or raw_title.strip()
+
+
+def classify_type(title: str | None) -> str:
+    # Category metadata is a multi-value list ("Domeinregistratie, Webdesign,
+    # Webhosting, ...") and not usable for a single-label type, so classify
+    # from the (cleaned) title only.
+    text = (title or "").lower()
+    for label, keywords in TYPE_KEYWORDS.items():
+        if any(kw in text for kw in keywords):
+            return label
     return "Onbekend"
 
 
@@ -180,8 +208,9 @@ def enrich(records: list[dict]) -> list[dict]:
     seller_counts = Counter(seller_key(r.get("seller_name")) for r in records)
     rows = []
     for r in records:
+        title = clean_title(r.get("title"))
         label, value = normalize_price(r.get("price_raw"), r.get("listing_price_hint"))
-        if label == "vast" and looks_monthly(r.get("title")):
+        if label == "vast" and looks_monthly(title):
             label = "abonnement"  # numeric value kept, but segmented separately
         favorites = to_int(r.get("favorites"))
         views = to_int(r.get("views"))
@@ -189,10 +218,10 @@ def enrich(records: list[dict]) -> list[dict]:
         key = seller_key(r.get("seller_name"))
         rows.append({
             "url": r.get("url"),
-            "title": r.get("title"),
+            "title": title,
             "seller_name": r.get("seller_name"),
             "location": r.get("location"),
-            "type": classify_type(r.get("title"), r.get("category_raw")),
+            "type": classify_type(title),
             "price_label": label,
             "price_value": value,
             "price_segment": price_segment(label, value),
