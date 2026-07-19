@@ -86,13 +86,20 @@ class FieldExtractionError(Exception):
 #     with a timestamp)
 SELLER_NAME_RE = re.compile(r'href="#verkoper"[^>]*>([^<]+)</a>')
 CITY_NAME_RE = re.compile(r'"cityName":"([^"]+)"')
-ACCOUNT_AGE_RE = re.compile(r"(\d+)\s*jaar op Marktplaats")
+# Fallback for sellers with no fixed city (e.g. "Bezorgt in heel Nederland" /
+# nationwide-service sellers) — same visible div, but no cityName JSON
+# fragment exists for them since it genuinely doesn't apply.
+LOCATION_TEXT_RE = re.compile(r'SellerLocationSection-locationName[^"]*">([^<]+)<')
+# Brand-new accounts show "X dagen op Marktplaats" instead of "jaar" — seen
+# live (e.g. "3 dagen op Marktplaats"). Match all three units so new sellers
+# aren't systematically dropped from this field.
+ACCOUNT_AGE_RE = re.compile(r"(\d+)\s*(dagen?|maanden?|jaren?|jaar)\s*op Marktplaats")
 POSTED_DATE_RE = re.compile(r'Report-label">Sinds\s*<b>([^<]+)</b>')
 
 
 def extract_seller_fields(html: str) -> dict:
     seller_match = SELLER_NAME_RE.search(html)
-    city_match = CITY_NAME_RE.search(html)
+    location_match = CITY_NAME_RE.search(html) or LOCATION_TEXT_RE.search(html)
     age_match = ACCOUNT_AGE_RE.search(html)
     date_match = POSTED_DATE_RE.search(html)
 
@@ -100,7 +107,7 @@ def extract_seller_fields(html: str) -> dict:
         name
         for name, m in (
             ("seller_name", seller_match),
-            ("location", city_match),
+            ("location", location_match),
             ("account_age", age_match),
             ("posted_date", date_match),
         )
@@ -111,8 +118,8 @@ def extract_seller_fields(html: str) -> dict:
 
     return {
         "seller_name": html_module.unescape(seller_match.group(1)).strip(),
-        "location": html_module.unescape(city_match.group(1)).strip(),
-        "account_age_raw": int(age_match.group(1)),
+        "location": html_module.unescape(location_match.group(1)).strip(),
+        "account_age_raw": f"{age_match.group(1)} {age_match.group(2)}",
         "posted_date_raw": html_module.unescape(date_match.group(1)).strip(),
     }
 
