@@ -63,7 +63,13 @@ python fetch_details.py --limit 5           # snelle test
 
 # 3. Normaliseer, classificeer, en schrijf output (geen netwerk)
 python enrich.py
+
+# 4. (optioneel) render de scatterplot prijs x favorieten naar output/scatter.png
+pip install matplotlib
+python plot.py
 ```
+
+De uitgewerkte marktconclusie + prijsadvies staat in **`POSITIONERING.md`**.
 
 Onderbroken? Run 1 en 2 gewoon opnieuw — al gedownloade advertenties
 (`data/raw/<slug>.json`) worden overgeslagen.
