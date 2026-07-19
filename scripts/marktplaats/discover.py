@@ -80,10 +80,13 @@ def discover(max_pages: int, debug_dump_first: bool) -> dict:
     existing = load_existing()
     seen_urls = set(existing.keys())
     page = 1
-    consecutive_empty = 0
+    consecutive_no_new = 0
 
-    while page <= max_pages and consecutive_empty < 2:
-        page_url = CATEGORY_URL if page == 1 else f"{CATEGORY_URL}?p={page}"
+    # Marktplaats paginates via a path segment (/p/2/), NOT a ?p= query
+    # param (confirmed live 2026-07: ?p=N silently returns page 1 every
+    # time, so the old query form collected only the first page's ads).
+    while page <= max_pages and consecutive_no_new < 2:
+        page_url = CATEGORY_URL if page == 1 else f"{CATEGORY_URL}p/{page}/"
         print(f"[discover] fetching page {page}: {page_url}")
         html, status = fetch_html(page_url)
 
@@ -109,7 +112,10 @@ def discover(max_pages: int, debug_dump_first: bool) -> dict:
                 new_count += 1
 
         print(f"[discover] page {page}: {len(ads)} ads found, {new_count} new")
-        consecutive_empty = consecutive_empty + 1 if not ads else 0
+        # Stop on consecutive pages that add nothing new — covers both a
+        # genuinely exhausted category and a pagination format that silently
+        # repeats page 1 (0 new, not 0 found).
+        consecutive_no_new = consecutive_no_new + 1 if new_count == 0 else 0
         save_all(existing)
         page += 1
         if page <= max_pages:
