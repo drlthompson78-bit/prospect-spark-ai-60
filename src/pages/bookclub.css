@@ -170,21 +170,22 @@
   transform: translateY(-1px);
 }
 
-.avk-btn-primary {
+/* .avk prefix keeps these above `.avk a { color: inherit }` in specificity */
+.avk .avk-btn-primary {
   background: var(--avk-bottle);
   color: var(--avk-paper);
 }
 
-.avk-btn-primary:hover {
+.avk .avk-btn-primary:hover {
   background: var(--avk-bottle-deep);
 }
 
-.avk-btn-ghost {
+.avk .avk-btn-ghost {
   background: transparent;
   color: var(--avk-bottle);
 }
 
-.avk-btn-ghost:hover {
+.avk .avk-btn-ghost:hover {
   background: color-mix(in srgb, var(--avk-bottle) 8%, transparent);
 }
 
@@ -702,14 +703,14 @@
   color: color-mix(in srgb, var(--avk-paper) 75%, transparent);
 }
 
-.avk-cta .avk-btn {
+.avk .avk-cta .avk-btn {
   margin-top: 2.2rem;
   border-color: var(--avk-foil);
   background: var(--avk-foil);
   color: var(--avk-bottle-deep);
 }
 
-.avk-cta .avk-btn:hover {
+.avk .avk-cta .avk-btn:hover {
   background: var(--avk-foil-soft);
 }
 
