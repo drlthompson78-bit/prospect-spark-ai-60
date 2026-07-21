@@ -1,755 +1,837 @@
-/* Aardvark Book Club clone — self-contained styles, scoped under .avk */
+/* Burrow Book Club — a playful, maximalist book-club landing page.
+   Placeholder clone of an aardvarkbookclub.com-style layout: original copy,
+   fictional titles, CSS-drawn covers. All styles scoped under .bbc. */
 
-.avk {
-  --avk-bottle: #14342b;
-  --avk-bottle-deep: #0d241e;
-  --avk-paper: #f7f1e1;
-  --avk-paper-soft: #efe6cf;
-  --avk-ink: #1e2a26;
-  --avk-foil: #c9a227;
-  --avk-foil-soft: #e6cd7a;
-  --avk-seal: #a83c2a;
+.bbc {
+  --yellow: #ffc629;
+  --yellow-pale: #fbe89a;
+  --pink: #ec1c94;
+  --pink-hot: #ff43b0;
+  --indigo: #221a5e;
+  --purple: #6c4bd1;
+  --lilac: #9a80e6;
+  --lilac-bg: #f6e7f6;
+  --cyan: #1ececf;
+  --orange: #f7941d;
+  --maroon: #591233;
+  --green: #35a35a;
+  --coral: #ff8a6a;
+  --sky: #2f6bff;
+  --ink: #17120f;
+  --paper: #ffffff;
 
-  --avk-display: "Fraunces", "Georgia", serif;
-  --avk-body: "Karla", "Helvetica Neue", sans-serif;
+  --display: "Baloo 2", "Trebuchet MS", sans-serif;
+  --body: "Hanken Grotesk", "Helvetica Neue", sans-serif;
+  --hand: "Caveat", "Comic Sans MS", cursive;
 
-  font-family: var(--avk-body);
-  color: var(--avk-ink);
-  background: var(--avk-paper);
-  line-height: 1.6;
+  font-family: var(--body);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.5;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
-.avk *,
-.avk *::before,
-.avk *::after {
+.bbc *,
+.bbc *::before,
+.bbc *::after {
   box-sizing: border-box;
 }
 
-.avk h1,
-.avk h2,
-.avk h3 {
-  font-family: var(--avk-display);
-  font-weight: 600;
-  line-height: 1.08;
+.bbc h1,
+.bbc h2,
+.bbc h3 {
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 0.98;
   margin: 0;
   letter-spacing: -0.01em;
 }
 
-.avk p {
+.bbc p {
   margin: 0;
 }
 
-.avk a {
-  color: inherit;
-}
-
-.avk :focus-visible {
-  outline: 3px solid var(--avk-foil);
+.bbc :focus-visible {
+  outline: 3px solid var(--ink);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
-.avk-wrap {
-  max-width: 72rem;
+.bbc-wrap {
+  max-width: 76rem;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-.avk-eyebrow {
-  font-size: 0.75rem;
+/* ---------- Buttons & pills ---------- */
+
+.bbc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.bbc-btn:hover {
+  transform: translateY(-2px) rotate(-1deg);
+  filter: brightness(1.03);
+}
+
+.bbc-btn .bbc-arrow {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+
+.bbc .bbc-btn-pink {
+  background: var(--pink);
+  color: #fff;
+}
+.bbc .bbc-btn-pink .bbc-arrow {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.bbc .bbc-btn-orange {
+  background: var(--orange);
+  color: var(--ink);
+}
+.bbc .bbc-btn-orange .bbc-arrow {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.bbc .bbc-btn-dark {
+  background: var(--ink);
+  color: #fff;
+}
+.bbc .bbc-btn-dark .bbc-arrow {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* nav pill */
+.bbc-navpill {
   font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--avk-seal);
+  font-size: 1rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.55);
+  transition: background 120ms ease;
+  white-space: nowrap;
 }
-
-.avk-section {
-  padding: 5.5rem 0;
-}
-
-.avk-section-head {
-  max-width: 34rem;
-  margin-bottom: 3rem;
-}
-
-.avk-section-head h2 {
-  font-size: clamp(1.9rem, 3.5vw, 2.75rem);
-  margin-top: 0.75rem;
-}
-
-.avk-section-head p {
-  margin-top: 1rem;
-  color: color-mix(in srgb, var(--avk-ink) 72%, transparent);
+.bbc-navpill:hover {
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* ---------- Header ---------- */
 
-.avk-header {
+.bbc-header {
   position: sticky;
   top: 0;
-  z-index: 40;
-  background: color-mix(in srgb, var(--avk-paper) 88%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid color-mix(in srgb, var(--avk-ink) 12%, transparent);
+  z-index: 50;
 }
 
-.avk-header-in {
+.bbc-header-in {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 0.9rem 1.5rem;
-  max-width: 72rem;
+  padding: 1rem 1.5rem;
+  max-width: 82rem;
   margin: 0 auto;
 }
 
-.avk-wordmark {
-  font-family: var(--avk-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  text-decoration: none;
+.bbc-logo {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--ink);
+  margin-right: auto;
 }
 
-.avk-wordmark-badge {
-  width: 1.9rem;
-  height: 1.9rem;
+.bbc-logo-mark {
+  font-size: 1.6rem;
+  line-height: 1;
+  transform: rotate(-8deg);
+}
+
+.bbc-logo-name {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.bbc-logo-sub {
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  align-self: center;
+}
+
+.bbc-nav {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bbc-social {
+  display: none;
+  gap: 0.5rem;
+}
+
+.bbc-social a {
+  width: 2.4rem;
+  height: 2.4rem;
   border-radius: 50%;
-  background: var(--avk-bottle);
-  color: var(--avk-foil-soft);
+  background: var(--ink);
+  color: #fff;
   display: grid;
   place-items: center;
-  font-size: 1rem;
-}
-
-.avk-nav {
-  display: none;
-  gap: 1.75rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.avk-nav a {
   text-decoration: none;
-  opacity: 0.75;
-  transition: opacity 150ms ease;
+  font-size: 1rem;
+  transition: transform 120ms ease;
+}
+.bbc-social a:hover {
+  transform: translateY(-2px) rotate(6deg);
 }
 
-.avk-nav a:hover {
-  opacity: 1;
-}
-
-@media (min-width: 768px) {
-  .avk-nav {
+@media (min-width: 900px) {
+  .bbc-nav,
+  .bbc-social {
     display: flex;
   }
 }
 
-/* ---------- Buttons ---------- */
+/* ---------- Blob helpers ---------- */
 
-.avk-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-family: var(--avk-body);
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.8rem 1.6rem;
-  border-radius: 999px;
-  border: 2px solid var(--avk-bottle);
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 150ms ease, background 150ms ease, color 150ms ease;
+.bbc-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
-
-.avk-btn:hover {
-  transform: translateY(-1px);
-}
-
-/* .avk prefix keeps these above `.avk a { color: inherit }` in specificity */
-.avk .avk-btn-primary {
-  background: var(--avk-bottle);
-  color: var(--avk-paper);
-}
-
-.avk .avk-btn-primary:hover {
-  background: var(--avk-bottle-deep);
-}
-
-.avk .avk-btn-ghost {
-  background: transparent;
-  color: var(--avk-bottle);
-}
-
-.avk .avk-btn-ghost:hover {
-  background: color-mix(in srgb, var(--avk-bottle) 8%, transparent);
+.bbc-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
 }
 
 /* ---------- Hero ---------- */
 
-.avk-hero {
+.bbc-hero {
+  position: relative;
+  background: var(--yellow);
+  margin-top: -4.7rem;
+  padding-top: 6.5rem;
   overflow: hidden;
-  background:
-    radial-gradient(60rem 30rem at 110% -10%, color-mix(in srgb, var(--avk-foil) 14%, transparent), transparent 60%),
-    var(--avk-paper);
 }
 
-.avk-hero-in {
+.bbc-hero .bbc-blob-1 {
+  width: 42rem;
+  height: 34rem;
+  right: -6rem;
+  top: 2rem;
+  background: rgba(255, 255, 255, 0.28);
+}
+.bbc-hero .bbc-blob-2 {
+  width: 22rem;
+  height: 18rem;
+  left: 30%;
+  bottom: -6rem;
+  background: var(--orange);
+  opacity: 0.55;
+}
+
+.bbc-hero-in {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 3rem;
+  gap: 2rem;
   align-items: center;
-  padding-top: 4.5rem;
-  padding-bottom: 4.5rem;
+  padding-bottom: 4rem;
 }
 
 @media (min-width: 900px) {
-  .avk-hero-in {
-    grid-template-columns: 1.1fr 0.9fr;
-    padding-top: 6rem;
-    padding-bottom: 6rem;
+  .bbc-hero-in {
+    grid-template-columns: 1.15fr 0.85fr;
+    padding-bottom: 5rem;
   }
 }
 
-.avk-hero h1 {
-  font-size: clamp(2.6rem, 6vw, 4.4rem);
-  font-weight: 640;
-  margin-top: 1rem;
+.bbc-hero h1 {
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  max-width: 12ch;
 }
 
-.avk-hero h1 em {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--avk-bottle);
+.bbc-hero-sub {
+  margin-top: 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  max-width: 32ch;
 }
 
-.avk-hero-sub {
-  margin-top: 1.4rem;
-  font-size: 1.1rem;
-  max-width: 30rem;
-  color: color-mix(in srgb, var(--avk-ink) 75%, transparent);
+.bbc-hero-cta {
+  margin-top: 2rem;
 }
 
-.avk-hero-cta {
-  margin-top: 2.2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
-  align-items: center;
-}
-
-.avk-hero-note {
-  margin-top: 1rem;
-  font-size: 0.85rem;
-  color: color-mix(in srgb, var(--avk-ink) 60%, transparent);
-}
-
-/* ---------- CSS hardcovers (signature element) ---------- */
-
-.avk-shelf {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 0;
-  perspective: 1200px;
-  padding: 1rem 0 2rem;
-}
-
-.avk-book {
+.bbc-hero-art {
   position: relative;
-  width: 9.5rem;
+  min-height: 20rem;
+  display: grid;
+  place-items: center;
+}
+
+.bbc-hand {
+  font-family: var(--hand);
+  font-weight: 700;
+  color: var(--purple);
+  font-size: 1.5rem;
+  line-height: 1.05;
+  transform: rotate(-8deg);
+}
+
+/* ---------- CSS book covers ---------- */
+
+.bbc-book {
+  position: relative;
   aspect-ratio: 2 / 3;
-  border-radius: 3px 10px 10px 3px;
-  transform: rotate(var(--tilt, 0deg));
-  transform-origin: bottom center;
-  transition: transform 250ms ease;
-  box-shadow:
-    0 18px 30px -14px rgba(13, 36, 30, 0.55),
-    inset -6px 0 12px -8px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  padding: 1rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  box-shadow: 0 22px 40px -18px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  isolation: isolate;
 }
-
-.avk-shelf .avk-book:not(:first-child) {
-  margin-left: -2.2rem;
-}
-
-.avk-shelf:hover .avk-book,
-.avk-shelf:focus-within .avk-book {
-  transform: rotate(calc(var(--tilt, 0deg) * 1.6)) translateY(-6px);
-}
-
-.avk-book::before {
-  /* foiled spine */
+.bbc-book::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
-  width: 9px;
-  border-radius: 3px 0 0 3px;
-  background: linear-gradient(
-    180deg,
-    var(--avk-foil-soft),
-    var(--avk-foil) 30%,
-    #8a6d14 55%,
-    var(--avk-foil-soft) 80%,
-    var(--avk-foil)
-  );
-  opacity: 0.9;
+  width: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  z-index: 2;
 }
-
-.avk-book::after {
-  /* matte jacket sheen */
+.bbc-book::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(105deg, rgba(255, 255, 255, 0.22), transparent 40%);
-  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.25), transparent 42%);
+  z-index: 1;
 }
-
-.avk-book-inner {
-  position: absolute;
-  inset: 0 0 0 9px;
-  padding: 1rem 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-radius: 0 10px 10px 0;
-  color: var(--avk-paper);
+.bbc-book > * {
+  position: relative;
+  z-index: 2;
 }
-
-.avk-book-title {
-  font-family: var(--avk-display);
-  font-weight: 600;
-  font-size: 1.02rem;
-  line-height: 1.15;
-}
-
-.avk-book-author {
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
+.bbc-book-kicker {
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   opacity: 0.85;
 }
-
-.avk-book-mark {
-  align-self: flex-end;
-  font-size: 0.9rem;
+.bbc-book-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.9rem;
+  line-height: 0.95;
+  margin-top: auto;
+}
+.bbc-book-author {
+  font-family: var(--body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   opacity: 0.9;
 }
 
-/* jacket color themes */
-.avk-jacket-moss { background: linear-gradient(160deg, #2e5744, #14342b); }
-.avk-jacket-night { background: linear-gradient(160deg, #27334d, #131a2c); }
-.avk-jacket-clay { background: linear-gradient(160deg, #b65437, #7c2d1b); }
-.avk-jacket-plum { background: linear-gradient(160deg, #6b3555, #3c1a30); }
-.avk-jacket-sea { background: linear-gradient(160deg, #2c6a72, #143a40); }
+/* jacket palettes */
+.bbc-j-indigo { background: linear-gradient(160deg, #3b2f8f, #1a144a); }
+.bbc-j-pink { background: linear-gradient(160deg, #ff5bb0, #c0106e); }
+.bbc-j-teal { background: linear-gradient(160deg, #1fd6c9, #0b7d84); }
+.bbc-j-coral { background: linear-gradient(160deg, #ff7a59, #d63b6a); }
+.bbc-j-green { background: linear-gradient(160deg, #4fbf6b, #1c6f3a); }
+.bbc-j-plum { background: linear-gradient(160deg, #8a4bb8, #45215f); }
+.bbc-j-sky { background: linear-gradient(160deg, #4aa3ff, #1d3f9e); }
 
-/* ---------- Ticker ---------- */
-
-.avk-ticker {
-  background: var(--avk-bottle);
-  color: var(--avk-paper-soft);
-  overflow: hidden;
-  padding: 0.75rem 0;
-  border-block: 1px solid var(--avk-bottle-deep);
+/* hero floating books */
+.bbc-hero-book {
+  position: absolute;
+  width: 15rem;
+  transform: rotate(9deg);
+  transition: transform 300ms ease;
+}
+.bbc-hero-book:hover {
+  transform: rotate(3deg) translateY(-8px);
+}
+.bbc-hero-book-2 {
+  width: 9rem;
+  top: -1rem;
+  left: -1rem;
+  transform: rotate(-14deg);
+  opacity: 0.96;
 }
 
-.avk-ticker-track {
-  display: flex;
-  gap: 3rem;
-  width: max-content;
-  animation: avk-scroll 30s linear infinite;
-  font-size: 0.8rem;
+/* ---------- Section scaffolding ---------- */
+
+.bbc-section {
+  position: relative;
+  padding: 5rem 0;
+  z-index: 1;
+}
+
+.bbc-eyebrow {
+  font-family: var(--hand);
   font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-size: 1.6rem;
+  transform: rotate(-3deg);
+  display: inline-block;
+}
+
+.bbc-h2 {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+}
+
+/* ---------- Books carousel ---------- */
+
+.bbc-books {
+  background: var(--paper);
+}
+.bbc-books-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.bbc-books-head p {
+  font-weight: 600;
+  color: #55504c;
+  margin-top: 0.4rem;
+}
+.bbc-rail {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 1.5rem 1.5rem 2.5rem;
+  margin: 0 -1.5rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.bbc-rail::-webkit-scrollbar { display: none; }
+
+.bbc-card {
+  flex: 0 0 15rem;
+  scroll-snap-align: start;
+}
+.bbc-card-cover {
+  position: relative;
+  border-radius: 16px;
+  padding: 0.7rem;
+  transition: transform 200ms ease;
+}
+.bbc-card:nth-child(5n + 1) .bbc-card-cover { background: var(--lilac); }
+.bbc-card:nth-child(5n + 2) .bbc-card-cover { background: var(--yellow); }
+.bbc-card:nth-child(5n + 3) .bbc-card-cover { background: var(--coral, #ff8a6a); }
+.bbc-card:nth-child(5n + 4) .bbc-card-cover { background: var(--green); }
+.bbc-card:nth-child(5n + 5) .bbc-card-cover { background: var(--pink-hot); }
+.bbc-card-cover:hover {
+  transform: translateY(-6px) rotate(-1.5deg);
+}
+.bbc-card-sprout {
+  position: absolute;
+  top: -1.1rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(-6deg);
+  font-size: 1.8rem;
+}
+.bbc-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1rem 0 0.7rem;
+}
+.bbc-tag {
+  font-weight: 800;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  color: #fff;
   white-space: nowrap;
 }
-
-.avk-ticker-track span::after {
-  content: "✦";
-  margin-left: 3rem;
-  color: var(--avk-foil);
+.bbc-tag-pink { background: var(--pink); }
+.bbc-tag-blue { background: var(--sky, #2f6bff); }
+.bbc-tag-cyan { background: var(--cyan); color: var(--ink); }
+.bbc-tag-purple { background: var(--purple); }
+.bbc-tag-orange { background: var(--orange); color: var(--ink); }
+.bbc-tag-green { background: var(--green); }
+.bbc-tag-yellow { background: var(--yellow); color: var(--ink); }
+.bbc-card-title {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  line-height: 1;
 }
-
-@keyframes avk-scroll {
-  to {
-    transform: translateX(-50%);
-  }
+.bbc-card-desc {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #55504c;
+  margin-top: 0.4rem;
 }
 
 /* ---------- How it works ---------- */
 
-.avk-steps {
-  display: grid;
-  gap: 1.5rem;
+.bbc-how {
+  background: var(--lilac-bg);
+  overflow: hidden;
 }
-
-@media (min-width: 768px) {
-  .avk-steps {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.bbc-how .bbc-blob-1 {
+  width: 30rem; height: 24rem; left: -6rem; top: 4rem;
+  background: rgba(255, 255, 255, 0.6);
 }
-
-.avk-step {
-  background: #fffdf6;
-  border: 1px solid color-mix(in srgb, var(--avk-ink) 10%, transparent);
-  border-radius: 14px;
-  padding: 1.8rem 1.6rem;
+.bbc-steps {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding: 2rem 1.5rem;
+  margin: 2rem -1.5rem 0;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
 }
-
-.avk-step-num {
-  font-family: var(--avk-display);
-  font-style: italic;
-  font-size: 2rem;
-  color: var(--avk-foil);
+.bbc-steps::-webkit-scrollbar { display: none; }
+.bbc-step {
+  flex: 0 0 17rem;
+  scroll-snap-align: center;
+  border-radius: 26px;
+  padding: 1.6rem 1.5rem 2rem;
+  color: var(--ink);
+  box-shadow: 0 16px 30px -18px rgba(0, 0, 0, 0.5);
 }
-
-.avk-step h3 {
-  margin-top: 0.6rem;
-  font-size: 1.25rem;
-}
-
-.avk-step p {
-  margin-top: 0.6rem;
-  font-size: 0.95rem;
-  color: color-mix(in srgb, var(--avk-ink) 72%, transparent);
-}
-
-/* ---------- Picks ---------- */
-
-.avk-picks {
-  background: var(--avk-bottle);
-  color: var(--avk-paper);
-}
-
-.avk-picks .avk-section-head p {
-  color: color-mix(in srgb, var(--avk-paper) 75%, transparent);
-}
-
-.avk-picks-grid {
-  display: grid;
-  gap: 2.5rem 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  justify-items: center;
-}
-
-.avk-pick {
-  text-align: center;
-  max-width: 11rem;
-}
-
-.avk-pick .avk-book {
-  margin: 0 auto;
-  width: 100%;
-}
-
-.avk-pick .avk-book:hover {
-  transform: translateY(-8px) rotate(-1.5deg);
-}
-
-.avk-pick-genre {
-  display: inline-block;
-  margin-top: 1.1rem;
-  font-size: 0.68rem;
+.bbc-step:nth-child(1) { background: var(--cyan); transform: rotate(-2deg); }
+.bbc-step:nth-child(2) { background: var(--pink); color: #fff; transform: rotate(1.5deg); }
+.bbc-step:nth-child(3) { background: var(--yellow); transform: rotate(-1.5deg); }
+.bbc-step:nth-child(4) { background: var(--lilac); color: #fff; transform: rotate(2deg); }
+.bbc-step-tag {
+  font-family: var(--hand);
   font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--avk-foil-soft);
+  font-size: 1.6rem;
+  display: block;
+  text-align: center;
+}
+.bbc-step-emoji {
+  font-size: 3.4rem;
+  text-align: center;
+  margin: 1rem 0 1.4rem;
+}
+.bbc-step h3 {
+  font-size: 1.7rem;
+}
+.bbc-step p {
+  margin-top: 0.6rem;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
-.avk-pick-name {
-  margin-top: 0.35rem;
-  font-family: var(--avk-display);
-  font-size: 1.05rem;
-  line-height: 1.2;
+/* ---------- Why Burrow (arced badge) ---------- */
+
+.bbc-why {
+  background: var(--yellow-pale);
+  text-align: center;
+  overflow: hidden;
+}
+.bbc-why-stage {
+  position: relative;
+  max-width: 46rem;
+  margin: 0 auto;
+  aspect-ratio: 1 / 0.78;
+}
+.bbc-why-arc {
+  width: 100%;
+  color: var(--maroon);
+  overflow: visible;
+}
+.bbc-why-arc text {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 3.4px;
+  fill: var(--maroon);
+  letter-spacing: 0.02em;
+}
+.bbc-why-mark {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8rem;
+  color: var(--maroon);
+}
+.bbc-why-pill {
+  position: absolute;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.2rem, 3vw, 2.1rem);
+  padding: 0.5rem 1.3rem;
+  border-radius: 999px;
+  box-shadow: 0 10px 22px -12px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+.bbc-why-pill.p1 { background: var(--pink); color: #fff; top: 40%; left: 2%; transform: rotate(-6deg); }
+.bbc-why-pill.p2 { background: var(--orange); color: var(--maroon); top: 46%; right: 1%; transform: rotate(5deg); }
+.bbc-why-pill.p3 { background: var(--lilac); color: #fff; top: 74%; left: 8%; transform: rotate(4deg); }
+.bbc-why-pill.p4 { background: var(--cyan); color: var(--indigo); top: 80%; right: 6%; transform: rotate(-4deg); }
+
+@media (max-width: 640px) {
+  .bbc-why-pill { font-size: 1rem; padding: 0.35rem 0.9rem; }
+  .bbc-why-mark { font-size: 5rem; }
 }
 
-.avk-pick-author {
-  margin-top: 0.25rem;
-  font-size: 0.8rem;
-  color: color-mix(in srgb, var(--avk-paper) 65%, transparent);
+/* ---------- App / think inside the box ---------- */
+
+.bbc-app {
+  background: var(--indigo);
+  color: #fff;
+  overflow: hidden;
 }
-
-/* ---------- Hardcover anatomy ---------- */
-
-.avk-anatomy {
+.bbc-app .bbc-blob-1 {
+  width: 28rem; height: 22rem; right: -4rem; top: -4rem;
+  background: var(--purple); opacity: 0.5;
+}
+.bbc-app-in {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 3rem;
+  gap: 2.5rem;
   align-items: center;
 }
-
 @media (min-width: 900px) {
-  .avk-anatomy {
-    grid-template-columns: 0.9fr 1.1fr;
-  }
+  .bbc-app-in { grid-template-columns: 1.1fr 0.9fr; }
 }
-
-.avk-anatomy .avk-book {
-  width: 14rem;
-  margin: 0 auto;
-  transform: rotate(-3deg);
+.bbc-app h2 {
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
 }
-
-.avk-anatomy .avk-book:hover {
-  transform: rotate(0deg) translateY(-6px);
+.bbc-app h2 em { font-style: italic; color: var(--yellow); }
+.bbc-app p {
+  margin-top: 1.2rem;
+  font-weight: 600;
+  max-width: 34ch;
+  color: rgba(255, 255, 255, 0.85);
 }
-
-.avk-features {
-  display: grid;
-  gap: 1.4rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.avk-feature {
+.bbc-stores {
   display: flex;
-  gap: 1rem;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
 }
-
-.avk-feature-icon {
-  flex: none;
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 50%;
+.bbc-store {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  padding: 0.6rem 1.1rem;
+  text-decoration: none;
+  font-weight: 700;
+}
+.bbc-store span { font-size: 0.65rem; opacity: 0.8; display: block; }
+.bbc-store strong { font-size: 1rem; }
+.bbc-phone {
+  justify-self: center;
+  width: 15rem;
+  aspect-ratio: 1 / 2;
+  border-radius: 34px;
+  background: linear-gradient(160deg, var(--pink), var(--purple));
+  border: 8px solid #0e0a30;
+  box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.7);
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--avk-foil) 22%, transparent);
-  color: var(--avk-bottle);
-  font-size: 1.05rem;
-}
-
-.avk-feature h3 {
-  font-size: 1.1rem;
-}
-
-.avk-feature p {
-  margin-top: 0.3rem;
-  font-size: 0.92rem;
-  color: color-mix(in srgb, var(--avk-ink) 72%, transparent);
-}
-
-/* ---------- Pricing ---------- */
-
-.avk-price-card {
-  max-width: 26rem;
-  margin: 0 auto;
-  background: #fffdf6;
-  border: 2px solid var(--avk-bottle);
-  border-radius: 18px;
-  padding: 2.4rem 2.2rem;
+  color: #fff;
   text-align: center;
-  box-shadow: 8px 8px 0 color-mix(in srgb, var(--avk-foil) 55%, transparent);
+  padding: 2rem 1.5rem;
+  transform: rotate(4deg);
 }
+.bbc-phone .bbc-phone-mark { font-size: 3rem; }
+.bbc-phone h3 { font-size: 1.6rem; margin-top: 0.8rem; }
 
-.avk-price {
-  font-family: var(--avk-display);
-  font-size: 3.4rem;
-  font-weight: 650;
-  color: var(--avk-bottle);
-  line-height: 1;
+/* ---------- Genre marquee ---------- */
+
+.bbc-genres {
+  background: var(--pink);
+  color: #fff;
+  padding: 4rem 0;
+  overflow: hidden;
 }
-
-.avk-price sup {
-  font-size: 1.4rem;
-  vertical-align: super;
+.bbc-genres h2 {
+  text-align: center;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin-bottom: 2rem;
 }
-
-.avk-price-per {
-  font-size: 0.9rem;
-  color: color-mix(in srgb, var(--avk-ink) 60%, transparent);
-}
-
-.avk-price-list {
-  list-style: none;
-  margin: 1.8rem 0 0;
-  padding: 1.6rem 0 0;
-  border-top: 1px dashed color-mix(in srgb, var(--avk-ink) 25%, transparent);
-  display: grid;
-  gap: 0.7rem;
-  font-size: 0.95rem;
-  text-align: left;
-}
-
-.avk-price-list li {
+.bbc-marquee {
   display: flex;
-  gap: 0.6rem;
-  align-items: baseline;
+  gap: 2.5rem;
+  width: max-content;
+  animation: bbc-scroll 26s linear infinite;
+}
+.bbc-marquee.rev { animation-direction: reverse; }
+.bbc-marquee span {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+.bbc-marquee span::after {
+  content: "✦";
+  color: var(--yellow);
+}
+.bbc-marquee-row + .bbc-marquee-row { margin-top: 1rem; }
+.bbc-marquee-row {
+  overflow: hidden;
+}
+@keyframes bbc-scroll {
+  to { transform: translateX(-50%); }
 }
 
-.avk-price-list li::before {
-  content: "✓";
-  color: var(--avk-seal);
-  font-weight: 700;
-}
+/* ---------- Promo bar ---------- */
 
-.avk-price-card .avk-btn {
-  margin-top: 2rem;
-  width: 100%;
+.bbc-promo {
+  background: var(--cyan);
+  color: var(--indigo);
+  padding: 0.9rem 0;
+  overflow: hidden;
+  border-block: 4px solid var(--ink);
 }
-
-/* ---------- Testimonials ---------- */
-
-.avk-quotes {
-  display: grid;
-  gap: 1.5rem;
+.bbc-promo .bbc-marquee { animation-duration: 18s; }
+.bbc-promo .bbc-marquee span {
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
 }
-
-@media (min-width: 768px) {
-  .avk-quotes {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.avk-quote {
-  background: var(--avk-paper-soft);
-  border-radius: 14px;
-  padding: 1.8rem 1.6rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.avk-quote blockquote {
-  margin: 0;
-  font-family: var(--avk-display);
-  font-style: italic;
-  font-size: 1.08rem;
-  line-height: 1.45;
-}
-
-.avk-quote figcaption {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: color-mix(in srgb, var(--avk-ink) 65%, transparent);
-}
-
-.avk-stars {
-  color: var(--avk-foil);
-  letter-spacing: 0.15em;
-}
+.bbc-promo .bbc-marquee span::after { content: "🎟"; }
 
 /* ---------- FAQ ---------- */
 
-.avk-faq {
-  max-width: 44rem;
+.bbc-faq {
+  background: var(--paper);
+}
+.bbc-faq-in {
+  max-width: 46rem;
   margin: 0 auto;
 }
-
-.avk-faq details {
-  border-bottom: 1px solid color-mix(in srgb, var(--avk-ink) 15%, transparent);
+.bbc-faq h2 {
+  text-align: center;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  margin-bottom: 2.5rem;
 }
-
-.avk-faq summary {
+.bbc-faq details {
+  background: var(--lilac-bg);
+  border-radius: 18px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.bbc-faq summary {
   cursor: pointer;
   list-style: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1.2rem 0;
-  font-family: var(--avk-display);
-  font-size: 1.15rem;
+  padding: 1.2rem 1.4rem;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.bbc-faq summary::-webkit-details-marker { display: none; }
+.bbc-faq summary::after {
+  content: "+";
+  font-family: var(--display);
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--pink);
+  transition: transform 180ms ease;
+}
+.bbc-faq details[open] summary::after { transform: rotate(45deg); }
+.bbc-faq details p {
+  padding: 0 1.4rem 1.3rem;
+  font-weight: 600;
+  color: #55504c;
+}
+
+/* ---------- Newsletter ---------- */
+
+.bbc-news {
+  background: var(--purple);
+  color: #fff;
+  text-align: center;
+}
+.bbc-news h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
+.bbc-news p { margin-top: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.85); }
+.bbc-news-form {
+  margin: 2rem auto 0;
+  max-width: 30rem;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.bbc-news-form input {
+  flex: 1 1 16rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.3rem;
+  font-family: var(--body);
+  font-size: 1rem;
   font-weight: 600;
 }
 
-.avk-faq summary::-webkit-details-marker {
-  display: none;
+/* ---------- Footer ---------- */
+
+.bbc-footer {
+  background: var(--indigo);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 3rem 0;
+  font-weight: 600;
 }
-
-.avk-faq summary::after {
-  content: "+";
-  font-size: 1.4rem;
-  color: var(--avk-seal);
-  transition: transform 200ms ease;
-}
-
-.avk-faq details[open] summary::after {
-  transform: rotate(45deg);
-}
-
-.avk-faq details p {
-  padding: 0 0 1.3rem;
-  max-width: 38rem;
-  color: color-mix(in srgb, var(--avk-ink) 75%, transparent);
-}
-
-/* ---------- Final CTA + footer ---------- */
-
-.avk-cta {
-  background: var(--avk-bottle);
-  color: var(--avk-paper);
-  text-align: center;
-}
-
-.avk-cta h2 {
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
-  max-width: 34rem;
-  margin: 0 auto;
-}
-
-.avk-cta h2 em {
-  font-style: italic;
-  color: var(--avk-foil-soft);
-}
-
-.avk-cta p {
-  margin: 1.2rem auto 0;
-  max-width: 28rem;
-  color: color-mix(in srgb, var(--avk-paper) 75%, transparent);
-}
-
-.avk .avk-cta .avk-btn {
-  margin-top: 2.2rem;
-  border-color: var(--avk-foil);
-  background: var(--avk-foil);
-  color: var(--avk-bottle-deep);
-}
-
-.avk .avk-cta .avk-btn:hover {
-  background: var(--avk-foil-soft);
-}
-
-.avk-footer {
-  background: var(--avk-bottle-deep);
-  color: color-mix(in srgb, var(--avk-paper) 70%, transparent);
-  font-size: 0.85rem;
-}
-
-.avk-footer-in {
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+.bbc-footer-in {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   align-items: center;
   justify-content: space-between;
 }
-
-.avk-footer nav {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.avk-footer a {
-  text-decoration: none;
-}
-
-.avk-footer a:hover {
-  color: var(--avk-paper);
-}
+.bbc-footer nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.bbc-footer a { color: inherit; text-decoration: none; }
+.bbc-footer a:hover { color: #fff; }
+.bbc-footer-note { font-size: 0.85rem; opacity: 0.65; }
 
 /* ---------- Motion safety ---------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .avk *,
-  .avk *::before,
-  .avk *::after {
+  .bbc *,
+  .bbc *::before,
+  .bbc *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

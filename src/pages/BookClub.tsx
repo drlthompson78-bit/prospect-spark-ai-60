@@ -1,337 +1,440 @@
 import "./bookclub.css";
 
-type Pick = {
+const BRAND = "Burrow Book Club";
+
+type Book = {
   title: string;
   author: string;
-  genre: string;
+  kicker: string;
   jacket: string;
+  tags: { label: string; tone: string }[];
+  desc: string;
 };
 
-const monthlyPicks: Pick[] = [
-  { title: "The Glass Orchard", author: "June Calloway", genre: "Literary fiction", jacket: "avk-jacket-moss" },
-  { title: "Do Not Wake the Bees", author: "R. M. Ostrander", genre: "Thriller", jacket: "avk-jacket-night" },
-  { title: "An Honest Map of Us", author: "Priya Venn", genre: "Romance", jacket: "avk-jacket-clay" },
-  { title: "Salt for the Sea Witch", author: "Ilsa Marchetti", genre: "Fantasy", jacket: "avk-jacket-plum" },
-  { title: "The Last Light on Vessel Street", author: "Theo Abara", genre: "Historical", jacket: "avk-jacket-sea" },
+const books: Book[] = [
+  {
+    title: "Long Way From Ordinary",
+    author: "Gabriela Nunes",
+    kicker: "A novel",
+    jacket: "bbc-j-plum",
+    tags: [
+      { label: "Contemporary", tone: "bbc-tag-purple" },
+      { label: "Coming of age", tone: "bbc-tag-pink" },
+    ],
+    desc: "A sharp, tender debut about the year everything changed.",
+  },
+  {
+    title: "Fall For Me",
+    author: "Shireen Oduya",
+    kicker: "A novel",
+    jacket: "bbc-j-pink",
+    tags: [
+      { label: "Romance", tone: "bbc-tag-pink" },
+      { label: "Fantasy", tone: "bbc-tag-blue" },
+      { label: "Has a dog", tone: "bbc-tag-orange" },
+    ],
+    desc: "A stay-up-all-night, spicy romance with a deadly secret.",
+  },
+  {
+    title: "Every Second Version",
+    author: "Nadia Messner",
+    kicker: "A novel",
+    jacket: "bbc-j-coral",
+    tags: [
+      { label: "Debut", tone: "bbc-tag-cyan" },
+      { label: "Magical realism", tone: "bbc-tag-green" },
+      { label: "Has a cat", tone: "bbc-tag-purple" },
+    ],
+    desc: "For fans of messy love stories and second chances.",
+  },
+  {
+    title: "Dreaming of Electric Things",
+    author: "Paul Trembley",
+    kicker: "A novel",
+    jacket: "bbc-j-green",
+    tags: [
+      { label: "Sci-fi", tone: "bbc-tag-green" },
+      { label: "Horror", tone: "bbc-tag-purple" },
+      { label: "Satire", tone: "bbc-tag-yellow" },
+    ],
+    desc: "A darkly funny trip to the edge of what's human.",
+  },
+  {
+    title: "The Quiet House",
+    author: "Nadia Barelo",
+    kicker: "A novel",
+    jacket: "bbc-j-pink",
+    tags: [{ label: "Thriller", tone: "bbc-tag-blue" }],
+    desc: "A bestselling indie thriller about the woman next door.",
+  },
+  {
+    title: "Salt & the Sea Witch",
+    author: "Isla March",
+    kicker: "A novel",
+    jacket: "bbc-j-teal",
+    tags: [
+      { label: "Fantasy", tone: "bbc-tag-blue" },
+      { label: "Sapphic", tone: "bbc-tag-pink" },
+    ],
+    desc: "A windswept fantasy of magic, salt water, and revenge.",
+  },
 ];
+
+const steps = [
+  {
+    tag: "Step #1",
+    emoji: "🗓️",
+    title: "Explore our books",
+    body: "On the first of every month we reveal 6–7 fresh releases. Follow along for hints before they drop.",
+  },
+  {
+    tag: "Step #2",
+    emoji: "📦",
+    title: "Build your box",
+    body: "Pick up to 3 books per box. At least one comes from this month's shortlist — the rest is yours to mix.",
+  },
+  {
+    tag: "Step #3",
+    emoji: "🚪",
+    title: "Check your doorstep",
+    body: "Your box ships free and lands on your doormat — the best excuse to cancel your Friday night plans.",
+  },
+  {
+    tag: "Step #4",
+    emoji: "💬",
+    title: "Share your reads",
+    body: "Tag your haul, swap hot takes, and jump into the in-app club discussions with other members.",
+  },
+];
+
+const genresA = ["Romance", "Thriller", "Literary fiction", "Fantasy", "Gothic"];
+const genresB = ["Historical", "Magical realism", "Sci-fi", "Horror", "And more!"];
 
 const faqs = [
   {
-    q: "How does the club work?",
-    a: "On the first of every month we announce a fresh shelf of new releases. You pick the one that grabs you, and a hardcover edition ships straight to your door with free shipping.",
+    q: "How much does membership cost?",
+    a: "One book a month with free shipping. Add up to two extra picks per box at a reduced member price — no surprise fees, ever.",
   },
   {
-    q: "Can I skip a month?",
-    a: "Yes — skip as many months as you like from your account, no questions asked. You're only charged for months you receive a book.",
+    q: "Which countries do you ship to?",
+    a: "We currently ship to addresses across the USA and Canada, with free shipping baked into every membership.",
   },
   {
-    q: "Can I get more than one book?",
-    a: "Absolutely. Your membership covers one hardcover per month, and you can add up to two extra picks at a reduced member price.",
+    q: "Can I skip or cancel?",
+    a: "Yes. Skip any month for free from your account, and cancel in two clicks whenever you like — no phone call, no fine print.",
   },
   {
-    q: "What kind of books do you choose?",
-    a: "Brand-new releases across literary fiction, thrillers, romance, fantasy, historical fiction and narrative nonfiction — chosen by readers, not algorithms.",
-  },
-  {
-    q: "How do I cancel?",
-    a: "Any time, in two clicks, from your account settings. Your last book still ships if it's already on its way.",
+    q: "How do I join?",
+    a: "Sign up, tell us the genres you love, then choose your first box from the current month's shortlist. That's it.",
   },
 ];
 
-function Book({ pick, tilt }: { pick: Pick; tilt?: number }) {
+function Cover({ book }: { book: Book }) {
   return (
-    <div
-      className={`avk-book ${pick.jacket}`}
-      style={tilt !== undefined ? ({ "--tilt": `${tilt}deg` } as React.CSSProperties) : undefined}
-      aria-label={`${pick.title} by ${pick.author}`}
-    >
-      <div className="avk-book-inner">
-        <span className="avk-book-title">{pick.title}</span>
-        <span className="avk-book-mark" aria-hidden="true">
-          ❦
-        </span>
-        <span className="avk-book-author">{pick.author}</span>
-      </div>
+    <div className={`bbc-book ${book.jacket}`} aria-label={`${book.title} by ${book.author}`}>
+      <span className="bbc-book-kicker">{book.kicker}</span>
+      <span className="bbc-book-title">{book.title}</span>
+      <span className="bbc-book-author">{book.author}</span>
     </div>
   );
 }
 
 export default function BookClub() {
   return (
-    <div className="avk">
-      <header className="avk-header">
-        <div className="avk-header-in">
-          <a href="#top" className="avk-wordmark">
-            <span className="avk-wordmark-badge" aria-hidden="true">
-              ❦
+    <div className="bbc">
+      <header className="bbc-header">
+        <div className="bbc-header-in">
+          <a href="#top" className="bbc-logo">
+            <span className="bbc-logo-mark" aria-hidden="true">
+              🌱
             </span>
-            Aardvark Book Club
+            <span className="bbc-logo-name">Burrow</span>
+            <span className="bbc-logo-sub">
+              Book
+              <br />
+              Club
+            </span>
           </a>
-          <nav className="avk-nav" aria-label="Main">
-            <a href="#how">How it works</a>
-            <a href="#picks">This month</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
+          <nav className="bbc-nav" aria-label="Main">
+            <a className="bbc-navpill" href="#books">
+              All Books
+            </a>
+            <a className="bbc-navpill" href="#app">
+              Gifting
+            </a>
+            <a className="bbc-navpill" href="#faq">
+              FAQ
+            </a>
+            <a className="bbc-btn bbc-btn-orange" href="#join">
+              Log-in / Sign-up
+              <span className="bbc-arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
           </nav>
-          <a href="#pricing" className="avk-btn avk-btn-primary">
-            Join the club
-          </a>
+          <div className="bbc-social">
+            <a href="#top" aria-label="Instagram">
+              ⌾
+            </a>
+            <a href="#top" aria-label="TikTok">
+              ♪
+            </a>
+          </div>
         </div>
       </header>
 
       <main id="top">
-        <section className="avk-hero">
-          <div className="avk-wrap avk-hero-in">
+        {/* Hero */}
+        <section className="bbc-hero">
+          <div className="bbc-blobs" aria-hidden="true">
+            <span className="bbc-blob bbc-blob-1" />
+            <span className="bbc-blob bbc-blob-2" />
+          </div>
+          <div className="bbc-wrap bbc-hero-in">
             <div>
-              <p className="avk-eyebrow">A monthly hardcover club</p>
-              <h1>
-                New books worth <em>staying up for</em>
-              </h1>
-              <p className="avk-hero-sub">
-                Every month, pick a brand-new hardcover from our shortlist of the season's best releases —
-                delivered to your door before the hype gets there.
+              <h1>Unbox stories worth talking about</h1>
+              <p className="bbc-hero-sub">
+                Join the book club that's anything but traditional. Choose up to 3 new reads every
+                month, delivered to your door — then dive into the stories and the conversations.
               </p>
-              <div className="avk-hero-cta">
-                <a href="#pricing" className="avk-btn avk-btn-primary">
-                  Start reading
-                </a>
-                <a href="#how" className="avk-btn avk-btn-ghost">
-                  How it works
+              <div className="bbc-hero-cta">
+                <a className="bbc-btn bbc-btn-pink" href="#join" id="join">
+                  Log-in / Sign-up now
+                  <span className="bbc-arrow" aria-hidden="true">
+                    →
+                  </span>
                 </a>
               </div>
-              <p className="avk-hero-note">Free shipping · Skip any month · Cancel anytime</p>
             </div>
-            <div className="avk-shelf" aria-hidden="true">
-              <Book pick={monthlyPicks[3]} tilt={-8} />
-              <Book pick={monthlyPicks[1]} tilt={-3} />
-              <Book pick={monthlyPicks[0]} tilt={2} />
-              <Book pick={monthlyPicks[2]} tilt={7} />
-            </div>
-          </div>
-        </section>
-
-        <div className="avk-ticker" aria-hidden="true">
-          <div className="avk-ticker-track">
-            {[0, 1].map((n) => (
-              <span key={n}>
-                <span>Literary fiction</span>
-                <span>Thriller</span>
-                <span>Romance</span>
-                <span>Fantasy</span>
-                <span>Historical</span>
-                <span>Narrative nonfiction</span>
-                <span>Mystery</span>
-                <span>Sci-fi</span>
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <section id="how" className="avk-section">
-          <div className="avk-wrap">
-            <div className="avk-section-head">
-              <p className="avk-eyebrow">How it works</p>
-              <h2>Three steps between you and your next favorite book</h2>
-            </div>
-            <ol className="avk-steps" style={{ listStyle: "none", margin: 0, padding: 0 }}>
-              <li className="avk-step">
-                <span className="avk-step-num" aria-hidden="true">
-                  No. 1
-                </span>
-                <h3>Browse the monthly shelf</h3>
-                <p>
-                  On the first of the month we reveal a shortlist of five just-published books, hand-picked
-                  across genres.
-                </p>
-              </li>
-              <li className="avk-step">
-                <span className="avk-step-num" aria-hidden="true">
-                  No. 2
-                </span>
-                <h3>Pick your hardcover</h3>
-                <p>
-                  Choose the one calling your name — or add up to two extra picks at member pricing. Nothing
-                  tempting? Skip the month for free.
-                </p>
-              </li>
-              <li className="avk-step">
-                <span className="avk-step-num" aria-hidden="true">
-                  No. 3
-                </span>
-                <h3>Read it first</h3>
-                <p>
-                  Your book ships free and lands on your doormat while it's still the new release everyone
-                  will be talking about.
-                </p>
-              </li>
-            </ol>
-          </div>
-        </section>
-
-        <section id="picks" className="avk-picks avk-section">
-          <div className="avk-wrap">
-            <div className="avk-section-head">
-              <p className="avk-eyebrow" style={{ color: "var(--avk-foil-soft)" }}>
-                This month's shelf
+            <div className="bbc-hero-art">
+              <div className="bbc-hero-book">
+                <Cover book={books[0]} />
+              </div>
+              <div className="bbc-hero-book bbc-hero-book-2">
+                <Cover book={books[5]} />
+              </div>
+              <p className="bbc-hand" style={{ position: "absolute", right: "-1rem", bottom: "1rem" }}>
+                Shipping to the
+                <br />
+                USA &amp; Canada
               </p>
-              <h2>Five new releases. One is yours.</h2>
-              <p>A taste of the kind of shortlist members choose from every month.</p>
             </div>
-            <div className="avk-picks-grid">
-              {monthlyPicks.map((pick) => (
-                <div className="avk-pick" key={pick.title}>
-                  <Book pick={pick} />
-                  <span className="avk-pick-genre">{pick.genre}</span>
-                  <p className="avk-pick-name">{pick.title}</p>
-                  <p className="avk-pick-author">{pick.author}</p>
+          </div>
+        </section>
+
+        {/* July books */}
+        <section id="books" className="bbc-section bbc-books">
+          <div className="bbc-wrap">
+            <div className="bbc-books-head">
+              <div>
+                <span className="bbc-eyebrow">fresh &amp; ready for you</span>
+                <h2 className="bbc-h2">Our books this month</h2>
+                <p>New releases drop on the 1st of every month. Call us creatures of habit.</p>
+              </div>
+              <a className="bbc-btn bbc-btn-dark" href="#join">
+                See all books
+                <span className="bbc-arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </div>
+          </div>
+          <div className="bbc-wrap">
+            <div className="bbc-rail">
+              {books.map((book) => (
+                <article className="bbc-card" key={book.title}>
+                  <div className="bbc-card-cover">
+                    <span className="bbc-card-sprout" aria-hidden="true">
+                      🌱
+                    </span>
+                    <Cover book={book} />
+                  </div>
+                  <div className="bbc-card-tags">
+                    {book.tags.map((t) => (
+                      <span className={`bbc-tag ${t.tone}`} key={t.label}>
+                        {t.label}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="bbc-card-title">{book.title}</h3>
+                  <p className="bbc-card-desc">{book.desc}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="bbc-section bbc-how">
+          <div className="bbc-blobs" aria-hidden="true">
+            <span className="bbc-blob bbc-blob-1" />
+          </div>
+          <div className="bbc-wrap">
+            <span className="bbc-eyebrow">easy as it sounds</span>
+            <h2 className="bbc-h2">How it works</h2>
+          </div>
+          <div className="bbc-wrap">
+            <div className="bbc-steps">
+              {steps.map((s) => (
+                <div className="bbc-step" key={s.tag}>
+                  <span className="bbc-step-tag">{s.tag}</span>
+                  <div className="bbc-step-emoji" aria-hidden="true">
+                    {s.emoji}
+                  </div>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="avk-section">
-          <div className="avk-wrap avk-anatomy">
-            <Book pick={monthlyPicks[0]} />
+        {/* Why Burrow */}
+        <section className="bbc-section bbc-why">
+          <div className="bbc-wrap">
+            <div className="bbc-why-stage">
+              <svg className="bbc-why-arc" viewBox="0 0 100 40" aria-hidden="true">
+                <path id="bbc-arc-path" d="M 8,40 A 42,42 0 0 1 92,40" fill="none" />
+                <text textAnchor="middle">
+                  <textPath href="#bbc-arc-path" startOffset="50%">
+                    Why Burrow?
+                  </textPath>
+                </text>
+              </svg>
+              <span className="bbc-why-mark" aria-hidden="true">
+                🌱
+              </span>
+              <span className="bbc-why-pill p1">Range of genres</span>
+              <span className="bbc-why-pill p2">Free shipping</span>
+              <span className="bbc-why-pill p3">Affordable</span>
+              <span className="bbc-why-pill p4">Quality hardcovers</span>
+            </div>
+          </div>
+        </section>
+
+        {/* App / gifting */}
+        <section id="app" className="bbc-section bbc-app">
+          <div className="bbc-blobs" aria-hidden="true">
+            <span className="bbc-blob bbc-blob-1" />
+          </div>
+          <div className="bbc-wrap bbc-app-in">
             <div>
-              <div className="avk-section-head" style={{ marginBottom: "2rem" }}>
-                <p className="avk-eyebrow">The editions</p>
-                <h2>Hardcovers made to be kept</h2>
-              </div>
-              <ul className="avk-features">
-                <li className="avk-feature">
-                  <span className="avk-feature-icon" aria-hidden="true">
-                    ✦
-                  </span>
-                  <div>
-                    <h3>Foil-stamped spines</h3>
-                    <p>Under every dust jacket hides a stamped spine that turns your shelf into a collection.</p>
-                  </div>
-                </li>
-                <li className="avk-feature">
-                  <span className="avk-feature-icon" aria-hidden="true">
-                    ❦
-                  </span>
-                  <div>
-                    <h3>Matte dust jackets</h3>
-                    <p>Soft-touch jackets over sturdy boards — books that feel as good as they read.</p>
-                  </div>
-                </li>
-                <li className="avk-feature">
-                  <span className="avk-feature-icon" aria-hidden="true">
-                    ✉
-                  </span>
-                  <div>
-                    <h3>Shipped with care</h3>
-                    <p>Snug, recyclable packaging so every edition arrives shelf-ready, corners intact.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section id="pricing" className="avk-section" style={{ background: "var(--avk-paper-soft)" }}>
-          <div className="avk-wrap">
-            <div className="avk-section-head" style={{ textAlign: "center", margin: "0 auto 3rem" }}>
-              <p className="avk-eyebrow">Membership</p>
-              <h2>One plan. Zero fine print.</h2>
-            </div>
-            <div className="avk-price-card">
-              <p className="avk-price">
-                <sup>$</sup>17.99
+              <span className="bbc-eyebrow" style={{ color: "var(--yellow)" }}>
+                the club in your pocket
+              </span>
+              <h2>
+                Think <em>inside</em> the box
+              </h2>
+              <p>
+                Pick your reads, track your shipments, and talk books with the club — all from the
+                Burrow app. Gifting a membership? Do that here too.
               </p>
-              <p className="avk-price-per">per month, pause or cancel anytime</p>
-              <ul className="avk-price-list">
-                <li>One new-release hardcover every month</li>
-                <li>Free shipping, always</li>
-                <li>Add up to 2 extra picks for $9.99 each</li>
-                <li>Skip any month at no cost</li>
-                <li>Exclusive member editions</li>
-              </ul>
-              <a href="#faq" className="avk-btn avk-btn-primary">
-                Become a member
-              </a>
+              <div className="bbc-stores">
+                <a className="bbc-store" href="#top">
+                  <span>
+                    Download on the
+                    <br />
+                    <strong>App Store</strong>
+                  </span>
+                </a>
+                <a className="bbc-store" href="#top">
+                  <span>
+                    Get it on
+                    <br />
+                    <strong>Google Play</strong>
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div className="bbc-phone">
+              <div>
+                <div className="bbc-phone-mark" aria-hidden="true">
+                  🌱
+                </div>
+                <h3>This month's shelf, ready when you are.</h3>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="avk-section">
-          <div className="avk-wrap">
-            <div className="avk-section-head">
-              <p className="avk-eyebrow">From the club</p>
-              <h2>Readers first, always</h2>
-            </div>
-            <div className="avk-quotes">
-              <figure className="avk-quote">
-                <span className="avk-stars" aria-label="5 out of 5 stars">
-                  ★★★★★
-                </span>
-                <blockquote>
-                  "The first of the month is now my favorite day. Choosing my book has become a small ritual."
-                </blockquote>
-                <figcaption>Maren — member since 2024</figcaption>
-              </figure>
-              <figure className="avk-quote">
-                <span className="avk-stars" aria-label="5 out of 5 stars">
-                  ★★★★★
-                </span>
-                <blockquote>
-                  "I've discovered three authors I'd never have picked up in a store. The editions are gorgeous."
-                </blockquote>
-                <figcaption>Devon — member since 2023</figcaption>
-              </figure>
-              <figure className="avk-quote">
-                <span className="avk-stars" aria-label="5 out of 5 stars">
-                  ★★★★★
-                </span>
-                <blockquote>
-                  "Skipping is genuinely one click, so I never feel locked in. That's why I've stayed."
-                </blockquote>
-                <figcaption>Sofia — member since 2025</figcaption>
-              </figure>
+        {/* Genre marquee */}
+        <section className="bbc-genres">
+          <div className="bbc-wrap">
+            <h2>Romance, thrillers, and everything in between</h2>
+          </div>
+          <div className="bbc-marquee-row">
+            <div className="bbc-marquee">
+              {[...genresA, ...genresA].map((g, i) => (
+                <span key={`a${i}`}>{g}</span>
+              ))}
             </div>
           </div>
-        </section>
-
-        <section id="faq" className="avk-section">
-          <div className="avk-wrap">
-            <div className="avk-section-head" style={{ textAlign: "center", margin: "0 auto 3rem" }}>
-              <p className="avk-eyebrow">Common questions</p>
-              <h2>Everything else you'd like to know</h2>
-            </div>
-            <div className="avk-faq">
-              {faqs.map((f) => (
-                <details key={f.q}>
-                  <summary>{f.q}</summary>
-                  <p>{f.a}</p>
-                </details>
+          <div className="bbc-marquee-row">
+            <div className="bbc-marquee rev">
+              {[...genresB, ...genresB].map((g, i) => (
+                <span key={`b${i}`}>{g}</span>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="avk-cta avk-section">
-          <div className="avk-wrap">
-            <h2>
-              Your next favorite book is <em>already printed</em>
-            </h2>
-            <p>Join before the first of the month and pick from the newest shelf of releases.</p>
-            <a href="#pricing" className="avk-btn">
-              Join the club
-            </a>
+        {/* Promo bar */}
+        <div className="bbc-promo" aria-hidden="true">
+          <div className="bbc-marquee">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span key={i}>1st book only $4 with code SUMMER (US &amp; CA)</span>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <section id="faq" className="bbc-section bbc-faq">
+          <div className="bbc-wrap bbc-faq-in">
+            <h2>Common questions</h2>
+            {faqs.map((f) => (
+              <details key={f.q}>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* Newsletter */}
+        <section className="bbc-section bbc-news">
+          <div className="bbc-wrap">
+            <h2>Join our mailing list</h2>
+            <p>Monthly picks, member deals, and the occasional bookish confession.</p>
+            <form className="bbc-news-form" onSubmit={(e) => e.preventDefault()}>
+              <input type="email" placeholder="you@email.com" aria-label="Email address" />
+              <button className="bbc-btn bbc-btn-pink" type="submit">
+                Subscribe
+                <span className="bbc-arrow" aria-hidden="true">
+                  →
+                </span>
+              </button>
+            </form>
           </div>
         </section>
       </main>
 
-      <footer className="avk-footer">
-        <div className="avk-footer-in">
-          <span>© {new Date().getFullYear()} Aardvark Book Club — demo clone for design study</span>
+      <footer className="bbc-footer">
+        <div className="bbc-wrap bbc-footer-in">
+          <a href="#top" className="bbc-logo" style={{ color: "#fff" }}>
+            <span className="bbc-logo-mark" aria-hidden="true">
+              🌱
+            </span>
+            <span className="bbc-logo-name">Burrow</span>
+          </a>
           <nav aria-label="Footer">
-            <a href="#how">How it works</a>
-            <a href="#pricing">Pricing</a>
+            <a href="#books">All Books</a>
+            <a href="#app">Gifting</a>
             <a href="#faq">FAQ</a>
+            <a href="#join">Sign up</a>
           </nav>
+          <p className="bbc-footer-note">
+            © {new Date().getFullYear()} {BRAND} — placeholder brand, demo clone for design study.
+          </p>
         </div>
       </footer>
     </div>
