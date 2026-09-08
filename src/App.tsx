@@ -17,6 +17,7 @@ import ScanPage from "@/pages/ScanPage";
 import AssistantTest from "@/pages/AssistantTest";
 import AssistantAction from "@/pages/AssistantAction";
 import OAuthConsent from "@/pages/OAuthConsent";
+import BookClub from "@/pages/BookClub";
 
 import NotFound from "@/pages/NotFound";
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="/scan/:scan_slug" element={<ScanPage />} />
+            <Route path="/bookclub" element={<BookClub />} />
             <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/sourcing" element={<Sourcing />} />
